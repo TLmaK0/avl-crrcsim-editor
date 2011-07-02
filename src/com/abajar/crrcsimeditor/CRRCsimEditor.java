@@ -4,10 +4,12 @@
 
 package com.abajar.crrcsimeditor;
 
-import com.sun.j3d.utils.geometry.ColorCube;
+import com.mnstarfire.loaders3d.Inspector3DS;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
-import java.awt.GraphicsEnvironment;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.j3d.Alpha;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -79,9 +81,25 @@ public class CRRCsimEditor extends SingleFrameApplication {
         trans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
         branch.addChild(trans);
 
+
+        
+            //new Loader3DS().load("Tank_BRDM3_N280611.3DS");
+            Inspector3DS loader = new Inspector3DS("Tank_BRDM3_N280611.3DS"); // constructor
+            loader.parseIt(); // process the file
+            TransformGroup theModel = loader.getModel();
+            branch.addChild(theModel);
+            // Make a shape
+            //ColorCube demo = new ColorCube(0.4);
+            //trans.addChild(demo);
+        //Inspector3DS loader = new Inspector3DS("C:/Proyectos/modeling/eurofighter/3dmodels/EF2000.3ds"); // constructor
+//loader.parseIt(); // process the file
+//TransformGroup theModel = loader.getModel();
+
+//branch.addChild(theModel);
         // Make a shape
-        ColorCube demo = new ColorCube(0.4);
-        trans.addChild(demo);
+        //ColorCube demo = new ColorCube(0.4);
+        //trans.addChild(demo);
+
 
         // Make a behavor to spin the shape
         Alpha spinAlpha = new Alpha(-1, 4000);
