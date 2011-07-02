@@ -4,20 +4,22 @@
 
 package com.abajar.crrcsimeditor;
 
-import com.mnstarfire.loaders3d.Inspector3DS;
+import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.io.FileNotFoundException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.media.j3d.Alpha;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
-import javax.media.j3d.RotationInterpolator;
+import javax.media.j3d.DirectionalLight;
+import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
+import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector3f;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -39,11 +41,21 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
         SimpleUniverse univ = new SimpleUniverse(canvas);
         univ.getViewingPlatform().setNominalViewingTransform();
-
         BranchGroup scene = createSceneGraph();
+addLights(scene);
+
         scene.compile();
         univ.addBranchGraph(scene);
 
+        TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
+
+  Transform3D Trfcamera = new Transform3D();
+  Trfcamera.setTranslation(new Vector3f(20f, 10f, 110f));
+  Trfcamera.rotX(0.5);
+  Trfcamera.rotY(0.3);
+  Trfcamera.setTranslation(new Vector3f(60f, 10f, 40f));
+  VpTG.setTransform( Trfcamera );
+        
         frame.setVisible(true);
 
 
@@ -74,40 +86,58 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     private static BranchGroup createSceneGraph() {
         // Make a scene graph branch
-        BranchGroup branch = new BranchGroup();
+//        BranchGroup branch = new BranchGroup();
+//
+//        // Make a changeable 3D transform
+//        TransformGroup trans = new TransformGroup();
+//        trans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+//        branch.addChild(trans);
+        Scene model3d = null;
 
-        // Make a changeable 3D transform
-        TransformGroup trans = new TransformGroup();
-        trans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-        branch.addChild(trans);
+        try {
+            model3d = new com.microcrowd.loader.java3d.max3ds.Loader3DS().load("Bounce.3DS");
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-
-        
-            //new Loader3DS().load("Tank_BRDM3_N280611.3DS");
-            Inspector3DS loader = new Inspector3DS("Tank_BRDM3_N280611.3DS"); // constructor
-            loader.parseIt(); // process the file
-            TransformGroup theModel = loader.getModel();
-            branch.addChild(theModel);
-            // Make a shape
-            //ColorCube demo = new ColorCube(0.4);
-            //trans.addChild(demo);
-        //Inspector3DS loader = new Inspector3DS("C:/Proyectos/modeling/eurofighter/3dmodels/EF2000.3ds"); // constructor
-//loader.parseIt(); // process the file
-//TransformGroup theModel = loader.getModel();
-
-//branch.addChild(theModel);
+        BranchGroup branch = model3d.getSceneGroup();
         // Make a shape
         //ColorCube demo = new ColorCube(0.4);
         //trans.addChild(demo);
 
 
         // Make a behavor to spin the shape
-        Alpha spinAlpha = new Alpha(-1, 4000);
-        RotationInterpolator spinner = new RotationInterpolator(spinAlpha,
-            trans);
-        spinner.setSchedulingBounds(new BoundingSphere(new Point3d(), 1000.0));
-        trans.addChild(spinner);
+//        Alpha spinAlpha = new Alpha(-1, 4000);
+//        RotationInterpolator spinner = new RotationInterpolator(spinAlpha,
+//            trans);
+//        spinner.setSchedulingBounds(new BoundingSphere(new Point3d(), 1000.0));
+//        trans.addChild(spinner);
 
         return branch;
     }
+
+    public void addLights( BranchGroup bg )
+ {
+  // create the color for the light
+  Color3f color = new Color3f( 1.0f,1.0f,0.0f );
+
+
+  // create a vector that describes the direction that
+  // the light is shining.
+  Vector3f direction  = new Vector3f( -1.0f,-1.0f,-1.0f );
+
+
+  // create the directional light with the color and direction
+  DirectionalLight light = new DirectionalLight( color, direction );
+
+
+  // set the volume of influence of the light.
+  // Only objects within the Influencing Bounds
+  // will be illuminated.
+  light.setInfluencingBounds( new BoundingSphere( new Point3d(0.0,0.0,0.0), 200.0 ) );
+
+
+  // add the light to the BranchGroup
+  bg.addChild( light );
+ }
 }
