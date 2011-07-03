@@ -40,7 +40,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
             SimpleUniverse univ = new SimpleUniverse(canvas);
             View view = canvas.getView();
             view.setBackClipDistance(100f);
-            
+            view.setProjectionPolicy(View.PARALLEL_PROJECTION);
+            view.setScreenScalePolicy(view.SCALE_EXPLICIT);
+            view.setScreenScale(0.01);
             univ.getViewingPlatform().setNominalViewingTransform();
 
             TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
