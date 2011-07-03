@@ -18,6 +18,32 @@
             <Property name="text" type="java.lang.String" resourceKey="jMenu2.text"/>
             <Property name="name" type="java.lang.String" value="jMenu2" noResource="true"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="TopViewOption">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="TopViewOption.text"/>
+                <Property name="name" type="java.lang.String" value="TopViewOption" noResource="true"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="RightViewOption">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="RightViewOption.text"/>
+                <Property name="name" type="java.lang.String" value="RightViewOption" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="RightViewOptionMouseClicked"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="FrontViewOption">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="FrontViewOption.text"/>
+                <Property name="name" type="java.lang.String" value="FrontViewOption" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="FrontViewOptionMouseClicked"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
       </SubComponents>
     </Menu>
@@ -45,13 +71,56 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="400" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                  <Component id="frontViewButton" alignment="0" max="32767" attributes="1"/>
+                  <Component id="topViewButton" alignment="0" max="32767" attributes="1"/>
+                  <Component id="rightViewButton" alignment="0" max="32767" attributes="1"/>
+              </Group>
+              <EmptySpace pref="341" max="32767" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <EmptySpace min="0" pref="279" max="32767" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="topViewButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="frontViewButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="rightViewButton" min="-2" max="-2" attributes="0"/>
+              <EmptySpace pref="198" max="32767" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
   </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JButton" name="topViewButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="topViewButton.text"/>
+        <Property name="name" type="java.lang.String" value="topViewButton" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="topViewButtonMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="frontViewButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="frontViewButton.text"/>
+        <Property name="name" type="java.lang.String" value="frontViewButton" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="frontViewButtonMouseClicked"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="rightViewButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" resourceKey="rightViewButton.text"/>
+        <Property name="name" type="java.lang.String" value="rightViewButton" noResource="true"/>
+      </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="rightViewButtonMouseClicked"/>
+      </Events>
+    </Component>
+  </SubComponents>
 </Form>

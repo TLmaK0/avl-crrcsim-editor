@@ -17,6 +17,7 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.swing.JFrame;
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Vector3f;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
@@ -26,30 +27,28 @@ import org.jdesktop.application.SingleFrameApplication;
  */
 public class CRRCsimEditor extends SingleFrameApplication {
 
+    SimpleUniverse univ;
+
     /**
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
         try {
-            JFrame frame = new MainFrame();
+            MainFrame frame = new MainFrame(this);
             frame.setSize(640, 480);
             frame.setLayout(new BorderLayout());
             Canvas3D canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
             frame.add("Center", canvas);
-
-            SimpleUniverse univ = new SimpleUniverse(canvas);
+    
+            univ = new SimpleUniverse(canvas);
             View view = canvas.getView();
-            view.setBackClipDistance(100f);
             view.setProjectionPolicy(View.PARALLEL_PROJECTION);
-            view.setScreenScalePolicy(view.SCALE_EXPLICIT);
-            view.setScreenScale(0.01);
+            view.setScreenScalePolicy(View.SCALE_EXPLICIT);
+            view.setScreenScale(0.004);
             univ.getViewingPlatform().setNominalViewingTransform();
 
-            TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
-            Transform3D Trfcamera = new Transform3D();
-            Trfcamera.setTranslation(new Vector3f(0f, 0f, 100f));
-            VpTG.setTransform(Trfcamera);
-
+            rightView();
+            
             Loader3DS loader3ds = new Loader3DS();
             Scene model3d = loader3ds.load("model\\EF2000.3ds");
             BranchGroup scene = model3d.getSceneGroup();
@@ -59,6 +58,33 @@ public class CRRCsimEditor extends SingleFrameApplication {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public void frontView(){
+        TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
+        Transform3D Trfcamera = new Transform3D();
+
+        Trfcamera.setRotation(new AxisAngle4f(new Vector3f(0f, 1f, 0f), (float)Math.PI/2 ));
+        Trfcamera.setTranslation(new Vector3f(100f, 0f, 0f));
+        VpTG.setTransform(Trfcamera);
+    }
+
+    public void topView(){
+        TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
+        Transform3D Trfcamera = new Transform3D();
+
+        Trfcamera.setRotation(new AxisAngle4f(new Vector3f(-1f, 0f, 0f), (float)Math.PI/2 ));
+        Trfcamera.setTranslation(new Vector3f(0f, 100f, 0f));
+        VpTG.setTransform(Trfcamera);
+    }
+
+    public void rightView(){
+        TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
+        Transform3D Trfcamera = new Transform3D();
+
+        Trfcamera.setRotation(new AxisAngle4f(new Vector3f(0f, 0f, 0f), 0 ));
+        Trfcamera.setTranslation(new Vector3f(0f, 0f, 100f));
+        VpTG.setTransform(Trfcamera);
     }
 
     /**

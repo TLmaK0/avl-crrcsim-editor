@@ -6,19 +6,22 @@
 /*
  * MainFrame.java
  *
- * Created on 01-jul-2011, 21:27:48
+ * Created on 03-jul-2011, 22:45:18
  */
 
 package com.abajar.crrcsimeditor;
 
 /**
  *
- * @author Hugo
+ * @author hfreire
  */
 public class MainFrame extends javax.swing.JFrame {
 
+    private CRRCsimEditor controller;
+
     /** Creates new form MainFrame */
-    public MainFrame() {
+    public MainFrame(CRRCsimEditor controller) {
+        this.controller= controller;
         initComponents();
     }
 
@@ -31,22 +34,75 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        topViewButton = new javax.swing.JButton();
+        frontViewButton = new javax.swing.JButton();
+        rightViewButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenu2 = new javax.swing.JMenu();
+        TopViewOption = new javax.swing.JMenuItem();
+        RightViewOption = new javax.swing.JMenuItem();
+        FrontViewOption = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
 
+        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.abajar.crrcsimeditor.CRRCsimEditor.class).getContext().getResourceMap(MainFrame.class);
+        topViewButton.setText(resourceMap.getString("topViewButton.text")); // NOI18N
+        topViewButton.setName("topViewButton"); // NOI18N
+        topViewButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                topViewButtonMouseClicked(evt);
+            }
+        });
+
+        frontViewButton.setText(resourceMap.getString("frontViewButton.text")); // NOI18N
+        frontViewButton.setName("frontViewButton"); // NOI18N
+        frontViewButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                frontViewButtonMouseClicked(evt);
+            }
+        });
+
+        rightViewButton.setText(resourceMap.getString("rightViewButton.text")); // NOI18N
+        rightViewButton.setName("rightViewButton"); // NOI18N
+        rightViewButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                rightViewButtonMouseClicked(evt);
+            }
+        });
+
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(com.abajar.crrcsimeditor.CRRCsimEditor.class).getContext().getResourceMap(MainFrame.class);
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText(resourceMap.getString("jMenu2.text")); // NOI18N
         jMenu2.setName("jMenu2"); // NOI18N
+
+        TopViewOption.setText(resourceMap.getString("TopViewOption.text")); // NOI18N
+        TopViewOption.setName("TopViewOption"); // NOI18N
+        jMenu2.add(TopViewOption);
+
+        RightViewOption.setText(resourceMap.getString("RightViewOption.text")); // NOI18N
+        RightViewOption.setName("RightViewOption"); // NOI18N
+        RightViewOption.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                RightViewOptionMouseClicked(evt);
+            }
+        });
+        jMenu2.add(RightViewOption);
+
+        FrontViewOption.setText(resourceMap.getString("FrontViewOption.text")); // NOI18N
+        FrontViewOption.setName("FrontViewOption"); // NOI18N
+        FrontViewOption.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                FrontViewOptionMouseClicked(evt);
+            }
+        });
+        jMenu2.add(FrontViewOption);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -55,20 +111,57 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rightViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(341, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 279, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(topViewButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(frontViewButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rightViewButton)
+                .addContainerGap(198, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void FrontViewOptionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FrontViewOptionMouseClicked
+        controller.frontView();
+    }//GEN-LAST:event_FrontViewOptionMouseClicked
+
+    private void RightViewOptionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightViewOptionMouseClicked
+        controller.rightView();
+    }//GEN-LAST:event_RightViewOptionMouseClicked
+
+    private void topViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topViewButtonMouseClicked
+        controller.topView();
+    }//GEN-LAST:event_topViewButtonMouseClicked
+
+    private void frontViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frontViewButtonMouseClicked
+        controller.frontView();
+    }//GEN-LAST:event_frontViewButtonMouseClicked
+
+    private void rightViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rightViewButtonMouseClicked
+        controller.rightView();
+    }//GEN-LAST:event_rightViewButtonMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem FrontViewOption;
+    private javax.swing.JMenuItem RightViewOption;
+    private javax.swing.JMenuItem TopViewOption;
+    private javax.swing.JButton frontViewButton;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JButton rightViewButton;
+    private javax.swing.JButton topViewButton;
     // End of variables declaration//GEN-END:variables
 
 }
