@@ -39,17 +39,17 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
             SimpleUniverse univ = new SimpleUniverse(canvas);
             View view = canvas.getView();
-            view.setBackClipDistance(20000);
+            view.setBackClipDistance(100f);
             
             univ.getViewingPlatform().setNominalViewingTransform();
 
             TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
             Transform3D Trfcamera = new Transform3D();
-            Trfcamera.setTranslation(new Vector3f(50f, 20f, 20000f));
+            Trfcamera.setTranslation(new Vector3f(0f, 0f, 100f));
             VpTG.setTransform(Trfcamera);
 
             Loader3DS loader3ds = new Loader3DS();
-            Scene model3d = loader3ds.load(".\\model\\Tank_BRDM3_N280611.3DS");
+            Scene model3d = loader3ds.load("model\\EF2000.3ds");
             BranchGroup scene = model3d.getSceneGroup();
             scene.compile();
             univ.addBranchGraph(scene);
