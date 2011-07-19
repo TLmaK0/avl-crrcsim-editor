@@ -5,6 +5,9 @@
 
 package com.abajar.crrcsimeditor.avl;
 
+import com.abajar.crrcsimeditor.avl.geometry.Body;
+import com.abajar.crrcsimeditor.avl.geometry.Surface;
+
 /**
  *
  * @author hfreire
@@ -15,6 +18,7 @@ public class AVLGeometry {
     final float[] SCBref = new float[3];
     final float[] XYZref = new float[3];
     float CDp;
-
+    final Surface[] surfaces = new Surface[20];
+    final Body[] body = new Body[10];
 
 }

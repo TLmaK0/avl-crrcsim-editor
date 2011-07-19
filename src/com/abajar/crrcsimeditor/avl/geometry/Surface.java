@@ -28,9 +28,6 @@ public class Surface {
     //TODO: NOLOAD
 
     //SECTION
-    final Section[] sections = new Section[5];
+    final Section[] sections = new Section[10];
 
-    //BODY
-    final Body[] body = new Body[5];
-    
 }

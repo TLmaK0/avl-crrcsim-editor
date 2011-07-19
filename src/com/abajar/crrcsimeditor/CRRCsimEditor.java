@@ -16,7 +16,6 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
-import javax.swing.JFrame;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Vector3f;
 import org.jdesktop.application.Application;
@@ -28,6 +27,12 @@ import org.jdesktop.application.SingleFrameApplication;
 public class CRRCsimEditor extends SingleFrameApplication {
 
     SimpleUniverse univ;
+    final GeometryEditor geoEditor;
+
+    public CRRCsimEditor() {
+        geoEditor =  new GeometryEditor(this);
+    }
+
 
     /**
      * At startup create and show the main frame of the application.
@@ -87,6 +92,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
         VpTG.setTransform(Trfcamera);
     }
 
+    public void addSurface(){
+        geoEditor.addSurface();
+        geoEditor.setVisible(true);
+    }
     /**
      * A convenient static getter for the application instance.
      * @return the instance of CRRCsimEditor

@@ -37,12 +37,9 @@ public class MainFrame extends javax.swing.JFrame {
         topViewButton = new javax.swing.JButton();
         frontViewButton = new javax.swing.JButton();
         rightViewButton = new javax.swing.JButton();
+        addSurfaceButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        TopViewOption = new javax.swing.JMenuItem();
-        RightViewOption = new javax.swing.JMenuItem();
-        FrontViewOption = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -72,38 +69,19 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addSurfaceButton.setLabel(resourceMap.getString("addSurfaceButton.label")); // NOI18N
+        addSurfaceButton.setName("addSurfaceButton"); // NOI18N
+        addSurfaceButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                addSurfaceButtonMouseClicked(evt);
+            }
+        });
+
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
         jMenuBar1.add(jMenu1);
-
-        jMenu2.setText(resourceMap.getString("jMenu2.text")); // NOI18N
-        jMenu2.setName("jMenu2"); // NOI18N
-
-        TopViewOption.setText(resourceMap.getString("TopViewOption.text")); // NOI18N
-        TopViewOption.setName("TopViewOption"); // NOI18N
-        jMenu2.add(TopViewOption);
-
-        RightViewOption.setText(resourceMap.getString("RightViewOption.text")); // NOI18N
-        RightViewOption.setName("RightViewOption"); // NOI18N
-        RightViewOption.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                RightViewOptionMouseClicked(evt);
-            }
-        });
-        jMenu2.add(RightViewOption);
-
-        FrontViewOption.setText(resourceMap.getString("FrontViewOption.text")); // NOI18N
-        FrontViewOption.setName("FrontViewOption"); // NOI18N
-        FrontViewOption.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                FrontViewOptionMouseClicked(evt);
-            }
-        });
-        jMenu2.add(FrontViewOption);
-
-        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -112,11 +90,13 @@ public class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(rightViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(341, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(rightViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(addSurfaceButton))
+                .addContainerGap(309, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,19 +106,13 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(frontViewButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rightViewButton)
-                .addContainerGap(198, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addSurfaceButton)
+                .addContainerGap(169, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void FrontViewOptionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_FrontViewOptionMouseClicked
-        controller.frontView();
-    }//GEN-LAST:event_FrontViewOptionMouseClicked
-
-    private void RightViewOptionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_RightViewOptionMouseClicked
-        controller.rightView();
-    }//GEN-LAST:event_RightViewOptionMouseClicked
 
     private void topViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topViewButtonMouseClicked
         controller.topView();
@@ -152,13 +126,14 @@ public class MainFrame extends javax.swing.JFrame {
         controller.rightView();
     }//GEN-LAST:event_rightViewButtonMouseClicked
 
+    private void addSurfaceButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSurfaceButtonMouseClicked
+        controller.addSurface();
+    }//GEN-LAST:event_addSurfaceButtonMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenuItem FrontViewOption;
-    private javax.swing.JMenuItem RightViewOption;
-    private javax.swing.JMenuItem TopViewOption;
+    private javax.swing.JButton addSurfaceButton;
     private javax.swing.JButton frontViewButton;
     private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JButton rightViewButton;
     private javax.swing.JButton topViewButton;
