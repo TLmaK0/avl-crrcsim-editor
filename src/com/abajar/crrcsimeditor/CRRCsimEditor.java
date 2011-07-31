@@ -4,6 +4,12 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.geometry.Body;
+import com.abajar.crrcsimeditor.avl.geometry.Control;
+import com.abajar.crrcsimeditor.avl.geometry.Section;
+import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -16,6 +22,7 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
+import javax.swing.tree.DefaultMutableTreeNode;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Vector3f;
 import org.jdesktop.application.Application;
@@ -27,11 +34,56 @@ import org.jdesktop.application.SingleFrameApplication;
 public class CRRCsimEditor extends SingleFrameApplication {
 
     SimpleUniverse univ;
-    final GeometryEditor geoEditor;
+    AVL avl;
+    MainFrame frame;
 
     public CRRCsimEditor() {
-        geoEditor =  new GeometryEditor(this);
+        avl = new AVL();
     }
+
+    public DefaultMutableTreeNode getTreeModel(){
+        
+        DefaultMutableTreeNode avlNode = new DefaultMutableTreeNode(avl);
+        DefaultMutableTreeNode geometryNode = new DefaultMutableTreeNode(avl.getGeometry());
+        DefaultMutableTreeNode massNode = new DefaultMutableTreeNode(avl.getMass());
+
+        DefaultMutableTreeNode surfacesNode = new DefaultMutableTreeNode("Surfaces");
+        for(Surface surf : avl.getGeometry().getSurfaces()){
+            DefaultMutableTreeNode surfNode = new DefaultMutableTreeNode(surf);
+            surfacesNode.add(surfNode);
+
+            for(Section section:surf.getSections()){
+                DefaultMutableTreeNode sectionNode = new DefaultMutableTreeNode(section);
+                surfNode.add(sectionNode);
+
+                for(Control control:section.getControls()){
+                    DefaultMutableTreeNode controlNode = new DefaultMutableTreeNode(control);
+                    sectionNode.add(controlNode);
+                }
+            }
+        }
+        geometryNode.add(surfacesNode);
+
+        DefaultMutableTreeNode bodiesNode = new DefaultMutableTreeNode("Bodies");
+        for(Body body : avl.getGeometry().getBodies()){
+            DefaultMutableTreeNode bodyNode = new DefaultMutableTreeNode(body);
+            bodiesNode.add(bodyNode);
+        }
+        geometryNode.add(bodiesNode);
+
+
+        DefaultMutableTreeNode massesNode = new DefaultMutableTreeNode("Masses");
+        for(Mass mass:avl.getMass().getMass()){
+            DefaultMutableTreeNode mNode = new DefaultMutableTreeNode(mass);
+            massesNode.add(mNode);
+        }
+        massNode.add(massesNode);
+        
+        avlNode.add(geometryNode);
+        avlNode.add(massNode);
+        return avlNode;
+    }
+
 
 
     /**
@@ -39,7 +91,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
      */
     @Override protected void startup() {
         try {
-            MainFrame frame = new MainFrame(this);
+            frame = new MainFrame(this);
             frame.setSize(640, 480);
             frame.setLayout(new BorderLayout());
             Canvas3D canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
@@ -92,10 +144,14 @@ public class CRRCsimEditor extends SingleFrameApplication {
         VpTG.setTransform(Trfcamera);
     }
 
-    public void addSurface(){
-        geoEditor.addSurface();
-        geoEditor.setVisible(true);
+    public void showAvlEditor(){
+        frame.showGeoEditor();
     }
+
+    public AVL getAvl(){
+        return this.avl;
+    }
+
     /**
      * A convenient static getter for the application instance.
      * @return the instance of CRRCsimEditor

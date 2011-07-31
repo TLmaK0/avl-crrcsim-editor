@@ -18,12 +18,20 @@ package com.abajar.crrcsimeditor;
 public class MainFrame extends javax.swing.JFrame {
 
     private CRRCsimEditor controller;
+    final GeometryEditor geoEditor;
 
     /** Creates new form MainFrame */
     public MainFrame(CRRCsimEditor controller) {
-        this.controller= controller;
+        this.controller = controller;
+        this.geoEditor =  new GeometryEditor(this.controller);
+
         initComponents();
     }
+
+    public void showGeoEditor(){
+        geoEditor.setVisible(true);
+    }
+
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -127,7 +135,7 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_rightViewButtonMouseClicked
 
     private void addSurfaceButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSurfaceButtonMouseClicked
-        controller.addSurface();
+        controller.showAvlEditor();
     }//GEN-LAST:event_addSurfaceButtonMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
