@@ -11,6 +11,14 @@
 
 package com.abajar.crrcsimeditor;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+
 /**
  *
  * @author hfreire
@@ -48,6 +56,7 @@ public class MainFrame extends javax.swing.JFrame {
         addSurfaceButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        fileSaveAsMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -89,6 +98,17 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
+
+        fileSaveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        fileSaveAsMenuItem.setText(resourceMap.getString("fileSaveAsMenuItem.text")); // NOI18N
+        fileSaveAsMenuItem.setName("fileSaveAsMenuItem"); // NOI18N
+        fileSaveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileSaveAsMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(fileSaveAsMenuItem);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -138,8 +158,20 @@ public class MainFrame extends javax.swing.JFrame {
         controller.showAvlEditor();
     }//GEN-LAST:event_addSurfaceButtonMouseClicked
 
+    private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveAsMenuItemActionPerformed
+        try {
+            JFileChooser fc = new JFileChooser();
+            System.out.println(fc.showOpenDialog(this));
+            File file = fc.getSelectedFile();
+            controller.saveAs(file);
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_fileSaveAsMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addSurfaceButton;
+    private javax.swing.JMenuItem fileSaveAsMenuItem;
     private javax.swing.JButton frontViewButton;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;

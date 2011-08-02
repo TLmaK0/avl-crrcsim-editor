@@ -9,7 +9,7 @@ package com.abajar.crrcsimeditor.avl;
  *
  * @author hfreire
  */
-public class AVL {
+public class AVL{
     private AVLGeometry geometry = new AVLGeometry();
     private AVLMass mass = new AVLMass();
 

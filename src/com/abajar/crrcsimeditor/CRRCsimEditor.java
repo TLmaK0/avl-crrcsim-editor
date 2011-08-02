@@ -15,7 +15,10 @@ import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.j3d.BranchGroup;
@@ -132,6 +135,12 @@ public class CRRCsimEditor extends SingleFrameApplication {
        surface.setName("new surface");
        aVLGeometry.getSurfaces().add(surface);
        return surface;
+    }
+
+    public void saveAs(File file) throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        this.avl.getGeometry().writeAVLData(fos);
+        fos.close();
     }
 
 }

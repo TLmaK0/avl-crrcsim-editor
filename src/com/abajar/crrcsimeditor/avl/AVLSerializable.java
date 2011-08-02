@@ -11,6 +11,6 @@ import java.io.OutputStream;
  *
  * @author hfreire
  */
-public interface AVLSerializer{
-    public void toAVLFile(OutputStream out);
+public interface AVLSerializable{
+    public void writeAVLData(OutputStream out);
 }
