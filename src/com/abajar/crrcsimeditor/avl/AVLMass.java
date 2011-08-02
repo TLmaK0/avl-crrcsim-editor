@@ -97,4 +97,10 @@ public class AVLMass {
     public ArrayList<Mass> getMass() {
         return mass;
     }
+
+    @Override
+    public String toString() {
+        return "Mass";
+    }
+
 }

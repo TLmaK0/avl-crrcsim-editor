@@ -5,6 +5,7 @@
 package com.abajar.crrcsimeditor;
 
 import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
@@ -41,48 +42,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         avl = new AVL();
     }
 
-    public DefaultMutableTreeNode getTreeModel(){
-        
-        DefaultMutableTreeNode avlNode = new DefaultMutableTreeNode(avl);
-        DefaultMutableTreeNode geometryNode = new DefaultMutableTreeNode(avl.getGeometry());
-        DefaultMutableTreeNode massNode = new DefaultMutableTreeNode(avl.getMass());
-
-        DefaultMutableTreeNode surfacesNode = new DefaultMutableTreeNode("Surfaces");
-        for(Surface surf : avl.getGeometry().getSurfaces()){
-            DefaultMutableTreeNode surfNode = new DefaultMutableTreeNode(surf);
-            surfacesNode.add(surfNode);
-
-            for(Section section:surf.getSections()){
-                DefaultMutableTreeNode sectionNode = new DefaultMutableTreeNode(section);
-                surfNode.add(sectionNode);
-
-                for(Control control:section.getControls()){
-                    DefaultMutableTreeNode controlNode = new DefaultMutableTreeNode(control);
-                    sectionNode.add(controlNode);
-                }
-            }
-        }
-        geometryNode.add(surfacesNode);
-
-        DefaultMutableTreeNode bodiesNode = new DefaultMutableTreeNode("Bodies");
-        for(Body body : avl.getGeometry().getBodies()){
-            DefaultMutableTreeNode bodyNode = new DefaultMutableTreeNode(body);
-            bodiesNode.add(bodyNode);
-        }
-        geometryNode.add(bodiesNode);
-
-
-        DefaultMutableTreeNode massesNode = new DefaultMutableTreeNode("Masses");
-        for(Mass mass:avl.getMass().getMass()){
-            DefaultMutableTreeNode mNode = new DefaultMutableTreeNode(mass);
-            massesNode.add(mNode);
-        }
-        massNode.add(massesNode);
-        
-        avlNode.add(geometryNode);
-        avlNode.add(massNode);
-        return avlNode;
-    }
+    
 
 
 
@@ -165,6 +125,13 @@ public class CRRCsimEditor extends SingleFrameApplication {
      */
     public static void main(String[] args) {
         launch(CRRCsimEditor.class, args);
+    }
+
+    public Surface createNewSurfaceFor(AVLGeometry aVLGeometry) {
+       Surface surface = new Surface();
+       surface.setName("new surface");
+       aVLGeometry.getSurfaces().add(surface);
+       return surface;
     }
 
 }

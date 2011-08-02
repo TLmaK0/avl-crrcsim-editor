@@ -7,19 +7,20 @@ package com.abajar.crrcsimeditor.avl;
 
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author hfreire
  */
-public class AVLGeometry {
+public class AVLGeometry{
     private float Mach;
     private final float[] SCBref = new float[3];
     private final float[] XYZref = new float[3];
     private float CDp;
     private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
-    private final ArrayList<Body> body = new ArrayList<Body>();;
+    private final ArrayList<Body> body = new ArrayList<Body>();
 
     /**
      * @return the Mach
@@ -28,6 +29,13 @@ public class AVLGeometry {
         return Mach;
     }
 
+    /**
+     * @param Mach the Mach to set
+     */
+    public void setMach(float Mach) {
+        this.Mach = Mach;
+    }
+    
     /**
      * @return the SCBref
      */
@@ -62,5 +70,19 @@ public class AVLGeometry {
     public ArrayList<Body> getBodies() {
         return body;
     }
+
+    @Override
+    public String toString() {
+        return "Geometry";
+    }
+
+    /**
+     * @param CDp the CDp to set
+     */
+    public void setCDp(float CDp) {
+        this.CDp = CDp;
+    }
+
+
 
 }
