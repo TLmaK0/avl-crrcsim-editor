@@ -5,11 +5,13 @@
 
 package com.abajar.crrcsimeditor.avl;
 
+import java.io.Serializable;
+
 /**
  *
  * @author hfreire
  */
-public class AVL{
+public class AVL implements Serializable{
     private AVLGeometry geometry = new AVLGeometry();
     private AVLMass mass = new AVLMass();
 

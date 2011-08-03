@@ -28,9 +28,9 @@ public class Surface implements AVLSerializable {
     private float Sspace;
 
     //TODO: COMPONENT
-    //TODO: YDUPLICATE
     //TODO: SCALE
 
+    private float Ydupl;
     private final float[] dXYZ = new float[3];
     private float dAinc;
     
@@ -144,18 +144,34 @@ public class Surface implements AVLSerializable {
         PrintStream ps = new PrintStream(out);
         ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
         ps.printf("%1$s\n", this.getName());                                        //Main Wing            | surface name string
-        ps.printf("! Nchord  Cspace   [ Nspan Sspace ]\n" + fs(4) +"\n",
+        ps.printf("!Nchord  Cspace   [ Nspan Sspace ]\n" + fs(4) +"\n",
                 this.getNchord(), this.getCspace(),
                 this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
+        ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
+        ps.printf("!Ydupl\n" + fs(1) + "\n", this.getYdupl());          //0.0             | Ydupl
         ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
-        ps.printf("! dX  dY  dZ\n" + fs(3) + "\n",
+        ps.printf("!dX  dY  dZ\n" + fs(3) + "\n",
                 this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
         ps.print("ANGLE\n");                                         //ANGLE       |  (keyword)
-        ps.printf("! dAinc\n" + fs(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
+        ps.printf("!dAinc\n" + fs(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
 
         for(Section sect : this.getSections()){
             sect.writeAVLData(out);
         }
+    }
+
+    /**
+     * @return the Ydupl
+     */
+    public float getYdupl() {
+        return Ydupl;
+    }
+
+    /**
+     * @param Ydupl the Ydupl to set
+     */
+    public void setYdupl(float Ydupl) {
+        this.Ydupl = Ydupl;
     }
 
 

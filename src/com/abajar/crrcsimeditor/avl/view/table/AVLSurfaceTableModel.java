@@ -26,10 +26,11 @@ class AVLSurfaceTableModel extends AVLTableModel  {
         this.surface.setCspace((Float)tableModel.getValueAt(0, 2));
         this.surface.setNspan((Float)tableModel.getValueAt(0, 3));
         this.surface.setSspace((Float)tableModel.getValueAt(0, 4));
-        this.surface.getdXYZ()[0]=(Float)tableModel.getValueAt(0, 5);
-        this.surface.getdXYZ()[1]=(Float)tableModel.getValueAt(0, 6);
-        this.surface.getdXYZ()[2]=(Float)tableModel.getValueAt(0, 7);
-        this.surface.setdAinc((Float)tableModel.getValueAt(0, 8));
+        this.surface.setYdupl((Float)tableModel.getValueAt(0, 5));
+        this.surface.getdXYZ()[0]=(Float)tableModel.getValueAt(0, 6);
+        this.surface.getdXYZ()[1]=(Float)tableModel.getValueAt(0, 7);
+        this.surface.getdXYZ()[2]=(Float)tableModel.getValueAt(0, 8);
+        this.surface.setdAinc((Float)tableModel.getValueAt(0, 9));
     }
 
     @Override
@@ -40,6 +41,7 @@ class AVLSurfaceTableModel extends AVLTableModel  {
             this.surface.getCspace(),
             this.surface.getNspan(),
             this.surface.getSspace(),
+            this.surface.getYdupl(),
             this.surface.getdXYZ()[0],
             this.surface.getdXYZ()[1],
             this.surface.getdXYZ()[2],
@@ -49,7 +51,7 @@ class AVLSurfaceTableModel extends AVLTableModel  {
 
     @Override
     protected Object[] getColumns() {
-         return new Object[]{"surface name","Nchord","Cspace","Nspan","Sspace","Translate dX","Translate dY","Translate dZ","ANGLE dAinc"};
+         return new Object[]{"surface name","Nchord","Cspace","Nspan","Sspace","Ydupl","Translate dX","Translate dY","Translate dZ","ANGLE dAinc"};
     }
 
     @Override

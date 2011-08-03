@@ -26,18 +26,12 @@ import javax.swing.JFileChooser;
 public class MainFrame extends javax.swing.JFrame {
 
     private CRRCsimEditor controller;
-    final GeometryEditor geoEditor;
-
+    
     /** Creates new form MainFrame */
     public MainFrame(CRRCsimEditor controller) {
         this.controller = controller;
-        this.geoEditor =  new GeometryEditor(this.controller);
 
         initComponents();
-    }
-
-    public void showGeoEditor(){
-        geoEditor.setVisible(true);
     }
 
 
@@ -56,7 +50,9 @@ public class MainFrame extends javax.swing.JFrame {
         addSurfaceButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        fileSaveAsMenuItem = new javax.swing.JMenuItem();
+        fileExportAsAVLMenuItem = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        fileOpenMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -86,7 +82,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        addSurfaceButton.setLabel(resourceMap.getString("addSurfaceButton.label")); // NOI18N
+        addSurfaceButton.setText(resourceMap.getString("addSurfaceButton.text")); // NOI18N
         addSurfaceButton.setName("addSurfaceButton"); // NOI18N
         addSurfaceButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -99,15 +95,34 @@ public class MainFrame extends javax.swing.JFrame {
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
 
-        fileSaveAsMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        fileSaveAsMenuItem.setText(resourceMap.getString("fileSaveAsMenuItem.text")); // NOI18N
-        fileSaveAsMenuItem.setName("fileSaveAsMenuItem"); // NOI18N
-        fileSaveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        fileExportAsAVLMenuItem.setText(resourceMap.getString("fileExportAsAVLMenuItem.text")); // NOI18N
+        fileExportAsAVLMenuItem.setName("fileExportAsAVLMenuItem"); // NOI18N
+        fileExportAsAVLMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileSaveAsMenuItemActionPerformed(evt);
+                fileExportAsAVLMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(fileSaveAsMenuItem);
+        jMenu1.add(fileExportAsAVLMenuItem);
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
+        jMenuItem1.setName("jMenuItem1"); // NOI18N
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        fileOpenMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        fileOpenMenuItem.setText(resourceMap.getString("fileOpenMenuItem.text")); // NOI18N
+        fileOpenMenuItem.setName("fileOpenMenuItem"); // NOI18N
+        fileOpenMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileOpenMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(fileOpenMenuItem);
 
         jMenuBar1.add(jMenu1);
 
@@ -124,7 +139,7 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(rightViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(addSurfaceButton))
-                .addContainerGap(309, Short.MAX_VALUE))
+                .addContainerGap(341, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -143,38 +158,55 @@ public class MainFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void topViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topViewButtonMouseClicked
-        controller.topView();
+        controller.showTopView();
     }//GEN-LAST:event_topViewButtonMouseClicked
 
     private void frontViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frontViewButtonMouseClicked
-        controller.frontView();
+        controller.showFrontView();
     }//GEN-LAST:event_frontViewButtonMouseClicked
 
     private void rightViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rightViewButtonMouseClicked
-        controller.rightView();
+        controller.showRightView();
     }//GEN-LAST:event_rightViewButtonMouseClicked
 
     private void addSurfaceButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSurfaceButtonMouseClicked
         controller.showAvlEditor();
     }//GEN-LAST:event_addSurfaceButtonMouseClicked
 
-    private void fileSaveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSaveAsMenuItemActionPerformed
-        try {
-            JFileChooser fc = new JFileChooser();
-            System.out.println(fc.showOpenDialog(this));
-            File file = fc.getSelectedFile();
-            controller.saveAs(file);
-        } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_fileSaveAsMenuItemActionPerformed
+    private void fileExportAsAVLMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileExportAsAVLMenuItemActionPerformed
+        controller.exportAsAVL();
+    }//GEN-LAST:event_fileExportAsAVLMenuItemActionPerformed
+
+    public File showOpenDialog(){
+        JFileChooser fc = new JFileChooser();
+        fc.showOpenDialog(this);
+        File file = fc.getSelectedFile();
+        return file;
+    }
+
+    public File showSaveDialog(){
+        JFileChooser fc = new JFileChooser();
+        fc.showSaveDialog(this);
+        File file = fc.getSelectedFile();
+        return file;
+    }
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        controller.saveFile();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void fileOpenMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileOpenMenuItemActionPerformed
+        controller.openFile();
+    }//GEN-LAST:event_fileOpenMenuItemActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addSurfaceButton;
-    private javax.swing.JMenuItem fileSaveAsMenuItem;
+    private javax.swing.JMenuItem fileExportAsAVLMenuItem;
+    private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JButton frontViewButton;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JButton rightViewButton;
     private javax.swing.JButton topViewButton;
     // End of variables declaration//GEN-END:variables

@@ -11,9 +11,6 @@
 
 package com.abajar.crrcsimeditor;
 
-import com.abajar.crrcsimeditor.avl.view.table.AVLGeometryTableModel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableColumnModel;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import java.util.EnumSet;
@@ -22,11 +19,9 @@ import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
-import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
@@ -83,6 +78,9 @@ public class GeometryEditor extends javax.swing.JFrame {
         return new DefaultTreeModel(avlNode);
     }
 
+    public void updateAVLTree(){
+        this.avlTree.setModel(this.getTreeModel());
+    }
 
 
     /** This method is called from within the constructor to

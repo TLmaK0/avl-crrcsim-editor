@@ -6,11 +6,12 @@
 package com.abajar.crrcsimeditor.avl;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 
 /**
  *
  * @author hfreire
  */
-public interface AVLSerializable{
+public interface AVLSerializable extends  Serializable{
     public void writeAVLData(OutputStream out);
 }

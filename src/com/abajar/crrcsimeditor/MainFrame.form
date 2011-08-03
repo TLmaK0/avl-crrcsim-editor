@@ -13,16 +13,37 @@
             <Property name="name" type="java.lang.String" value="jMenu1" noResource="true"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="fileSaveAsMenuItem">
+            <MenuItem class="javax.swing.JMenuItem" name="fileExportAsAVLMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="fileExportAsAVLMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="fileExportAsAVLMenuItem" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileExportAsAVLMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem1">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
-                <Property name="text" type="java.lang.String" resourceKey="fileSaveAsMenuItem.text"/>
-                <Property name="name" type="java.lang.String" value="fileSaveAsMenuItem" noResource="true"/>
+                <Property name="text" type="java.lang.String" resourceKey="jMenuItem1.text"/>
+                <Property name="name" type="java.lang.String" value="jMenuItem1" noResource="true"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileSaveAsMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItem1ActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="fileOpenMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+O"/>
+                </Property>
+                <Property name="text" type="java.lang.String" resourceKey="fileOpenMenuItem.text"/>
+                <Property name="name" type="java.lang.String" value="fileOpenMenuItem" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fileOpenMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -62,7 +83,7 @@
                   </Group>
                   <Component id="addSurfaceButton" alignment="0" min="-2" max="-2" attributes="1"/>
               </Group>
-              <EmptySpace pref="309" max="32767" attributes="0"/>
+              <EmptySpace pref="341" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -111,7 +132,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="addSurfaceButton">
       <Properties>
-        <Property name="label" type="java.lang.String" resourceKey="addSurfaceButton.label"/>
+        <Property name="text" type="java.lang.String" resourceKey="addSurfaceButton.text"/>
         <Property name="name" type="java.lang.String" value="addSurfaceButton" noResource="true"/>
       </Properties>
       <Events>
