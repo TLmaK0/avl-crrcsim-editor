@@ -27,7 +27,7 @@ public class Section implements AVLSerializable{
     private float Ainc;
     private float Nspan;
     private float Sspace;
-    private String NACA;
+    private String NACA="";
     private final ArrayList<Control> controls = new ArrayList<Control>();
 
     //TODO: CLAF

@@ -15,15 +15,20 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-public class AVLGeometryTable extends DefaultTableModel implements TableModelListener {
+public class AVLGeometryTableModel extends AVLTableModel implements TableModelListener {
     private final AVLGeometry aVLGeometry;
-    public AVLGeometryTable(AVLGeometry aVLGeometry){
+    protected AVLGeometryTableModel(AVLGeometry aVLGeometry){
         this.aVLGeometry = aVLGeometry;
-        this.initModel();
     }
 
-    private void initModel(){
-        Object[][] data = new Object[][] {{
+    @Override
+    protected Object[] getColumns() {
+        return new Object[] {"Mach","iYsym","iZsym","Zsym","Sref","Cref","Bref","Xref","Yref","Zref","CDp"};
+    }
+
+    @Override
+    protected Object[][] getData() {
+        return new Object[][] {{
               aVLGeometry.getMach()
                         ,aVLGeometry.getiYiZZsym()[0]
                         ,aVLGeometry.getiYiZZsym()[1]
@@ -36,13 +41,10 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
                         ,aVLGeometry.getXYZref()[2]
                         ,aVLGeometry.getCDp()
        }};
-       this.setDataVector(data,new Object[] {"Mach","iYsym","iZsym","Zsym","Sref","Cref","Bref","Xref","Yref","Zref","CDp"});
-       this.addTableModelListener(this);
     }
 
     @Override
-    public void tableChanged(TableModelEvent tme) {
-        TableModel tableModel = (TableModel)tme.getSource();
+    public void updateAVL(TableModel tableModel){
         aVLGeometry.setMach( (Float) tableModel.getValueAt(0,0));
 
         aVLGeometry.getiYiZZsym()[0]= (Float) tableModel.getValueAt(0, 1);
@@ -58,6 +60,7 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
         aVLGeometry.getXYZref()[2]= (Float) tableModel.getValueAt(0, 9);
 
         aVLGeometry.setCDp( (Float) tableModel.getValueAt(0, 10));
+
     }
 
     @Override
@@ -65,24 +68,4 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
         return Float.class;
     }
 
-    @Override
-    public Object getValueAt(int i, int i1) {
-        Object value =  super.getValueAt(i, i1);
-
-        float returnValue;
-        if (value.getClass().equals(String.class)){
-            returnValue = Float.valueOf((String)value);
-        } else{
-             returnValue = (Float)value;
-        }
-        return returnValue;
-    }
-
-
-
-    private float getFloatAt(int row, int column, TableModel tableModel){
-        Object value = tableModel.getValueAt(row, column);
-
-        return (Float)value;
-    }
 }

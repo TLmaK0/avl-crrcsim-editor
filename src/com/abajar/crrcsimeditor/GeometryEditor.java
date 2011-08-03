@@ -11,7 +11,7 @@
 
 package com.abajar.crrcsimeditor;
 
-import com.abajar.crrcsimeditor.avl.view.table.AVLGeometryTable;
+import com.abajar.crrcsimeditor.avl.view.table.AVLGeometryTableModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableColumnModel;
@@ -25,6 +25,7 @@ import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
@@ -235,11 +236,7 @@ public class GeometryEditor extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     private void showModelProperties(Object userObject) {
-        if (userObject.getClass().equals(AVLGeometry.class)) showModelPropertiesTyped((AVLGeometry)userObject);
-    }
-
-    private void showModelPropertiesTyped(AVLGeometry aVLGeometry) {
-       this.modelPropertiesTable.setModel(new AVLGeometryTable(aVLGeometry));
+        this.modelPropertiesTable.setModel(AVLModelTableFactory.createTableModel(userObject));
     }
 
     private void createColumn(DefaultTableColumnModel tableModel, String name){
