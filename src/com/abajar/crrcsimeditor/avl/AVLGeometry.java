@@ -16,6 +16,7 @@ import java.util.ArrayList;
  * @author hfreire
  */
 public class AVLGeometry implements AVLSerializable{
+    private String name = "";
     private float Mach;
     private final float[] iYiZZsym = new float[3];
     private final float[] SCBref = new float[3];
@@ -89,6 +90,7 @@ public class AVLGeometry implements AVLSerializable{
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
+        ps.printf("%1$s\n", this.getName());
         ps.printf("!Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
         ps.printf("!iYsym  iZsym  Zsym\n" + fs(3) + "\n", this.getiYiZZsym()[0], this.getiYiZZsym()[1], this.getiYiZZsym()[2]);          //1     0     0.0     | iYsym  iZsym  Zsym
         ps.printf("!Sref   Cref   Bref\n" + fs(3) + "\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
@@ -117,6 +119,20 @@ public class AVLGeometry implements AVLSerializable{
             format += "%" + n + "$-4.4g ";
         }
         return format;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
