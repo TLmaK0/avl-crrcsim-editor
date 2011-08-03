@@ -87,12 +87,11 @@ public class Control implements AVLSerializable {
     @Override
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
-        ps.print("CONTROL                              | (keyword)\n");                                                          //        CONTROL                              | (keyword)
-        ps.printf("%1$-s " + fs(6, 2)  + "| name, gain,  Xhinge,  XYZhvec,  SgnDup\n",
+        ps.print("CONTROL\n");                                                          //        CONTROL                              | (keyword)
+        ps.printf("!name, gain,  Xhinge,  XYZhvec,  SgnDup\n%1$s " + fs(6, 2)  + "\n",
                 this.getName(), this.getGain(), this.getXhinge(),
                 this.getXYZhvec()[0], this.getXYZhvec()[1],
                 this.getXYZhvec()[2], this.getSgnDup()) ;                                                                   //elevator  1.0  0.6   0. 1. 0.   1.0  | name, gain,  Xhinge,  XYZhvec,  SgnDup
-
     }
 
     @Override

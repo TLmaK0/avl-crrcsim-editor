@@ -142,16 +142,16 @@ public class Surface implements AVLSerializable {
     @Override
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
-        ps.print("SURFACE              | (keyword)\n");                             //        SURFACE              | (keyword)
-        ps.printf("%1$-19s\n", this.getName());                                        //Main Wing            | surface name string
-        ps.printf(fs(4) + "| Nchord  Cspace   [ Nspan Sspace ]\n",
+        ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
+        ps.printf("%1$s\n", this.getName());                                        //Main Wing            | surface name string
+        ps.printf("! Nchord  Cspace   [ Nspan Sspace ]\n" + fs(4) +"\n",
                 this.getNchord(), this.getCspace(),
                 this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
-        ps.print("TRANSLATE         |  (keyword)\n");                                 //TRANSLATE         |  (keyword)
-        ps.printf(fs(3) + "| dX  dY  dZ\n",
+        ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
+        ps.printf("! dX  dY  dZ\n" + fs(3) + "\n",
                 this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
-        ps.print("ANGLE       |  (keyword)\n");                                         //ANGLE       |  (keyword)
-        ps.printf(fs(1) + "| dAinc\n", this.getdAinc());                                                     //2.0         | dAinc
+        ps.print("ANGLE\n");                                         //ANGLE       |  (keyword)
+        ps.printf("! dAinc\n" + fs(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
 
         for(Section sect : this.getSections()){
             sect.writeAVLData(out);

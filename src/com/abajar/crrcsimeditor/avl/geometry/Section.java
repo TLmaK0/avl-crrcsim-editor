@@ -120,13 +120,13 @@ public class Section implements AVLSerializable{
     @Override
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
-        ps.print("SECTION                             |  (keyword)\n");                      //        SECTION                             |  (keyword)
-        ps.printf(fs(7) + "| Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]\n", this.getXYZle()[0],
+        ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
+        ps.printf("! Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]\n" + fs(7) + "\n", this.getXYZle()[0],
                 this.getXYZle()[1], this.getXYZle()[1],
                 this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
 
-        ps.printf("NACA                      |    (keyword)\n");                                         //NACA                      |    (keyword)
-        ps.printf("%1$19s | section NACA camberline\n", this.getNACA());            //4300                      | section NACA camberline
+        ps.printf("NACA\n");                                         //NACA                      |    (keyword)
+        ps.printf("%1$19s\n", this.getNACA());            //4300                      | section NACA camberline
 
         for(Control control : this.getControls()){
             control.writeAVLData(out);
