@@ -95,5 +95,10 @@ public class Control implements AVLSerializable {
 
     }
 
+    @Override
+    public String toString() {
+        return this.getName();
+    }
+
 
 }
