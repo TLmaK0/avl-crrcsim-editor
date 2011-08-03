@@ -25,6 +25,9 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
     private void initModel(){
         Object[][] data = new Object[][] {{
               aVLGeometry.getMach()
+                        ,aVLGeometry.getiYiZZsym()[0]
+                        ,aVLGeometry.getiYiZZsym()[1]
+                        ,aVLGeometry.getiYiZZsym()[2]
                         , aVLGeometry.getSCBref()[0]
                         ,aVLGeometry.getSCBref()[1]
                         ,aVLGeometry.getSCBref()[2]
@@ -33,7 +36,7 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
                         ,aVLGeometry.getXYZref()[2]
                         ,aVLGeometry.getCDp()
        }};
-       this.setDataVector(data,new Object[] {"Mach","SCBref S","SCBref C","SCBref B","XYZref X","XYZref Y","XYZref Z","CDp"});
+       this.setDataVector(data,new Object[] {"Mach","iYsym","iZsym","Zsym","Sref","Cref","Bref","Xref","Yref","Zref","CDp"});
        this.addTableModelListener(this);
     }
 
@@ -42,15 +45,19 @@ public class AVLGeometryTable extends DefaultTableModel implements TableModelLis
         TableModel tableModel = (TableModel)tme.getSource();
         aVLGeometry.setMach( (Float) tableModel.getValueAt(0,0));
 
-        aVLGeometry.getSCBref()[0] = (Float) tableModel.getValueAt(0, 1);
-        aVLGeometry.getSCBref()[1]=  (Float) tableModel.getValueAt(0, 2);
-        aVLGeometry.getSCBref()[2]= (Float) tableModel.getValueAt(0, 3);
+        aVLGeometry.getiYiZZsym()[0]= (Float) tableModel.getValueAt(0, 1);
+        aVLGeometry.getiYiZZsym()[1]= (Float) tableModel.getValueAt(0, 2);
+        aVLGeometry.getiYiZZsym()[2]= (Float) tableModel.getValueAt(0, 3);
 
-        aVLGeometry.getXYZref()[0]= (Float) tableModel.getValueAt(0, 4);
-        aVLGeometry.getXYZref()[1]= (Float) tableModel.getValueAt(0, 5);
-        aVLGeometry.getXYZref()[2]= (Float) tableModel.getValueAt(0, 6);
+        aVLGeometry.getSCBref()[0] = (Float) tableModel.getValueAt(0, 4);
+        aVLGeometry.getSCBref()[1]=  (Float) tableModel.getValueAt(0, 5);
+        aVLGeometry.getSCBref()[2]= (Float) tableModel.getValueAt(0, 6);
 
-        aVLGeometry.setCDp( (Float) tableModel.getValueAt(0, 7));
+        aVLGeometry.getXYZref()[0]= (Float) tableModel.getValueAt(0, 7);
+        aVLGeometry.getXYZref()[1]= (Float) tableModel.getValueAt(0, 8);
+        aVLGeometry.getXYZref()[2]= (Float) tableModel.getValueAt(0, 9);
+
+        aVLGeometry.setCDp( (Float) tableModel.getValueAt(0, 10));
     }
 
     @Override

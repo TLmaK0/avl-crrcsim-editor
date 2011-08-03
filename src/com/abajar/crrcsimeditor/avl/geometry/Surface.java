@@ -5,13 +5,16 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.avl.AVLSerializable;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
-
+import static com.abajar.crrcsimeditor.avl.AVLGeometry.fs;
 /**
  *
  * @author hfreire
  */
-public class Surface {
+public class Surface implements AVLSerializable {
 
     //TODO: NOWAKE
     //TODO: NOALBE
@@ -23,8 +26,14 @@ public class Surface {
     private float Cspace;
     private float Nspan;
     private float Sspace;
+
+    //TODO: COMPONENT
+    //TODO: YDUPLICATE
+    //TODO: SCALE
+
     private final float[] dXYZ = new float[3];
     private float dAinc;
+    
     private final ArrayList<Section> sections = new ArrayList<Section>();
 
     @Override
@@ -129,4 +138,25 @@ public class Surface {
     public ArrayList<Section> getSections() {
         return sections;
     }
+
+    @Override
+    public void writeAVLData(OutputStream out) {
+        PrintStream ps = new PrintStream(out);
+        ps.print("SURFACE              | (keyword)\n");                             //        SURFACE              | (keyword)
+        ps.printf("%1$-19s\n", this.getName());                                        //Main Wing            | surface name string
+        ps.printf(fs(4) + "| Nchord  Cspace   [ Nspan Sspace ]\n",
+                this.getNchord(), this.getCspace(),
+                this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
+        ps.print("TRANSLATE         |  (keyword)\n");                                 //TRANSLATE         |  (keyword)
+        ps.printf(fs(3) + "| dX  dY  dZ\n",
+                this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
+        ps.print("ANGLE       |  (keyword)\n");                                         //ANGLE       |  (keyword)
+        ps.printf(fs(1) + "| dAinc\n", this.getdAinc());                                                     //2.0         | dAinc
+
+        for(Section sect : this.getSections()){
+            sect.writeAVLData(out);
+        }
+    }
+
+
 }

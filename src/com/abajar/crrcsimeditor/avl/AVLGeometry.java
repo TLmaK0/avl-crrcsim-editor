@@ -88,12 +88,16 @@ public class AVLGeometry implements AVLSerializable{
     @Override
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
-        ps.println("#Created with CRRCsimEditor");
-        ps.printf("%1$-19.4g | Mach\r\n", this.getMach());                                                         //0.0                 | Mach
-        ps.printf("%1$-4.4g %2$-4.4g %3$-4.4g | iYsym  iZsym  Zsym\r\n", this.getiYiZZsym()[0], this.getiYiZZsym()[1], this.getiYiZZsym()[2]);          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf("%1$-4.4g %2$-4.4g %3$-4.4g | Sref   Cref   Bref\r\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
-        ps.printf("%1$-4.4g %2$-4.4g %3$-4.4g | Xref   Yref   Zref\r\n", this.getXYZref()[0], this.getXYZref()[1], this.getXYZref()[2]);          //0.1   0.0   0.0     | Xref   Yref   Zref
-        ps.printf("%1$-19.4g | CDp  (optional)\r\n", this.CDp);                                                         //0.020               | CDp  (optional)
+        ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
+        ps.printf("%1$-19.4g | Mach\n", this.getMach());                                                         //0.0                 | Mach
+        ps.printf(fs(3) + "| iYsym  iZsym  Zsym\n", this.getiYiZZsym()[0], this.getiYiZZsym()[1], this.getiYiZZsym()[2]);          //1     0     0.0     | iYsym  iZsym  Zsym
+        ps.printf(fs(3) + "| Sref   Cref   Bref\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf(fs(3) + "| Xref   Yref   Zref\n", this.getXYZref()[0], this.getXYZref()[1], this.getXYZref()[2]);          //0.1   0.0   0.0     | Xref   Yref   Zref
+        ps.printf("%1$-19.4g | CDp  (optional)\n", this.CDp);                                                         //0.020               | CDp  (optional)
+
+        for(Surface surf : this.getSurfaces()){
+            surf.writeAVLData(out);
+        }
     }
 
     /**
@@ -103,6 +107,16 @@ public class AVLGeometry implements AVLSerializable{
         return iYiZZsym;
     }
 
+    public static String fs(int numberOfValues){
+        return fs(numberOfValues, 1);
+    }
 
+    public static String fs(int numberOfValues, int startValue){
+        String format ="";
+        for(int n=startValue; n <= numberOfValues; n++){
+            format += "%" + n + "$-4.4g ";
+        }
+        return format;
+    }
 
 }

@@ -29,6 +29,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
+import javax.swing.tree.MutableTreeNode;
 
 /**
  *
@@ -43,7 +44,6 @@ public class GeometryEditor extends javax.swing.JFrame {
         initComponents();
     }
 
-    
     private DefaultTreeModel getTreeModel(){
         AVL avl = this.controller.avl;
         
@@ -52,11 +52,11 @@ public class GeometryEditor extends javax.swing.JFrame {
         SelectorMutableTreeNode massNode = new SelectorMutableTreeNode(avl.getMass());
 
         for(Surface surf : avl.getGeometry().getSurfaces()){
-            SelectorMutableTreeNode surfNode = new SelectorMutableTreeNode(surf);
+            SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
             geometryNode.add(surfNode);
 
             for(Section section:surf.getSections()){
-                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section);
+                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL));
                 surfNode.add(sectionNode);
 
                 for(Control control:section.getControls()){
@@ -72,13 +72,13 @@ public class GeometryEditor extends javax.swing.JFrame {
         }
         
 
-        for(Mass mass:avl.getMass().getMass()){
-            SelectorMutableTreeNode mNode = new SelectorMutableTreeNode(mass);
-            massNode.add(mNode);
-        }
+//        for(Mass mass:avl.getMass().getMass()){
+//            SelectorMutableTreeNode mNode = new SelectorMutableTreeNode(mass);
+//            massNode.add(mNode);
+//        }
         
         avlNode.add(geometryNode);
-        avlNode.add(massNode);
+//        avlNode.add(massNode);
         return new DefaultTreeModel(avlNode);
     }
 
@@ -98,6 +98,8 @@ public class GeometryEditor extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         modelPropertiesTable = new javax.swing.JTable();
         addSurfaceButton = new javax.swing.JButton();
+        addSectionButton = new javax.swing.JButton();
+        addControlButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -133,9 +135,27 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSurfaceButton.setText(resourceMap.getString("addSurfaceButton.text")); // NOI18N
         addSurfaceButton.setEnabled(false);
         addSurfaceButton.setName("addSurfaceButton"); // NOI18N
-        addSurfaceButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addSurfaceButtonMouseClicked(evt);
+        addSurfaceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSurfaceButtonActionPerformed(evt);
+            }
+        });
+
+        addSectionButton.setText(resourceMap.getString("addSectionButton.text")); // NOI18N
+        addSectionButton.setEnabled(false);
+        addSectionButton.setName("addSectionButton"); // NOI18N
+        addSectionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSectionButtonActionPerformed(evt);
+            }
+        });
+
+        addControlButton.setText(resourceMap.getString("addControlButton.text")); // NOI18N
+        addControlButton.setEnabled(false);
+        addControlButton.setName("addControlButton"); // NOI18N
+        addControlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addControlButtonActionPerformed(evt);
             }
         });
 
@@ -144,11 +164,16 @@ public class GeometryEditor extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addSurfaceButton)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(addSurfaceButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addSectionButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addControlButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -159,7 +184,10 @@ public class GeometryEditor extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addSurfaceButton))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(addSurfaceButton)
+                            .addComponent(addSectionButton)
+                            .addComponent(addControlButton)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(51, Short.MAX_VALUE))
         );
@@ -172,16 +200,33 @@ public class GeometryEditor extends javax.swing.JFrame {
 
         EnumSet<ENABLE_BUTTONS> options = treeNode.getOptions();
         addSurfaceButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SURFACE));
+        addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
+        addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
+        
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
-    private void addSurfaceButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSurfaceButtonMouseClicked
+    private void addSurfaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSurfaceButtonActionPerformed
         SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Surface newSurface = this.controller.createNewSurfaceFor((AVLGeometry)(treeNode).getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(new SelectorMutableTreeNode(newSurface), treeNode, treeNode.getChildCount());
-    }//GEN-LAST:event_addSurfaceButtonMouseClicked
+        Surface newSurface = this.controller.createSurfaceFor((AVLGeometry)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSurfaceTreeNode(newSurface), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addSurfaceButtonActionPerformed
+
+    private void addSectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSectionButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Section newSection = this.controller.createSectionFor((Surface)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSectionTreeNode(newSection), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addSectionButtonActionPerformed
+
+    private void addControlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addControlButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Control newControl = this.controller.createControlFor((Section)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createControlTreeNode(newControl), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addControlButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addControlButton;
+    private javax.swing.JButton addSectionButton;
     private javax.swing.JButton addSurfaceButton;
     private javax.swing.JTree avlTree;
     private javax.swing.JScrollPane jScrollPane1;
@@ -202,5 +247,18 @@ public class GeometryEditor extends javax.swing.JFrame {
        tc.setHeaderValue(name);
        tableModel.addColumn(tc);
     }
+
+    private SelectorMutableTreeNode createSectionTreeNode(Section section) {
+        return new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL));
+    }
+
+    private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
+        return new SelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION));
+    }
+
+    private MutableTreeNode createControlTreeNode(Control control) {
+        return new SelectorMutableTreeNode(control, of(ENABLE_BUTTONS.NONE));
+    }
+
 
 }

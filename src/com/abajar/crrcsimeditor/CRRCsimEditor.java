@@ -130,17 +130,32 @@ public class CRRCsimEditor extends SingleFrameApplication {
         launch(CRRCsimEditor.class, args);
     }
 
-    public Surface createNewSurfaceFor(AVLGeometry aVLGeometry) {
+    public Surface createSurfaceFor(AVLGeometry aVLGeometry) {
        Surface surface = new Surface();
        surface.setName("new surface");
        aVLGeometry.getSurfaces().add(surface);
        return surface;
     }
 
+    public Section createSectionFor(Surface surface) {
+       Section section  = new Section();
+       surface.getSections().add(section);
+       return section;
+    }
+
+    public Control createControlFor(Section section) {
+        Control control = new Control();
+        control.setName("new control");
+        section.getControls().add(control);
+        return control;
+    }
+
+
     public void saveAs(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         this.avl.getGeometry().writeAVLData(fos);
         fos.close();
     }
+
 
 }

@@ -17,7 +17,9 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
     public enum ENABLE_BUTTONS {
         NONE,
         ADD_SURFACE,
-        ADD_BODY
+        ADD_BODY,
+        ADD_SECTION,
+        ADD_CONTROL
     }
 
     public SelectorMutableTreeNode(Object object) {

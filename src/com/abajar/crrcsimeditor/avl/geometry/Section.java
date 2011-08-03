@@ -5,13 +5,17 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.avl.AVLSerializable;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import static com.abajar.crrcsimeditor.avl.AVLGeometry.fs;
 
 /**
  *
  * @author hfreire
  */
-public class Section {
+public class Section implements AVLSerializable{
 
     //TODO: AIRFOIL
     //TODO: AFILE
@@ -25,6 +29,9 @@ public class Section {
     private float Sspace;
     private String NACA;
     private final ArrayList<Control> controls = new ArrayList<Control>();
+
+    //TODO: CLAF
+    //TODO: CDCL
 
     /**
      * @return the XYZle
@@ -110,6 +117,26 @@ public class Section {
         return controls;
     }
 
-    //TODO: CLAF
-    //TODO: CDCL
+    @Override
+    public void writeAVLData(OutputStream out) {
+        PrintStream ps = new PrintStream(out);
+        ps.print("SECTION                             |  (keyword)\n");                      //        SECTION                             |  (keyword)
+        ps.printf(fs(7) + "| Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]\n", this.getXYZle()[0],
+                this.getXYZle()[1], this.getXYZle()[1],
+                this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
+
+        ps.printf("NACA                      |    (keyword)\n");                                         //NACA                      |    (keyword)
+        ps.printf("%1$19s | section NACA camberline\n", this.getNACA());            //4300                      | section NACA camberline
+
+        for(Control control : this.getControls()){
+            control.writeAVLData(out);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "section";
+    }
+
+
 }
