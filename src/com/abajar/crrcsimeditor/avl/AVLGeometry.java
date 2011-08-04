@@ -18,12 +18,16 @@ import java.util.ArrayList;
 public class AVLGeometry implements AVLSerializable{
     private String name = "";
     private float Mach;
-    private final float[] iYiZZsym = new float[3];
+    private final int[] iYiZsym = new int[2];
+    private float Zsym;
+
     private final float[] SCBref = new float[3];
     private final float[] XYZref = new float[3];
     private float CDp;
     private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
     private final ArrayList<Body> body = new ArrayList<Body>();
+
+    static final long serialVersionUID = 7590357473387179207L;
 
     /**
      * @return the Mach
@@ -91,32 +95,41 @@ public class AVLGeometry implements AVLSerializable{
         PrintStream ps = new PrintStream(out);
         ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
         ps.printf("%1$s\n", this.getName());
-        ps.printf("!Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
-        ps.printf("!iYsym  iZsym  Zsym\n" + fs(3) + "\n", this.getiYiZZsym()[0], this.getiYiZZsym()[1], this.getiYiZZsym()[2]);          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf("!Sref   Cref   Bref\n" + fs(3) + "\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
-        ps.printf("!Xref   Yref   Zref\n" + fs(3) + "\n", this.getXYZref()[0], this.getXYZref()[1], this.getXYZref()[2]);          //0.1   0.0   0.0     | Xref   Yref   Zref
-        ps.printf("!CDp\n%1$-19.4g\n", this.CDp);                                                         //0.020               | CDp  (optional)
-
+        ps.printf("#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
+        ps.printf("#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYiZsym()[0], this.getiYiZsym()[1], this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
+        ps.printf("#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf("#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXYZref()[0], this.getXYZref()[1], this.getXYZref()[2]);          //0.1   0.0   0.0     | Xref   Yref   Zref
+        
+        if(this.CDp != 0){
+            ps.printf("#CDp\n%1$-19.4g\n", this.CDp);                                                         //0.020               | CDp  (optional)
+        }
+        
         for(Surface surf : this.getSurfaces()){
             surf.writeAVLData(out);
         }
     }
 
-    /**
-     * @return the iYiZZsym
-     */
-    public float[] getiYiZZsym() {
-        return iYiZZsym;
-    }
 
-    public static String fs(int numberOfValues){
-        return fs(numberOfValues, 1);
-    }
-
-    public static String fs(int numberOfValues, int startValue){
+    public static String formatInteger(int numberOfValues, int startValue){
         String format ="";
-        for(int n=startValue; n <= numberOfValues; n++){
-            format += "%" + n + "$-4.4g ";
+        for(int n=startValue; n < startValue + numberOfValues; n++){
+            format += "%" + n + "$-8d ";
+        }
+        return format;
+    }
+
+    public static String formatInteger(int numberOfValues){
+        return formatInteger(numberOfValues, 1);
+    }
+
+    public static String formatFloat(int numberOfValues){
+        return formatFloat(numberOfValues, 1);
+    }
+
+    public static String formatFloat(int numberOfValues, int startValue){
+        String format ="";
+        for(int n=startValue; n < startValue + numberOfValues; n++){
+            format += "%" + n + "$-8.2g ";
         }
         return format;
     }
@@ -133,6 +146,27 @@ public class AVLGeometry implements AVLSerializable{
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the iYiZsym
+     */
+    public int[] getiYiZsym() {
+        return iYiZsym;
+    }
+
+    /**
+     * @return the Zsym
+     */
+    public float getZsym() {
+        return Zsym;
+    }
+
+    /**
+     * @param Zsym the Zsym to set
+     */
+    public void setZsym(float Zsym) {
+        this.Zsym = Zsym;
     }
 
 }

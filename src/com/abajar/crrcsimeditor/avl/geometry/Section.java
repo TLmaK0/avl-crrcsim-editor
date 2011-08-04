@@ -9,7 +9,7 @@ import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import static com.abajar.crrcsimeditor.avl.AVLGeometry.fs;
+import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 
 /**
  *
@@ -25,7 +25,7 @@ public class Section implements AVLSerializable{
     private final float[] XYZle = new float[3];
     private float Chord;
     private float Ainc;
-    private float Nspan;
+    private int Nspan;
     private float Sspace;
     private String NACA="";
     private final ArrayList<Control> controls = new ArrayList<Control>();
@@ -71,14 +71,14 @@ public class Section implements AVLSerializable{
     /**
      * @return the Nspan
      */
-    public float getNspan() {
+    public int getNspan() {
         return Nspan;
     }
 
     /**
      * @param Nspan the Nspan to set
      */
-    public void setNspan(float Nspan) {
+    public void setNspan(int Nspan) {
         this.Nspan = Nspan;
     }
 
@@ -121,13 +121,15 @@ public class Section implements AVLSerializable{
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
-        ps.printf("! Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]\n" + fs(7) + "\n", this.getXYZle()[0],
-                this.getXYZle()[1], this.getXYZle()[1],
+        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5) + formatInteger(1,6) + formatFloat(1,7) + "\n", this.getXYZle()[0],
+                this.getXYZle()[1], this.getXYZle()[2],
                 this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
 
-        ps.printf("NACA\n");                                         //NACA                      |    (keyword)
-        ps.printf("%1$19s\n", this.getNACA());            //4300                      | section NACA camberline
-
+        if (!this.getNACA().equals("")){
+            //NACA                      |    (keyword)
+            ps.printf("NACA\n%1$19s\n", this.getNACA());            //4300                      | section NACA camberline
+        }
+        
         for(Control control : this.getControls()){
             control.writeAVLData(out);
         }

@@ -31,9 +31,9 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
         return new Object[][] {{
              aVLGeometry.getName()
             ,aVLGeometry.getMach()
-            ,aVLGeometry.getiYiZZsym()[0]
-            ,aVLGeometry.getiYiZZsym()[1]
-            ,aVLGeometry.getiYiZZsym()[2]
+            ,aVLGeometry.getiYiZsym()[0]
+            ,aVLGeometry.getiYiZsym()[1]
+            ,aVLGeometry.getZsym()
             , aVLGeometry.getSCBref()[0]
             ,aVLGeometry.getSCBref()[1]
             ,aVLGeometry.getSCBref()[2]
@@ -49,9 +49,9 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
         aVLGeometry.setName( (String) tableModel.getValueAt(0,0));
         aVLGeometry.setMach( (Float) tableModel.getValueAt(0,1));
 
-        aVLGeometry.getiYiZZsym()[0]= (Float) tableModel.getValueAt(0, 2);
-        aVLGeometry.getiYiZZsym()[1]= (Float) tableModel.getValueAt(0, 3);
-        aVLGeometry.getiYiZZsym()[2]= (Float) tableModel.getValueAt(0, 4);
+        aVLGeometry.getiYiZsym()[0]= (Integer) tableModel.getValueAt(0, 2);
+        aVLGeometry.getiYiZsym()[1]= (Integer) tableModel.getValueAt(0, 3);
+        aVLGeometry.setZsym( (Float) tableModel.getValueAt(0, 4));
 
         aVLGeometry.getSCBref()[0] = (Float) tableModel.getValueAt(0, 5);
         aVLGeometry.getSCBref()[1]=  (Float) tableModel.getValueAt(0, 6);
@@ -69,6 +69,7 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
     public Class<?> getColumnClass(int i) {
         Class result = Float.class;
         if (i == 0) result = String.class;
+        if (i == 2 || i == 3) result = Integer.class;
         return result;
     }
 

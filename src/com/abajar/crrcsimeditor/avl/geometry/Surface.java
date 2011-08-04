@@ -9,22 +9,23 @@ import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import static com.abajar.crrcsimeditor.avl.AVLGeometry.fs;
+import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
+import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
 /**
  *
  * @author hfreire
  */
 public class Surface implements AVLSerializable {
-
+    static final long serialVersionUID = 1138674039288253507L;
     //TODO: NOWAKE
     //TODO: NOALBE
     //TODO: NOLOAD
 
     //SECTION
     private String name;
-    private float Nchord;
+    private int Nchord;
     private float Cspace;
-    private float Nspan;
+    private int Nspan;
     private float Sspace;
 
     //TODO: COMPONENT
@@ -58,14 +59,14 @@ public class Surface implements AVLSerializable {
     /**
      * @return the Nchord
      */
-    public float getNchord() {
+    public int getNchord() {
         return Nchord;
     }
 
     /**
      * @param Nchord the Nchord to set
      */
-    public void setNchord(float Nchord) {
+    public void setNchord(int Nchord) {
         this.Nchord = Nchord;
     }
 
@@ -86,14 +87,14 @@ public class Surface implements AVLSerializable {
     /**
      * @return the Nspan
      */
-    public float getNspan() {
+    public int getNspan() {
         return Nspan;
     }
 
     /**
      * @param Nspan the Nspan to set
      */
-    public void setNspan(float Nspan) {
+    public void setNspan(int Nspan) {
         this.Nspan = Nspan;
     }
 
@@ -144,16 +145,29 @@ public class Surface implements AVLSerializable {
         PrintStream ps = new PrintStream(out);
         ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
         ps.printf("%1$s\n", this.getName());                                        //Main Wing            | surface name string
-        ps.printf("!Nchord  Cspace   [ Nspan Sspace ]\n" + fs(4) +"\n",
-                this.getNchord(), this.getCspace(),
-                this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
+        
+        ps.printf("#Nchord  Cspace   [Nspan   Sspace]\n" + formatInteger(1) + formatFloat(1,2),
+                this.getNchord(), this.getCspace());
+
+        if (this.getNspan() != 0 || this.getSspace() != 0){
+            ps.printf( formatInteger(1) + formatFloat(1,2),
+                    this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
+        }
+        ps.print("\n");
+
         ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
-        ps.printf("!Ydupl\n" + fs(1) + "\n", this.getYdupl());          //0.0             | Ydupl
-        ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
-        ps.printf("!dX  dY  dZ\n" + fs(3) + "\n",
-                this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
-        ps.print("ANGLE\n");                                         //ANGLE       |  (keyword)
-        ps.printf("!dAinc\n" + fs(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
+        ps.printf(formatFloat(1) + "\n", this.getYdupl());          //0.0             | Ydupl
+
+        if (this.getdXYZ()[0] != 0 ||  this.getdXYZ()[1] != 0 || this.getdXYZ()[2] != 0){
+            ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
+            ps.printf("#dX  dY  dZ\n" + formatFloat(3) + "\n",
+                    this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
+        }
+        
+        if (this.getdAinc() != 0){
+            ps.print("ANGLE\n");                                         //ANGLE       |  (keyword)
+            ps.printf("#dAinc\n" + formatFloat(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
+        }
 
         for(Section sect : this.getSections()){
             sect.writeAVLData(out);

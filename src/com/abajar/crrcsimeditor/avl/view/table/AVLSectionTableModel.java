@@ -27,7 +27,7 @@ class AVLSectionTableModel extends AVLTableModel{
         this.section.getXYZle()[2]=(Float)tableModel.getValueAt(0,2);
         this.section.setChord((Float)tableModel.getValueAt(0,3));
         this.section.setAinc((Float)tableModel.getValueAt(0,4));
-        this.section.setNspan((Float)tableModel.getValueAt(0,5));
+        this.section.setNspan((Integer)tableModel.getValueAt(0,5));
         this.section.setSspace((Float)tableModel.getValueAt(0,6));
         this.section.setNACA((String)tableModel.getValueAt(0,7));
     }
@@ -55,6 +55,7 @@ class AVLSectionTableModel extends AVLTableModel{
     public Class<?> getColumnClass(int i) {
         Class result = Float.class;
         if (i == 7) result = String.class;
+        if (i == 5) result = Integer.class;
         return result;
     }
 
