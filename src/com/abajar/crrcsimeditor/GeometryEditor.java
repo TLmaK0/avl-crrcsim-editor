@@ -100,7 +100,6 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSectionButton = new javax.swing.JButton();
         addControlButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
 
         jScrollPane1.setName("jScrollPane1"); // NOI18N
