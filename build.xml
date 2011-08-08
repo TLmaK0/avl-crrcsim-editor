@@ -71,4 +71,8 @@
     nbproject/build-impl.xml file. 
 
     -->
+
+	<target name="-post-jar">
+		<copy file="model/EF2000.3ds" flatten="true" todir="${dist.dir}/model" />
+	</target> 
 </project>
