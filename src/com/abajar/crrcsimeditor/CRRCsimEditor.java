@@ -71,7 +71,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             showRightView();
             
             Loader3DS loader3ds = new Loader3DS();
-            Scene model3d = loader3ds.load("model\\EF2000.3ds");
+            Scene model3d = loader3ds.load(getClass().getClassLoader().getResource("model/EF2000.3ds"));
             BranchGroup scene = model3d.getSceneGroup();
             scene.compile();
             univ.addBranchGraph(scene);
