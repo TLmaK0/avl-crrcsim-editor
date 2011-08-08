@@ -5,9 +5,16 @@
         <homepage href="${APPLICATION.HOMEPAGE}"/>
         <description>${APPLICATION.DESC}</description>
         <description kind="short">${APPLICATION.DESC.SHORT}</description>
+        <offline-allowed />
+        <shortcut online="false">
+          <desktop/>
+          <menu submenu="CRRCsimEditor"/>
+        </shortcut>
 <!--${JNLP.ICONS}-->
     </information>
-<!--${JNLP.UPDATE}-->
+<!--${_JNLP.UPDATE}-->
+    <update check="true" policy="prompt-update" />
+
 <!--${JNLP.SECURITY}-->
     <resources>
 <!--${JNLP.RESOURCES.RUNTIME}-->
