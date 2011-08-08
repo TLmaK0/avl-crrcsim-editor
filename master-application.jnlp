@@ -13,7 +13,7 @@
 <!--${JNLP.ICONS}-->
     </information>
 <!--${_JNLP.UPDATE}-->
-    <update check="true" policy="prompt-update" />
+    <update check="background" policy="prompt-update" />
 
 <!--${JNLP.SECURITY}-->
     <resources>
