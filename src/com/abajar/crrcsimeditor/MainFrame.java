@@ -12,12 +12,8 @@
 package com.abajar.crrcsimeditor;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
@@ -177,15 +173,21 @@ public class MainFrame extends javax.swing.JFrame {
         controller.exportAsAVL();
     }//GEN-LAST:event_fileExportAsAVLMenuItemActionPerformed
 
-    public File showOpenDialog(){
+    public File showOpenDialog(String extensionDescription, String extension){
         JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
+        fc.setFileFilter(filter);
+
         fc.showOpenDialog(this);
         File file = fc.getSelectedFile();
         return file;
     }
 
-    public File showSaveDialog(){
+    public File showSaveDialog(String extensionDescription, String extension){
         JFileChooser fc = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
+        fc.setFileFilter(filter);
+
         fc.showSaveDialog(this);
         File file = fc.getSelectedFile();
         return file;

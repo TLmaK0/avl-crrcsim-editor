@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.avl;
 
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -81,7 +82,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
 
     @Override
     public String toString() {
-        return "Geometry";
+        return !this.name.isEmpty() ? this.name : "Geometry";
     }
 
     /**
@@ -109,6 +110,19 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
             surf.writeAVLData(out);
         }
     }
+
+    @Override
+    public void writeAVLMassData(OutputStream out) {
+        PrintStream ps = new PrintStream(out);
+        ps.print("Lunit = 0.0254 m\n" +
+                    "Munit = 0.001 kg\n" +
+                    "Tunit = 1.0 s\n" +
+                    "g   = 9.81\n" +
+                    "rho = 1.225\n");
+        ps.print("#x       y        z        Ixx      Iyy      Izz      [Ixy Ixz Iyz]\n");
+        super.writeAVLMassData(out);
+    }
+
 
 
     public static String formatInteger(int numberOfValues, int startValue){
@@ -169,5 +183,6 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     public void setZsym(float Zsym) {
         this.Zsym = Zsym;
     }
+
 
 }

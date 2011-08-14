@@ -164,6 +164,12 @@ public class CRRCsimEditor extends SingleFrameApplication {
         FileOutputStream fos = new FileOutputStream(file);
         this.avl.getGeometry().writeAVLData(fos);
         fos.close();
+
+        String fileMassPath = file.getPath().replace(".avl", ".mass");
+        File fileMass = new File(fileMassPath);
+        fos = new FileOutputStream(fileMass);
+        this.avl.getGeometry().writeAVLMassData(fos);
+        fos.close();
     }
 
     void saveAs(File file) throws IOException {
@@ -191,7 +197,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void openFile() {
         try {
-            this.open(this.frame.showOpenDialog());
+            this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)","crr"));
         } catch (IOException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
@@ -201,7 +207,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void saveFile() {
         try {
-            this.saveAs(this.frame.showSaveDialog());
+            this.saveAs(this.frame.showSaveDialog("CRRCsim editor file (*.crr)","crr"));
         } catch (IOException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -209,7 +215,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void exportAsAVL() {
         try {
-            this.exportAsAVL(this.frame.showSaveDialog());
+            this.exportAsAVL(this.frame.showSaveDialog("AVL file (*.avl)","avl"));
         } catch (IOException ex) {
             Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }

@@ -14,4 +14,6 @@ import java.io.Serializable;
  */
 public interface AVLSerializable extends  Serializable{
     public void writeAVLData(OutputStream out);
+
+    public void writeAVLMassData(OutputStream out);
 }

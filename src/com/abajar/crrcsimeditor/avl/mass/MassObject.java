@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.mass;
 
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,12 @@ public class MassObject {
      */
     public List<Mass> getMasses() {
         return masses;
+    }
+
+    public void writeAVLMassData(OutputStream out) {
+        for(Mass mass : this.getMasses()){
+            mass.writeAVLMassData(out);
+        }
     }
 
 }
