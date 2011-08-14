@@ -19,7 +19,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_SURFACE,
         ADD_BODY,
         ADD_SECTION,
-        ADD_CONTROL
+        ADD_CONTROL,
+        ADD_MASS
     }
 
     public SelectorMutableTreeNode(Object object) {

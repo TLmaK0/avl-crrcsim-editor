@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.avl;
 
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
  *
  * @author hfreire
  */
-public class AVLGeometry implements AVLSerializable{
+public class AVLGeometry extends MassObject implements AVLSerializable{
     private String name = "";
     private float Mach;
     private final int[] iYiZsym = new int[2];

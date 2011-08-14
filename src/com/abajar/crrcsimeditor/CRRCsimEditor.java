@@ -9,6 +9,8 @@ import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -148,6 +150,13 @@ public class CRRCsimEditor extends SingleFrameApplication {
         control.setName("new control");
         section.getControls().add(control);
         return control;
+    }
+
+    Mass createMassFor(MassObject massObject) {
+        Mass mass = new Mass();
+        mass.setName(massObject.toString());
+        massObject.getMasses().add(mass);
+        return mass;
     }
 
 

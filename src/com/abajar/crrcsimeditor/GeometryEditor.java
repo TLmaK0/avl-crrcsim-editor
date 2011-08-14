@@ -19,6 +19,8 @@ import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
@@ -44,15 +46,14 @@ public class GeometryEditor extends javax.swing.JFrame {
         AVL avl = this.controller.avl;
         
         SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
-        SelectorMutableTreeNode geometryNode = new SelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE));
-        SelectorMutableTreeNode massNode = new SelectorMutableTreeNode(avl.getMass());
+        SelectorMutableTreeNode geometryNode = new SelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS));
 
         for(Surface surf : avl.getGeometry().getSurfaces()){
             SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
             geometryNode.add(surfNode);
 
             for(Section section:surf.getSections()){
-                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL));
+                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS));
                 surfNode.add(sectionNode);
 
                 for(Control control:section.getControls()){
@@ -99,6 +100,7 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSurfaceButton = new javax.swing.JButton();
         addSectionButton = new javax.swing.JButton();
         addControlButton = new javax.swing.JButton();
+        addMassButton = new javax.swing.JButton();
 
         setName("Form"); // NOI18N
 
@@ -157,6 +159,15 @@ public class GeometryEditor extends javax.swing.JFrame {
             }
         });
 
+        addMassButton.setText(resourceMap.getString("addMassButton.text")); // NOI18N
+        addMassButton.setEnabled(false);
+        addMassButton.setName("addMassButton"); // NOI18N
+        addMassButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMassButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -170,8 +181,10 @@ public class GeometryEditor extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addSectionButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addControlButton))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE))
+                        .addComponent(addControlButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addMassButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -185,7 +198,8 @@ public class GeometryEditor extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(addSurfaceButton)
                             .addComponent(addSectionButton)
-                            .addComponent(addControlButton)))
+                            .addComponent(addControlButton)
+                            .addComponent(addMassButton)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(51, Short.MAX_VALUE))
         );
@@ -200,7 +214,7 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSurfaceButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SURFACE));
         addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
         addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
-        
+        addMassButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_MASS));
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
@@ -222,8 +236,15 @@ public class GeometryEditor extends javax.swing.JFrame {
         ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createControlTreeNode(newControl), treeNode, treeNode.getChildCount());
     }//GEN-LAST:event_addControlButtonActionPerformed
 
+    private void addMassButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMassButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Mass newMass = this.controller.createMassFor((MassObject)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createMassTreeNode(newMass), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addMassButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addControlButton;
+    private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
     private javax.swing.JButton addSurfaceButton;
     private javax.swing.JTree avlTree;
@@ -243,16 +264,18 @@ public class GeometryEditor extends javax.swing.JFrame {
     }
 
     private SelectorMutableTreeNode createSectionTreeNode(Section section) {
-        return new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL));
+        return new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS));
     }
 
     private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
-        return new SelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION));
+        return new SelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS));
     }
 
     private MutableTreeNode createControlTreeNode(Control control) {
-        return new SelectorMutableTreeNode(control, of(ENABLE_BUTTONS.NONE));
+        return new SelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS));
     }
 
-
+    private MutableTreeNode createMassTreeNode(Mass mass) {
+        return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.NONE));
+    }
 }

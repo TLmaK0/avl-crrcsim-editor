@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -14,7 +15,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
  *
  * @author hfreire
  */
-public class Control implements AVLSerializable {
+public class Control extends MassObject implements AVLSerializable {
     private String name;
     private float gain;
     private float Xhinge;

@@ -10,8 +10,35 @@ package com.abajar.crrcsimeditor.avl.mass;
  * @author hfreire
  */
 public class Mass {
-    String name;
-    float[] xyz = new float[3];
-    float[] Ixxyyzz = new float[3];
-    float[] Ixyxzyz = new float[3];
+    private String name;
+    private float[] xyz = new float[3];
+    private float[] Ixxyyzzxz = new float[4];
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the xyz
+     */
+    public float[] getXyz() {
+        return xyz;
+    }
+
+    /**
+     * @return the Ixxyyzzxz
+     */
+    public float[] getIxxyyzzxz() {
+        return Ixxyyzzxz;
+    }
 }

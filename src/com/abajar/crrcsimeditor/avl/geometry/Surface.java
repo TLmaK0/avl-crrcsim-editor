@@ -6,6 +6,7 @@
 package com.abajar.crrcsimeditor.avl.geometry;
 
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
  *
  * @author hfreire
  */
-public class Surface implements AVLSerializable {
+public class Surface extends MassObject implements AVLSerializable {
     static final long serialVersionUID = 1138674039288253507L;
     //TODO: NOWAKE
     //TODO: NOALBE

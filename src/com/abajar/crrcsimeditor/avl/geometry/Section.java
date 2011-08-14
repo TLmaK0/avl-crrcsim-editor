@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -15,7 +16,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  *
  * @author hfreire
  */
-public class Section implements AVLSerializable{
+public class Section  extends MassObject implements AVLSerializable{
 
     //TODO: AIRFOIL
     //TODO: AFILE

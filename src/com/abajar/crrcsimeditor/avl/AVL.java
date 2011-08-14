@@ -13,7 +13,6 @@ import java.io.Serializable;
  */
 public class AVL implements Serializable{
     private AVLGeometry geometry = new AVLGeometry();
-    private AVLMass mass = new AVLMass();
 
     /**
      * @return the geometry
@@ -27,20 +26,6 @@ public class AVL implements Serializable{
      */
     public void setGeometry(AVLGeometry geometry) {
         this.geometry = geometry;
-    }
-
-    /**
-     * @return the mass
-     */
-    public AVLMass getMass() {
-        return mass;
-    }
-
-    /**
-     * @param mass the mass to set
-     */
-    public void setMass(AVLMass mass) {
-        this.mass = mass;
     }
 
     @Override
