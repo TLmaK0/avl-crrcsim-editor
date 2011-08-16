@@ -189,7 +189,14 @@ public class MainFrame extends javax.swing.JFrame {
         fc.setFileFilter(filter);
 
         fc.showSaveDialog(this);
+
         File file = fc.getSelectedFile();
+        String filePath = file.getAbsolutePath();
+        if (!filePath.contains(".")) {
+            filePath += "." + extension;
+            file = new File(filePath) ;
+        }
+        
         return file;
     }
 
