@@ -7,19 +7,23 @@ package com.abajar.crrcsimeditor.avl.mass;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author hfreire
  */
 public class MassObject {
-    private final List<Mass> masses = new ArrayList<Mass>();
+    private final ArrayList<Mass> masses = new ArrayList<Mass>();
 
     /**
      * @return the masses
      */
-    public List<Mass> getMasses() {
+    @XmlElementWrapper
+    @XmlElement(name="mass")
+    public ArrayList<Mass> getMasses() {
         return masses;
     }
 

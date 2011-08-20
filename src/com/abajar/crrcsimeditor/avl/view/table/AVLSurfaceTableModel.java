@@ -27,9 +27,9 @@ class AVLSurfaceTableModel extends AVLTableModel  {
         this.surface.setNspan((Integer)tableModel.getValueAt(0, 3));
         this.surface.setSspace((Float)tableModel.getValueAt(0, 4));
         this.surface.setYdupl((Float)tableModel.getValueAt(0, 5));
-        this.surface.getdXYZ()[0]=(Float)tableModel.getValueAt(0, 6);
-        this.surface.getdXYZ()[1]=(Float)tableModel.getValueAt(0, 7);
-        this.surface.getdXYZ()[2]=(Float)tableModel.getValueAt(0, 8);
+        this.surface.setdX((Float)tableModel.getValueAt(0, 6));
+        this.surface.setdY((Float)tableModel.getValueAt(0, 7));
+        this.surface.setdZ((Float)tableModel.getValueAt(0, 8));
         this.surface.setdAinc((Float)tableModel.getValueAt(0, 9));
     }
 
@@ -42,9 +42,9 @@ class AVLSurfaceTableModel extends AVLTableModel  {
             this.surface.getNspan(),
             this.surface.getSspace(),
             this.surface.getYdupl(),
-            this.surface.getdXYZ()[0],
-            this.surface.getdXYZ()[1],
-            this.surface.getdXYZ()[2],
+            this.surface.getdX(),
+            this.surface.getdY(),
+            this.surface.getdZ(),
             this.surface.getdAinc()
         }};
     }

@@ -31,15 +31,15 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
         return new Object[][] {{
              aVLGeometry.getName()
             ,aVLGeometry.getMach()
-            ,aVLGeometry.getiYiZsym()[0]
-            ,aVLGeometry.getiYiZsym()[1]
+            ,aVLGeometry.getiYsym()
+            ,aVLGeometry.getiZsym()
             ,aVLGeometry.getZsym()
-            , aVLGeometry.getSCBref()[0]
-            ,aVLGeometry.getSCBref()[1]
-            ,aVLGeometry.getSCBref()[2]
-            ,aVLGeometry.getXYZref()[0]
-            ,aVLGeometry.getXYZref()[1]
-            ,aVLGeometry.getXYZref()[2]
+            , aVLGeometry.getSref()
+            ,aVLGeometry.getCref()
+            ,aVLGeometry.getBref()
+            ,aVLGeometry.getXref()
+            ,aVLGeometry.getYref()
+            ,aVLGeometry.getZref()
             ,aVLGeometry.getCDp()
        }};
     }
@@ -49,17 +49,17 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
         aVLGeometry.setName( (String) tableModel.getValueAt(0,0));
         aVLGeometry.setMach( (Float) tableModel.getValueAt(0,1));
 
-        aVLGeometry.getiYiZsym()[0]= (Integer) tableModel.getValueAt(0, 2);
-        aVLGeometry.getiYiZsym()[1]= (Integer) tableModel.getValueAt(0, 3);
+        aVLGeometry.setiYsym((Integer) tableModel.getValueAt(0, 2));
+        aVLGeometry.setiZsym((Integer) tableModel.getValueAt(0, 3));
         aVLGeometry.setZsym( (Float) tableModel.getValueAt(0, 4));
 
-        aVLGeometry.getSCBref()[0] = (Float) tableModel.getValueAt(0, 5);
-        aVLGeometry.getSCBref()[1]=  (Float) tableModel.getValueAt(0, 6);
-        aVLGeometry.getSCBref()[2]= (Float) tableModel.getValueAt(0, 7);
+        aVLGeometry.setSref((Float) tableModel.getValueAt(0, 5));
+        aVLGeometry.setCref((Float) tableModel.getValueAt(0, 6));
+        aVLGeometry.setBref((Float) tableModel.getValueAt(0, 7));
 
-        aVLGeometry.getXYZref()[0]= (Float) tableModel.getValueAt(0, 8);
-        aVLGeometry.getXYZref()[1]= (Float) tableModel.getValueAt(0, 9);
-        aVLGeometry.getXYZref()[2]= (Float) tableModel.getValueAt(0, 10);
+        aVLGeometry.setXref((Float) tableModel.getValueAt(0, 8));
+        aVLGeometry.setYref((Float) tableModel.getValueAt(0, 9));
+        aVLGeometry.setZref((Float) tableModel.getValueAt(0, 10));
 
         aVLGeometry.setCDp( (Float) tableModel.getValueAt(0, 11));
 

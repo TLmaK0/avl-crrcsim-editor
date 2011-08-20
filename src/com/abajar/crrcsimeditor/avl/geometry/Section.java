@@ -5,11 +5,13 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import javax.xml.bind.annotation.XmlElement;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 
 /**
@@ -22,8 +24,9 @@ public class Section  extends MassObject implements AVLSerializable{
     //TODO: AFILE
     //TODO: DESIGN
 
-    //CONTROL
-    private final float[] XYZle = new float[3];
+    private float Xle;
+    private float Yle;
+    private float Zle;
     private float Chord;
     private float Ainc;
     private int Nspan;
@@ -33,13 +36,6 @@ public class Section  extends MassObject implements AVLSerializable{
 
     //TODO: CLAF
     //TODO: CDCL
-
-    /**
-     * @return the XYZle
-     */
-    public float[] getXYZle() {
-        return XYZle;
-    }
 
     /**
      * @return the Chord
@@ -114,6 +110,8 @@ public class Section  extends MassObject implements AVLSerializable{
     /**
      * @return the controls
      */
+    @XmlElementWrapper
+    @XmlElement(name = "control")
     public ArrayList<Control> getControls() {
         return controls;
     }
@@ -122,8 +120,8 @@ public class Section  extends MassObject implements AVLSerializable{
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
-        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5) + formatInteger(1,6) + formatFloat(1,7) + "\n", this.getXYZle()[0],
-                this.getXYZle()[1], this.getXYZle()[2],
+        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5) + formatInteger(1,6) + formatFloat(1,7) + "\n", this.getXle(),
+                this.getYle(), this.getZle(),
                 this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
 
         if (!this.getNACA().equals("")){
@@ -139,6 +137,48 @@ public class Section  extends MassObject implements AVLSerializable{
     @Override
     public String toString() {
         return "section";
+    }
+
+    /**
+     * @return the Xle
+     */
+    public float getXle() {
+        return Xle;
+    }
+
+    /**
+     * @param Xle the Xle to set
+     */
+    public void setXle(float Xle) {
+        this.Xle = Xle;
+    }
+
+    /**
+     * @return the Yle
+     */
+    public float getYle() {
+        return Yle;
+    }
+
+    /**
+     * @param Yle the Yle to set
+     */
+    public void setYle(float Yle) {
+        this.Yle = Yle;
+    }
+
+    /**
+     * @return the Zle
+     */
+    public float getZle() {
+        return Zle;
+    }
+
+    /**
+     * @param Zle the Zle to set
+     */
+    public void setZle(float Zle) {
+        this.Zle = Zle;
     }
 
 

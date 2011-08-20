@@ -22,9 +22,9 @@ class AVLSectionTableModel extends AVLTableModel{
 
     @Override
     protected void updateAVL(TableModel tableModel) {
-        this.section.getXYZle()[0]=(Float)tableModel.getValueAt(0,0);
-        this.section.getXYZle()[1]=(Float)tableModel.getValueAt(0,1);
-        this.section.getXYZle()[2]=(Float)tableModel.getValueAt(0,2);
+        this.section.setXle((Float)tableModel.getValueAt(0,0));
+        this.section.setYle((Float)tableModel.getValueAt(0,1));
+        this.section.setZle((Float)tableModel.getValueAt(0,2));
         this.section.setChord((Float)tableModel.getValueAt(0,3));
         this.section.setAinc((Float)tableModel.getValueAt(0,4));
         this.section.setNspan((Integer)tableModel.getValueAt(0,5));
@@ -35,9 +35,9 @@ class AVLSectionTableModel extends AVLTableModel{
     @Override
     protected Object[][] getData() {
         return new Object[][]{{
-          this.section.getXYZle()[0],
-          this.section.getXYZle()[1],
-          this.section.getXYZle()[2],
+          this.section.getXle(),
+          this.section.getYle(),
+          this.section.getZle(),
           this.section.getChord(),
           this.section.getAinc(),
           this.section.getNspan(),

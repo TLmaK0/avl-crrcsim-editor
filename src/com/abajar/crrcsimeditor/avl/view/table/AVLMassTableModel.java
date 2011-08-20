@@ -23,26 +23,26 @@ public class AVLMassTableModel extends AVLTableModel {
     @Override
     protected void updateAVL(TableModel tableModel) {
         this.mass.setName((String)tableModel.getValueAt(0, 0));
-        this.mass.getXyz()[0]=(Float)tableModel.getValueAt(0, 1);
-        this.mass.getXyz()[1]=(Float)tableModel.getValueAt(0, 2);
-        this.mass.getXyz()[2]=(Float)tableModel.getValueAt(0, 3);
-        this.mass.getIxxyyzzxz()[0]=(Float)tableModel.getValueAt(0,4);
-        this.mass.getIxxyyzzxz()[1]=(Float)tableModel.getValueAt(0,5);
-        this.mass.getIxxyyzzxz()[2]=(Float)tableModel.getValueAt(0,6);
-        this.mass.getIxxyyzzxz()[3]=(Float)tableModel.getValueAt(0,7);
+        this.mass.setX((Float)tableModel.getValueAt(0, 1));
+        this.mass.setY((Float)tableModel.getValueAt(0, 2));
+        this.mass.setZ((Float)tableModel.getValueAt(0, 3));
+        this.mass.setIxx((Float)tableModel.getValueAt(0,4));
+        this.mass.setIyy((Float)tableModel.getValueAt(0,5));
+        this.mass.setIzz((Float)tableModel.getValueAt(0,6));
+        this.mass.setIxz((Float)tableModel.getValueAt(0,7));
     }
 
     @Override
     protected Object[][] getData() {
         return new Object[][]{{
           this.mass.getName(),
-          this.mass.getXyz()[0],
-          this.mass.getXyz()[1],
-          this.mass.getXyz()[2],
-          this.mass.getIxxyyzzxz()[0],
-          this.mass.getIxxyyzzxz()[1],
-          this.mass.getIxxyyzzxz()[2],
-          this.mass.getIxxyyzzxz()[3]
+          this.mass.getX(),
+          this.mass.getY(),
+          this.mass.getZ(),
+          this.mass.getIxx(),
+          this.mass.getIyy(),
+          this.mass.getIzz(),
+          this.mass.getIxz()
         }};
     }
 

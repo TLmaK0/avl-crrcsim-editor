@@ -6,6 +6,8 @@ package com.abajar.crrcsimeditor;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
+import com.abajar.crrcsimeditor.avl.StabilityDerivatives;
+import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
@@ -15,13 +17,14 @@ import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
+import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.j3d.BranchGroup;
@@ -31,6 +34,9 @@ import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Vector3f;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -44,8 +50,22 @@ public class CRRCsimEditor extends SingleFrameApplication {
     MainFrame frame;
     GeometryEditor geoEditor;
 
+    static final String CONFIGURATION_ROOT = ".crrcsimeditor";
+    static final String CONFIGURATION_PATH = CONFIGURATION_ROOT + "/configuration.xml";
+    Properties configuration;
+
     public CRRCsimEditor() {
+        File dir = new File(CONFIGURATION_ROOT);
+        if (!dir.exists()) dir.mkdir();
+
         avl = new AVL();
+        configuration = new Properties();
+        try {
+            configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH));
+        } catch (IOException ex) {
+            //Config file doesn't exists
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.INFO, "Config file doesn't exists");
+        }
     }
 
     
@@ -80,7 +100,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
             frame.setVisible(true);
 
             geoEditor =  new GeometryEditor(this);
-            
+
+            updateEnabledEditExportAsCRRCsimMenuItem();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -172,11 +193,16 @@ public class CRRCsimEditor extends SingleFrameApplication {
         fos.close();
     }
 
-    void saveAs(File file) throws IOException {
+    void saveAs(File file) throws IOException, JAXBException {
         FileOutputStream fos = new FileOutputStream(file);
-        ObjectOutputStream out = new ObjectOutputStream(fos);
-        out.writeObject(this.avl.getGeometry());
-        out.close();
+        
+        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
+
+        Marshaller m = context.createMarshaller();
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+        m.marshal(this.avl.getGeometry(), fos);
+        fos.close();
     }
 
     void open(File file) throws IOException, ClassNotFoundException {
@@ -207,7 +233,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void saveFile() {
         try {
-            this.saveAs(this.frame.showSaveDialog("CRRCsim editor file (*.crr)","crr"));
+            this.saveAs(this.frame.showSaveDialog("CRRCsim editor file (*.crr)", "crr"));
+        }catch (JAXBException ex) {
+             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -217,8 +245,41 @@ public class CRRCsimEditor extends SingleFrameApplication {
         try {
             this.exportAsAVL(this.frame.showSaveDialog("AVL file (*.avl)","avl"));
         } catch (IOException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    void exportAsCRRCsim() {
+        String fileNameTmp = CONFIGURATION_ROOT + "/crrcsimtmp.avl";
+        try {
+            this.exportAsAVL(new File(fileNameTmp));
+
+            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"),fileNameTmp);
+            avlRunner.calculate();
+            StabilityDerivatives st = avlRunner.getStabilityDerivatives();
+            avlRunner.close();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
+    }
+
+    void setAvlExecutable() {
+        File file = this.frame.showOpenDialog("AVL executable");
+        this.configuration.setProperty("avl.path", file.getAbsolutePath());
+        updateEnabledEditExportAsCRRCsimMenuItem();
+        try {
+            this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null);
+        } catch (IOException ex) {
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void updateEnabledEditExportAsCRRCsimMenuItem() {
+        this.frame.getFileExportAsCRRsimMenuItem().setEnabled(this.configuration.getProperty("avl.path")!=null);
     }
 
 

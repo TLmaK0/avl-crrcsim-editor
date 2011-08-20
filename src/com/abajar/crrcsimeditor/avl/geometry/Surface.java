@@ -5,11 +5,13 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import javax.xml.bind.annotation.XmlElement;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
 /**
@@ -33,7 +35,9 @@ public class Surface extends MassObject implements AVLSerializable {
     //TODO: SCALE
 
     private float Ydupl;
-    private final float[] dXYZ = new float[3];
+    private float dX;
+    private float dY;
+    private float dZ;
     private float dAinc;
     
     private final ArrayList<Section> sections = new ArrayList<Section>();
@@ -114,13 +118,6 @@ public class Surface extends MassObject implements AVLSerializable {
     }
 
     /**
-     * @return the dXYZ
-     */
-    public float[] getdXYZ() {
-        return dXYZ;
-    }
-
-    /**
      * @return the dAinc
      */
     public float getdAinc() {
@@ -137,6 +134,8 @@ public class Surface extends MassObject implements AVLSerializable {
     /**
      * @return the sections
      */
+    @XmlElementWrapper
+    @XmlElement(name = "section")
     public ArrayList<Section> getSections() {
         return sections;
     }
@@ -159,10 +158,10 @@ public class Surface extends MassObject implements AVLSerializable {
         ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
         ps.printf(formatFloat(1) + "\n", this.getYdupl());          //0.0             | Ydupl
 
-        if (this.getdXYZ()[0] != 0 ||  this.getdXYZ()[1] != 0 || this.getdXYZ()[2] != 0){
+        if (this.getdX() != 0 ||  this.getdY() != 0 || this.getdZ() != 0){
             ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
             ps.printf("#dX  dY  dZ\n" + formatFloat(3) + "\n",
-                    this.getdXYZ()[0], this.getdXYZ()[1], this.getdXYZ()[2]);              //10.0  0.0  0.5    | dX  dY  dZ
+                    this.getdX(), this.getdY(), this.getdZ());              //10.0  0.0  0.5    | dX  dY  dZ
         }
         
         if (this.getdAinc() != 0){
@@ -187,6 +186,48 @@ public class Surface extends MassObject implements AVLSerializable {
      */
     public void setYdupl(float Ydupl) {
         this.Ydupl = Ydupl;
+    }
+
+    /**
+     * @return the dX
+     */
+    public float getdX() {
+        return dX;
+    }
+
+    /**
+     * @param dX the dX to set
+     */
+    public void setdX(float dX) {
+        this.dX = dX;
+    }
+
+    /**
+     * @return the dY
+     */
+    public float getdY() {
+        return dY;
+    }
+
+    /**
+     * @param dY the dY to set
+     */
+    public void setdY(float dY) {
+        this.dY = dY;
+    }
+
+    /**
+     * @return the dZ
+     */
+    public float getdZ() {
+        return dZ;
+    }
+
+    /**
+     * @param dZ the dZ to set
+     */
+    public void setdZ(float dZ) {
+        this.dZ = dZ;
     }
 
 

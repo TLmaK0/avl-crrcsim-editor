@@ -12,19 +12,32 @@ import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 
 /**
  *
  * @author hfreire
  */
+@XmlRootElement
 public class AVLGeometry extends MassObject implements AVLSerializable{
-    private String name = "";
+    private String name = "Geometry";
     private float Mach;
-    private final int[] iYiZsym = new int[2];
+
+    private  int iYsym;
+    private  int iZsym;
     private float Zsym;
 
-    private final float[] SCBref = new float[3];
-    private final float[] XYZref = new float[3];
+    private  float Sref;
+    private  float Cref;
+    private  float Bref;
+
+    private  float Xref;
+    private  float Yref;
+    private  float Zref;
+
     private float CDp;
     private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
     private final ArrayList<Body> body = new ArrayList<Body>();
@@ -46,20 +59,6 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     }
     
     /**
-     * @return the SCBref
-     */
-    public float[] getSCBref() {
-        return SCBref;
-    }
-
-    /**
-     * @return the XYZref
-     */
-    public float[] getXYZref() {
-        return XYZref;
-    }
-
-    /**
      * @return the CDp
      */
     public float getCDp() {
@@ -69,6 +68,8 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     /**
      * @return the surfaces
      */
+    @XmlElementWrapper
+    @XmlElement(name="surface")
     public ArrayList<Surface> getSurfaces() {
         return surfaces;
     }
@@ -76,13 +77,14 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     /**
      * @return the body
      */
+    @XmlElement(name="body")
     public ArrayList<Body> getBodies() {
         return body;
     }
 
     @Override
     public String toString() {
-        return !this.name.isEmpty() ? this.name : "Geometry";
+        return this.name;
     }
 
     /**
@@ -98,9 +100,9 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
         ps.printf("%1$s\n", this.getName());
         ps.printf("#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
-        ps.printf("#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYiZsym()[0], this.getiYiZsym()[1], this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf("#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSCBref()[0], this.getSCBref()[1], this.getSCBref()[2]);          //4.0   0.4   0.1     | Sref   Cref   Bref
-        ps.printf("#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXYZref()[0], this.getXYZref()[1], this.getXYZref()[2]);          //0.1   0.0   0.0     | Xref   Yref   Zref
+        ps.printf("#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), this.getiZsym(), this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
+        ps.printf("#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf("#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXref(), this.getYref(), this.getZref());          //0.1   0.0   0.0     | Xref   Yref   Zref
         
         if(this.CDp != 0){
             ps.printf("#CDp\n%1$-19.4g\n", this.CDp);                                                         //0.020               | CDp  (optional)
@@ -164,13 +166,6 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     }
 
     /**
-     * @return the iYiZsym
-     */
-    public int[] getiYiZsym() {
-        return iYiZsym;
-    }
-
-    /**
      * @return the Zsym
      */
     public float getZsym() {
@@ -182,6 +177,118 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
      */
     public void setZsym(float Zsym) {
         this.Zsym = Zsym;
+    }
+
+    /**
+     * @return the iYsym
+     */
+    public int getiYsym() {
+        return iYsym;
+    }
+
+    /**
+     * @param iYsym the iYsym to set
+     */
+    public void setiYsym(int iYsym) {
+        this.iYsym = iYsym;
+    }
+
+    /**
+     * @return the iZsym
+     */
+    public int getiZsym() {
+        return iZsym;
+    }
+
+    /**
+     * @param iZsym the iZsym to set
+     */
+    public void setiZsym(int iZsym) {
+        this.iZsym = iZsym;
+    }
+
+    /**
+     * @return the Sref
+     */
+    public float getSref() {
+        return Sref;
+    }
+
+    /**
+     * @param Sref the Sref to set
+     */
+    public void setSref(float Sref) {
+        this.Sref = Sref;
+    }
+
+    /**
+     * @return the Cref
+     */
+    public float getCref() {
+        return Cref;
+    }
+
+    /**
+     * @param Cref the Cref to set
+     */
+    public void setCref(float Cref) {
+        this.Cref = Cref;
+    }
+
+    /**
+     * @return the Bref
+     */
+    public float getBref() {
+        return Bref;
+    }
+
+    /**
+     * @param Bref the Bref to set
+     */
+    public void setBref(float Bref) {
+        this.Bref = Bref;
+    }
+
+    /**
+     * @return the Xref
+     */
+    public float getXref() {
+        return Xref;
+    }
+
+    /**
+     * @param Xref the Xref to set
+     */
+    public void setXref(float Xref) {
+        this.Xref = Xref;
+    }
+
+    /**
+     * @return the Yref
+     */
+    public float getYref() {
+        return Yref;
+    }
+
+    /**
+     * @param Yref the Yref to set
+     */
+    public void setYref(float Yref) {
+        this.Yref = Yref;
+    }
+
+    /**
+     * @return the Zref
+     */
+    public float getZref() {
+        return Zref;
+    }
+
+    /**
+     * @param Zref the Zref to set
+     */
+    public void setZref(float Zref) {
+        this.Zref = Zref;
     }
 
 

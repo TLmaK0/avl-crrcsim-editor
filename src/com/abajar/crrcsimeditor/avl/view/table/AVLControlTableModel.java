@@ -24,9 +24,9 @@ class AVLControlTableModel extends AVLTableModel{
         this.control.setName((String)tableModel.getValueAt(0, 0));
         this.control.setGain((Float)tableModel.getValueAt(0, 1));
         this.control.setXhinge((Float)tableModel.getValueAt(0, 2));
-        this.control.getXYZhvec()[0]=((Float)tableModel.getValueAt(0, 3));
-        this.control.getXYZhvec()[1]=((Float)tableModel.getValueAt(0, 4));
-        this.control.getXYZhvec()[2]=((Float)tableModel.getValueAt(0, 5));
+        this.control.setXhvec(((Float)tableModel.getValueAt(0, 3)));
+        this.control.setYhvec(((Float)tableModel.getValueAt(0, 4)));
+        this.control.setZhvec(((Float)tableModel.getValueAt(0, 5)));
         this.control.setSgnDup((Float)tableModel.getValueAt(0, 6));
     }
 
@@ -36,9 +36,9 @@ class AVLControlTableModel extends AVLTableModel{
             this.control.getName(),
             this.control.getGain(),
             this.control.getXhinge(),
-            this.control.getXYZhvec()[0],
-            this.control.getXYZhvec()[1],
-            this.control.getXYZhvec()[2],
+            this.control.getXhvec(),
+            this.control.getYhvec(),
+            this.control.getZhvec(),
             this.control.getSgnDup()
         }};
     }

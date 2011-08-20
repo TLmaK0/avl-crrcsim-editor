@@ -46,9 +46,12 @@ public class MainFrame extends javax.swing.JFrame {
         addSurfaceButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        fileExportAsAVLMenuItem = new javax.swing.JMenuItem();
         jMenuItem1 = new javax.swing.JMenuItem();
         fileOpenMenuItem = new javax.swing.JMenuItem();
+        fileExportAsAVLMenuItem = new javax.swing.JMenuItem();
+        fileExportAsCRRsimMenuItem = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        editSetAvlExecutableMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); // NOI18N
@@ -90,15 +93,11 @@ public class MainFrame extends javax.swing.JFrame {
 
         jMenu1.setText(resourceMap.getString("jMenu1.text")); // NOI18N
         jMenu1.setName("jMenu1"); // NOI18N
-
-        fileExportAsAVLMenuItem.setText(resourceMap.getString("fileExportAsAVLMenuItem.text")); // NOI18N
-        fileExportAsAVLMenuItem.setName("fileExportAsAVLMenuItem"); // NOI18N
-        fileExportAsAVLMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileExportAsAVLMenuItemActionPerformed(evt);
+        jMenu1.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                jMenu1ComponentShown(evt);
             }
         });
-        jMenu1.add(fileExportAsAVLMenuItem);
 
         jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
@@ -120,7 +119,44 @@ public class MainFrame extends javax.swing.JFrame {
         });
         jMenu1.add(fileOpenMenuItem);
 
+        fileExportAsAVLMenuItem.setText(resourceMap.getString("fileExportAsAVLMenuItem.text")); // NOI18N
+        fileExportAsAVLMenuItem.setName("fileExportAsAVLMenuItem"); // NOI18N
+        fileExportAsAVLMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileExportAsAVLMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(fileExportAsAVLMenuItem);
+
+        fileExportAsCRRsimMenuItem.setText(resourceMap.getString("fileExportAsCRRsimMenuItem.text")); // NOI18N
+        fileExportAsCRRsimMenuItem.setName("fileExportAsCRRsimMenuItem"); // NOI18N
+        fileExportAsCRRsimMenuItem.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                fileExportAsCRRsimMenuItemComponentShown(evt);
+            }
+        });
+        fileExportAsCRRsimMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileExportAsCRRsimMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu1.add(fileExportAsCRRsimMenuItem);
+
         jMenuBar1.add(jMenu1);
+
+        jMenu2.setText(resourceMap.getString("jMenu2.text")); // NOI18N
+        jMenu2.setName("jMenu2"); // NOI18N
+
+        editSetAvlExecutableMenuItem.setText(resourceMap.getString("editSetAvlExecutableMenuItem.text")); // NOI18N
+        editSetAvlExecutableMenuItem.setName("editSetAvlExecutableMenuItem"); // NOI18N
+        editSetAvlExecutableMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editSetAvlExecutableMenuItemActionPerformed(evt);
+            }
+        });
+        jMenu2.add(editSetAvlExecutableMenuItem);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -173,10 +209,13 @@ public class MainFrame extends javax.swing.JFrame {
         controller.exportAsAVL();
     }//GEN-LAST:event_fileExportAsAVLMenuItemActionPerformed
 
-    public File showOpenDialog(String extensionDescription, String extension){
+    public File showOpenDialog(String extensionDescription, String...extension){
         JFileChooser fc = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
-        fc.setFileFilter(filter);
+        
+        if (extension.length>0){
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
+            fc.setFileFilter(filter);
+        }
 
         fc.showOpenDialog(this);
         File file = fc.getSelectedFile();
@@ -208,16 +247,41 @@ public class MainFrame extends javax.swing.JFrame {
         controller.openFile();
     }//GEN-LAST:event_fileOpenMenuItemActionPerformed
 
+    private void fileExportAsCRRsimMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileExportAsCRRsimMenuItemActionPerformed
+        this.controller.exportAsCRRCsim();
+    }//GEN-LAST:event_fileExportAsCRRsimMenuItemActionPerformed
+
+    private void editSetAvlExecutableMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSetAvlExecutableMenuItemActionPerformed
+        this.controller.setAvlExecutable();
+    }//GEN-LAST:event_editSetAvlExecutableMenuItemActionPerformed
+
+    private void fileExportAsCRRsimMenuItemComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_fileExportAsCRRsimMenuItemComponentShown
+    }//GEN-LAST:event_fileExportAsCRRsimMenuItemComponentShown
+
+    private void jMenu1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu1ComponentShown
+    }//GEN-LAST:event_jMenu1ComponentShown
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addSurfaceButton;
+    private javax.swing.JMenuItem editSetAvlExecutableMenuItem;
     private javax.swing.JMenuItem fileExportAsAVLMenuItem;
+    private javax.swing.JMenuItem fileExportAsCRRsimMenuItem;
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JButton frontViewButton;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JButton rightViewButton;
     private javax.swing.JButton topViewButton;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * @return the fileExportAsCRRsimMenuItem
+     */
+    public javax.swing.JMenuItem getFileExportAsCRRsimMenuItem() {
+        return fileExportAsCRRsimMenuItem;
+    }
+
 
 }

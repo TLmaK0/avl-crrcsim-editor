@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import javax.xml.bind.annotation.XmlElementWrapper;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
@@ -19,7 +20,9 @@ public class Control extends MassObject implements AVLSerializable {
     private String name;
     private float gain;
     private float Xhinge;
-    private final float[] XYZhvec = new float[3];
+    private float Xhvec;
+    private float Yhvec;
+    private float Zhvec;
     private float SgnDup;
 
     /**
@@ -65,13 +68,6 @@ public class Control extends MassObject implements AVLSerializable {
     }
 
     /**
-     * @return the XYZhvec
-     */
-    public float[] getXYZhvec() {
-        return XYZhvec;
-    }
-
-    /**
      * @return the SgnDup
      */
     public float getSgnDup() {
@@ -91,13 +87,55 @@ public class Control extends MassObject implements AVLSerializable {
         ps.print("CONTROL\n");                                                          //        CONTROL                              | (keyword)
         ps.printf("#name, gain,  Xhinge,  XYZhvec,  SgnDup\n%1$s " + formatFloat(6, 2)  + "\n",
                 this.getName(), this.getGain(), this.getXhinge(),
-                this.getXYZhvec()[0], this.getXYZhvec()[1],
-                this.getXYZhvec()[2], this.getSgnDup()) ;                                                                   //elevator  1.0  0.6   0. 1. 0.   1.0  | name, gain,  Xhinge,  XYZhvec,  SgnDup
+                this.getXhvec(), this.getYhvec(),
+                this.getZhvec(), this.getSgnDup()) ;                                                                   //elevator  1.0  0.6   0. 1. 0.   1.0  | name, gain,  Xhinge,  XYZhvec,  SgnDup
     }
 
     @Override
     public String toString() {
         return this.getName();
+    }
+
+    /**
+     * @return the Xhvec
+     */
+    public float getXhvec() {
+        return Xhvec;
+    }
+
+    /**
+     * @param Xhvec the Xhvec to set
+     */
+    public void setXhvec(float Xhvec) {
+        this.Xhvec = Xhvec;
+    }
+
+    /**
+     * @return the Yhvec
+     */
+    public float getYhvec() {
+        return Yhvec;
+    }
+
+    /**
+     * @param Yhvec the Yhvec to set
+     */
+    public void setYhvec(float Yhvec) {
+        this.Yhvec = Yhvec;
+    }
+
+    /**
+     * @return the Zhvec
+     */
+    public float getZhvec() {
+        return Zhvec;
+    }
+
+    /**
+     * @param Zhvec the Zhvec to set
+     */
+    public void setZhvec(float Zhvec) {
+        this.Zhvec = Zhvec;
     }
 
 
