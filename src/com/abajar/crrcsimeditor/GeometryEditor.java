@@ -27,7 +27,6 @@ import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
-import javax.swing.tree.MutableTreeNode;
 
 /**
  *
@@ -46,25 +45,25 @@ public class GeometryEditor extends javax.swing.JFrame {
         AVL avl = this.controller.avl;
         
         SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
-        SelectorMutableTreeNode geometryNode = new SelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS));
+        SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS));
 
         for(Surface surf : avl.getGeometry().getSurfaces()){
             SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
             geometryNode.add(surfNode);
 
             for(Section section:surf.getSections()){
-                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS));
+                SelectorMutableTreeNode sectionNode = createSectionTreeNode(section);
                 surfNode.add(sectionNode);
 
                 for(Control control:section.getControls()){
-                    SelectorMutableTreeNode controlNode = new SelectorMutableTreeNode(control);
+                    SelectorMutableTreeNode controlNode = createControlTreeNode(control);
                     sectionNode.add(controlNode);
                 }
             }
         }
         
         for(Body body : avl.getGeometry().getBodies()){
-            SelectorMutableTreeNode bodyNode = new SelectorMutableTreeNode(body);
+            SelectorMutableTreeNode bodyNode = createSelectorMutableTreeNode(body, of(ENABLE_BUTTONS.NONE));
             geometryNode.add(bodyNode);
         }
         
@@ -77,6 +76,14 @@ public class GeometryEditor extends javax.swing.JFrame {
         avlNode.add(geometryNode);
 //        avlNode.add(massNode);
         return new DefaultTreeModel(avlNode);
+    }
+
+    private SelectorMutableTreeNode createSelectorMutableTreeNode(Object object, EnumSet<ENABLE_BUTTONS> options){
+        SelectorMutableTreeNode smTreeNode = new SelectorMutableTreeNode(object, options);
+        for(Mass mass : ((MassObject)object).getMasses()){
+            smTreeNode.add(createMassTreeNode(mass));
+        }
+        return smTreeNode;
     }
 
     public void updateAVLTree(){
@@ -101,6 +108,7 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSectionButton = new javax.swing.JButton();
         addControlButton = new javax.swing.JButton();
         addMassButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
 
         setName("Form"); // NOI18N
 
@@ -168,6 +176,15 @@ public class GeometryEditor extends javax.swing.JFrame {
             }
         });
 
+        deleteButton.setText(resourceMap.getString("deleteButton.text")); // NOI18N
+        deleteButton.setEnabled(false);
+        deleteButton.setName("deleteButton"); // NOI18N
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -183,8 +200,10 @@ public class GeometryEditor extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addControlButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addMassButton))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE))
+                        .addComponent(addMassButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 469, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -199,7 +218,8 @@ public class GeometryEditor extends javax.swing.JFrame {
                             .addComponent(addSurfaceButton)
                             .addComponent(addSectionButton)
                             .addComponent(addControlButton)
-                            .addComponent(addMassButton)))
+                            .addComponent(addMassButton)
+                            .addComponent(deleteButton)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(51, Short.MAX_VALUE))
         );
@@ -215,6 +235,7 @@ public class GeometryEditor extends javax.swing.JFrame {
         addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
         addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
         addMassButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_MASS));
+        deleteButton.setEnabled(options.contains(ENABLE_BUTTONS.DELETE));
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
@@ -242,12 +263,19 @@ public class GeometryEditor extends javax.swing.JFrame {
         ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createMassTreeNode(newMass), treeNode, treeNode.getChildCount());
     }//GEN-LAST:event_addMassButtonActionPerformed
 
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        SelectorMutableTreeNode deleteTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getLastPathComponent();
+        SelectorMutableTreeNode parentTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getParentPath().getLastPathComponent();
+        deleteTreeNodeAndObject(parentTreeNode, deleteTreeNode);
+    }//GEN-LAST:event_deleteButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addControlButton;
     private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
     private javax.swing.JButton addSurfaceButton;
     private javax.swing.JTree avlTree;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable modelPropertiesTable;
@@ -264,18 +292,33 @@ public class GeometryEditor extends javax.swing.JFrame {
     }
 
     private SelectorMutableTreeNode createSectionTreeNode(Section section) {
-        return new SelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS));
+        return createSelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
     }
 
     private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
-        return new SelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS));
+        return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
     }
 
-    private MutableTreeNode createControlTreeNode(Control control) {
-        return new SelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS));
+    private SelectorMutableTreeNode createControlTreeNode(Control control) {
+        return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
     }
 
-    private MutableTreeNode createMassTreeNode(Mass mass) {
-        return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.NONE));
+    private SelectorMutableTreeNode createMassTreeNode(Mass mass) {
+        return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.DELETE));
+    }
+
+    private void deleteTreeNodeAndObject(SelectorMutableTreeNode parentTreeNode, SelectorMutableTreeNode deleteTreeNode){
+        ((DefaultTreeModel)this.avlTree.getModel()).removeNodeFromParent(deleteTreeNode);
+
+        if(deleteTreeNode.getUserObject().getClass().equals(Mass.class)){
+            ((MassObject)parentTreeNode.getUserObject()).getMasses().remove((Mass)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Surface.class)){
+            ((AVLGeometry)parentTreeNode.getUserObject()).getSurfaces().remove((Surface)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Section.class)){
+            ((Surface)parentTreeNode.getUserObject()).getSections().remove((Section)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Control.class)){
+            ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
+        }
+
     }
 }

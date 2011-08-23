@@ -17,7 +17,6 @@ import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
-import java.beans.XMLEncoder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,6 +36,7 @@ import javax.vecmath.Vector3f;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -173,7 +173,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         return control;
     }
 
-    Mass createMassFor(MassObject massObject) {
+    public Mass createMassFor(MassObject massObject) {
         Mass mass = new Mass();
         mass.setName(massObject.toString());
         massObject.getMasses().add(mass);
@@ -205,12 +205,14 @@ public class CRRCsimEditor extends SingleFrameApplication {
         fos.close();
     }
 
-    void open(File file) throws IOException, ClassNotFoundException {
+    void open(File file) throws IOException, ClassNotFoundException, JAXBException {
         FileInputStream fis = new FileInputStream(file);
-        ObjectInputStream in = new ObjectInputStream(fis);
-        this.avl.setGeometry((AVLGeometry)in.readObject());
-        this.geoEditor.updateAVLTree();
-        in.close();
+        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
+
+        Unmarshaller u = context.createUnmarshaller();
+
+        this.avl.setGeometry((AVLGeometry)u.unmarshal(fis));
+        fis.close();
     }
 
     public void showGeoEditor(){
@@ -223,8 +225,11 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void openFile() {
         try {
-            this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)","crr"));
-        } catch (IOException ex) {
+                this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)", "crr"));
+                this.geoEditor.updateAVLTree();
+        } catch (JAXBException ex) {
+                Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }catch (IOException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);

@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.mass;
 
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlElement;

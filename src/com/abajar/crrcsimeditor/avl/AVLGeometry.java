@@ -5,10 +5,11 @@
 
 package com.abajar.crrcsimeditor.avl;
 
-import com.abajar.crrcsimeditor.avl.geometry.Body;
-import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
+import com.abajar.crrcsimeditor.avl.AVLSerializable;
+import com.abajar.crrcsimeditor.avl.geometry.Body;
+import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import javax.xml.bind.annotation.XmlSeeAlso;
  * @author hfreire
  */
 @XmlRootElement
+@XmlSeeAlso({
+    MassObject.class
+})
 public class AVLGeometry extends MassObject implements AVLSerializable{
     private String name = "Geometry";
     private float Mach;
