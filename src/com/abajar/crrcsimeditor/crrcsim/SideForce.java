@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-@XmlRootElement(name ="Y")
-class SideForce {
+public class SideForce {
     //    <Y CY_b="..." CY_p="..." CY_r="..." CY_dr="..." CY_da="..." />
 
     private float CY_b;

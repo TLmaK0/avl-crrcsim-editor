@@ -13,6 +13,7 @@ import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
+import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -22,7 +23,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -255,21 +255,36 @@ public class CRRCsimEditor extends SingleFrameApplication {
     }
 
     void exportAsCRRCsim() {
-        String fileNameTmp = CONFIGURATION_ROOT + "/crrcsimtmp.avl";
         try {
-            this.exportAsAVL(new File(fileNameTmp));
-
-            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"),fileNameTmp);
-            avlRunner.calculate();
-            StabilityDerivatives st = avlRunner.getStabilityDerivatives();
-            avlRunner.close();
+            this.exportAsCRRCsim(this.frame.showSaveDialog("CRRCsim file (*.xml)", "xml"));
         } catch (InterruptedException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
 
+    private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
+        try {
+            String fileNameTmp = CONFIGURATION_ROOT + "/crrcsimtmp.avl";
+            this.exportAsAVL(new File(fileNameTmp));
+            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), fileNameTmp);
+            avlRunner.calculate();
+            StabilityDerivatives st = avlRunner.getStabilityDerivatives();
+            avlRunner.close();
 
+            FileOutputStream fos = new FileOutputStream(file);
+            JAXBContext context = JAXBContext.newInstance(Aero.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            Aero aero = new Aero();
+            m.marshal(aero, fos);
+
+            fos.close();
+        } catch (JAXBException ex) {
+            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     void setAvlExecutable() {

@@ -6,6 +6,7 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -32,7 +33,7 @@ public class Aero {
     private Reference ref = new Reference();  //ref
     private Miscellaneous misc = new Miscellaneous(); //misc
     private PitchMoment pitchMoment = new PitchMoment(); //m
-    private Lift lisft = new Lift();
+    private Lift lift = new Lift();
     private Drag drag = new Drag();
     private SideForce sideForce = new SideForce();                                      //Y
     private RollMomment rollMomment = new RollMomment();    //l
@@ -66,5 +67,69 @@ public class Aero {
      */
     public void setUnits(int units) {
         this.units = units;
+    }
+
+    /**
+     * @return the ref
+     */
+    @XmlElement
+    public Reference getRef() {
+        return ref;
+    }
+
+    /**
+     * @return the misc
+     */
+    @XmlElement
+    public Miscellaneous getMisc() {
+        return misc;
+    }
+
+    /**
+     * @return the pitchMoment
+     */
+    @XmlElement(name="m")
+    public PitchMoment getPitchMoment() {
+        return pitchMoment;
+    }
+
+    /**
+     * @return the lisft
+     */
+    @XmlElement
+    public Lift getLift() {
+        return lift;
+    }
+
+    /**
+     * @return the drag
+     */
+    @XmlElement
+    public Drag getDrag() {
+        return drag;
+    }
+
+    /**
+     * @return the sideForce
+     */
+    @XmlElement(name="Y")
+    public SideForce getSideForce() {
+        return sideForce;
+    }
+
+    /**
+     * @return the rollMomment
+     */
+    @XmlElement(name="l")
+    public RollMomment getRollMomment() {
+        return rollMomment;
+    }
+
+    /**
+     * @return the yawMomment
+     */
+    @XmlElement(name="n")
+    public YawMomment getYawMomment() {
+        return yawMomment;
     }
 }

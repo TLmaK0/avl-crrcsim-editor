@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  * @author hfreire
  */
-class Drag {
+public class Drag {
     private float CD_prof;
     private float Uexp_CD;
     private float CD_stall;

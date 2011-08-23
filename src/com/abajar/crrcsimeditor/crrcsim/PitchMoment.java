@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-@XmlRootElement(name="m")
-class PitchMoment {
+public class PitchMoment {
     private float Cm_0;
     private float Cm_a;
     private float Cm_q;

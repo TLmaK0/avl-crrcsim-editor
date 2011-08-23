@@ -6,14 +6,12 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author hfreire
  */
-@XmlRootElement(name="misc")
-class Miscellaneous {
+public class Miscellaneous {
     private float Alpha_0;
     private float eta_loc;
     private float CG_arm;

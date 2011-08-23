@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-@XmlRootElement(name = "n")
-class YawMomment {
+public class YawMomment {
     private float Cn_b;
     private float Cn_p;
     private float Cn_r;

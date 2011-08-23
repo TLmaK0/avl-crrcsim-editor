@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlAttribute;
  *
  * @author hfreire
  */
-class Lift {
+public class Lift {
     //    <lift CL_0="..." CL_max="..." CL_min="..." CL_a="..." CL_q="..."
 //          CL_de="..." CL_drop="..." CL_CD0="..." />
     private float CL_0;
@@ -101,6 +101,7 @@ class Lift {
     /**
      * @return the CL_de
      */
+    @XmlAttribute
     public float getCL_de() {
         return CL_de;
     }
@@ -115,6 +116,7 @@ class Lift {
     /**
      * @return the CL_drop
      */
+    @XmlAttribute
     public float getCL_drop() {
         return CL_drop;
     }
@@ -129,6 +131,7 @@ class Lift {
     /**
      * @return the CL_CD0
      */
+    @XmlAttribute
     public float getCL_CD0() {
         return CL_CD0;
     }

@@ -12,8 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-@XmlRootElement(name="ref")
-class Reference {
+public class Reference {
     private float chord;
     private float span;
     private float area;
