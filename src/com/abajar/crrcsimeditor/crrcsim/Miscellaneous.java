@@ -1,0 +1,81 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package com.abajar.crrcsimeditor.crrcsim;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+/**
+ *
+ * @author hfreire
+ */
+@XmlRootElement(name="misc")
+class Miscellaneous {
+    private float Alpha_0;
+    private float eta_loc;
+    private float CG_arm;
+    private float span_eff;
+
+    /**
+     * @return the Alpha_0
+     */
+    @XmlAttribute
+    public float getAlpha_0() {
+        return Alpha_0;
+    }
+
+    /**
+     * @param Alpha_0 the Alpha_0 to set
+     */
+    public void setAlpha_0(float Alpha_0) {
+        this.Alpha_0 = Alpha_0;
+    }
+
+    /**
+     * @return the eta_loc
+     */
+    @XmlAttribute
+    public float getEta_loc() {
+        return eta_loc;
+    }
+
+    /**
+     * @param eta_loc the eta_loc to set
+     */
+    public void setEta_loc(float eta_loc) {
+        this.eta_loc = eta_loc;
+    }
+
+    /**
+     * @return the CG_arm
+     */
+    @XmlAttribute
+    public float getCG_arm() {
+        return CG_arm;
+    }
+
+    /**
+     * @param CG_arm the CG_arm to set
+     */
+    public void setCG_arm(float CG_arm) {
+        this.CG_arm = CG_arm;
+    }
+
+    /**
+     * @return the span_eff
+     */
+    @XmlAttribute
+    public float getSpan_eff() {
+        return span_eff;
+    }
+
+    /**
+     * @param span_eff the span_eff to set
+     */
+    public void setSpan_eff(float span_eff) {
+        this.span_eff = span_eff;
+    }
+}
