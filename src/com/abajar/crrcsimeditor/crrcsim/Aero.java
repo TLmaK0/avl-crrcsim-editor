@@ -8,12 +8,14 @@ package com.abajar.crrcsimeditor.crrcsim;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author hfreire
  */
 @XmlRootElement
+@XmlType(propOrder={"ref","misc","pitchMoment","lift","drag","sideForce","rollMomment","yawMomment"})
 public class Aero {
 //<aero version="1" units="0">
 //    <ref chord="..." span="..." area="..." speed="..." />

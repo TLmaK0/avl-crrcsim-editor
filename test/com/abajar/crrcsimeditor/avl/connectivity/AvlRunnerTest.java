@@ -5,16 +5,20 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import com.abajar.crrcsimeditor.avl.runcase.RunCase;
 import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-
 /**
  *
  * @author hfreire
@@ -46,9 +50,16 @@ public class AvlRunnerTest {
     @Test
     public void testCalculate() throws Exception {
         System.out.println("calculate");
+        String fileCrrTest="../sample/plane.crr";
         String fileTest = "test.avl";
         File file = new File(fileTest);
         AVL avl = new AVL();
+        FileInputStream fis = new FileInputStream(fileCrrTest);
+        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
+        Unmarshaller u = context.createUnmarshaller();
+        avl.setGeometry((AVLGeometry)u.unmarshal(fis));
+        fis.close();
+
         FileOutputStream fos = new FileOutputStream(file);
         avl.getGeometry().writeAVLData(fos);
         fos.close();
@@ -59,10 +70,42 @@ public class AvlRunnerTest {
         avl.getGeometry().writeAVLMassData(fos);
         fos.close();
 
-        AvlRunner instance = new AvlRunner("C://Programs//simulation//aviation//avl//bin/avl","test.avl");
+        AvlRunner instance = new AvlRunner("C://Programs//simulation//aviation//avl//bin/avl",".","test.avl");
         instance.calculate();
-        //instance.getStabilityDerivatives();
+        RunCase runCase = instance.getRunCase();
         instance.close();
+        assertTrue(runCase.getConfiguration().getBref() != 0);
+        assertTrue(runCase.getConfiguration().getSref() != 0);
+        assertTrue(runCase.getConfiguration().getCref() != 0);
+        assertTrue(runCase.getConfiguration().getVelocity() != 0);
+        assertTrue(runCase.getConfiguration().getAlpha() != 0);
+        assertTrue(runCase.getConfiguration().getCmtot() != 0);
+        assertTrue(runCase.getConfiguration().getCLtot() != 0);
+        assertTrue(runCase.getConfiguration().getCDvis() == 0);
+        
+        assertTrue(runCase.getStabilityDerivatives().getCma() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCmq() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCLa() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCmd()[1] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCLq() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCLd()[1] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYb() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYp() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYr() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYd()[0] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYd()[2] == 0);
+        assertTrue(runCase.getStabilityDerivatives().getClb() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getClp() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getClr() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCld()[0] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCld()[2] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnb() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnp() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnr() != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnd()[0] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnd()[2] == 0);
+
+
     }
 
 

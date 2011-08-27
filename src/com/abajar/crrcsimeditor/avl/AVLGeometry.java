@@ -7,7 +7,6 @@ package com.abajar.crrcsimeditor.avl;
 
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
-import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import java.io.OutputStream;

@@ -6,13 +6,13 @@ package com.abajar.crrcsimeditor;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
-import com.abajar.crrcsimeditor.avl.StabilityDerivatives;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
+import com.abajar.crrcsimeditor.avl.runcase.RunCase;
 import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
@@ -266,11 +266,11 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
         try {
-            String fileNameTmp = CONFIGURATION_ROOT + "/crrcsimtmp.avl";
-            this.exportAsAVL(new File(fileNameTmp));
-            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), fileNameTmp);
+            String fileNameTmp =  "crrcsimtmp.avl";
+            this.exportAsAVL(new File(CONFIGURATION_ROOT + "/" + fileNameTmp));
+            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), CONFIGURATION_ROOT, fileNameTmp);
             avlRunner.calculate();
-            StabilityDerivatives st = avlRunner.getStabilityDerivatives();
+            RunCase st = avlRunner.getRunCase();
             avlRunner.close();
 
             FileOutputStream fos = new FileOutputStream(file);
