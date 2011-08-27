@@ -6,7 +6,7 @@
 package com.abajar.crrcsimeditor.avl.connectivity;
 
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
-import com.abajar.crrcsimeditor.avl.runcase.RunCase;
+import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,16 +44,14 @@ public class AvlRunner {
         stdout = process.getInputStream ();
     }
 
-    public void calculate() throws IOException{
+    public AvlCalculation getCalculation() throws IOException{
         sendCommand("oper\n");
         sendCommand("c1\n");
         sendCommand("v\n");
         sendCommand(VELOCITY + "\n\n");        //setting velocity
         sendCommand("s\n\n");
         sendCommand("x\n");
-    }
 
-    public RunCase getRunCase() throws IOException{
         String resultFile = this.avlFileName.replace(".avl", ".st");
         sendCommand("st\n");
         sendCommand(resultFile + "\n");
@@ -61,7 +59,7 @@ public class AvlRunner {
         InputStream fis = new FileInputStream(new File(resultFile));
         Scanner scanner = new Scanner(fis);
 
-        RunCase runCase = new RunCase();
+        AvlCalculation runCase = new AvlCalculation();
         runCase.getConfiguration().setVelocity(VELOCITY);
 
         runCase.getConfiguration().setSref(readFloat("Sref =", scanner));

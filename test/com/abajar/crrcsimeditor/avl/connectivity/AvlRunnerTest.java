@@ -5,7 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
-import com.abajar.crrcsimeditor.avl.runcase.RunCase;
+import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import java.io.File;
@@ -71,8 +71,7 @@ public class AvlRunnerTest {
         fos.close();
 
         AvlRunner instance = new AvlRunner("C://Programs//simulation//aviation//avl//bin/avl",".","test.avl");
-        instance.calculate();
-        RunCase runCase = instance.getRunCase();
+        AvlCalculation runCase = instance.getCalculation();
         instance.close();
         assertTrue(runCase.getConfiguration().getBref() != 0);
         assertTrue(runCase.getConfiguration().getSref() != 0);

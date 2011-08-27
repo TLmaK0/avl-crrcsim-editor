@@ -12,7 +12,7 @@ import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
-import com.abajar.crrcsimeditor.avl.runcase.RunCase;
+import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
@@ -269,8 +269,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String fileNameTmp =  "crrcsimtmp.avl";
             this.exportAsAVL(new File(CONFIGURATION_ROOT + "/" + fileNameTmp));
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), CONFIGURATION_ROOT, fileNameTmp);
-            avlRunner.calculate();
-            RunCase st = avlRunner.getRunCase();
+            AvlCalculation st = avlRunner.getCalculation();
             avlRunner.close();
 
             FileOutputStream fos = new FileOutputStream(file);

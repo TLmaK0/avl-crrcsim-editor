@@ -9,7 +9,7 @@ package com.abajar.crrcsimeditor.avl.runcase;
  *
  * @author hfreire
  */
-public class RunCase {
+public class AvlCalculation {
     private Configuration configuration = new Configuration();
     private StabilityDerivatives stabilityDerivatives = new StabilityDerivatives();
 
