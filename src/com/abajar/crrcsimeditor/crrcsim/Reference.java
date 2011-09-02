@@ -6,7 +6,6 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *

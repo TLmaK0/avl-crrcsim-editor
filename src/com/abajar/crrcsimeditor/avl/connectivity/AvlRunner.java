@@ -29,14 +29,16 @@ public class AvlRunner {
         Process process;
         String avlPath;
         String avlFileName;
+        String executionPath;
         final float VELOCITY = 30; // 30m/s
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
 
-    public AvlRunner(String avlPath, String path, String fileName) throws IOException{
+    public AvlRunner(String avlPath, String executionPath, String fileName) throws IOException{
         this.avlPath = avlPath;
         this.avlFileName = fileName;
+        this.executionPath = executionPath;
         ProcessBuilder pb = new ProcessBuilder(avlPath, this.avlFileName);
-        pb.directory(new File(path).getAbsoluteFile());
+        pb.directory(new File(executionPath).getAbsoluteFile());
         pb.redirectErrorStream(true);
 
         process = pb.start();
@@ -44,7 +46,7 @@ public class AvlRunner {
         stdout = process.getInputStream ();
     }
 
-    public AvlCalculation getCalculation() throws IOException{
+    public AvlCalculation getCalculation() throws IOException, InterruptedException{
         sendCommand("oper\n");
         sendCommand("c1\n");
         sendCommand("v\n");
@@ -53,10 +55,18 @@ public class AvlRunner {
         sendCommand("x\n");
 
         String resultFile = this.avlFileName.replace(".avl", ".st");
+        new File(this.executionPath + "/" + resultFile).delete();
+
+        String runFile = this.avlFileName.replace(".avl", ".run");
+        new File(this.executionPath + "/" + runFile).delete();
+
         sendCommand("st\n");
         sendCommand(resultFile + "\n");
+        sendCommand("\nq\n");
+        flush();
+        process.waitFor();
 
-        InputStream fis = new FileInputStream(new File(resultFile));
+        InputStream fis = new FileInputStream(new File(this.executionPath + "/" +  resultFile));
         Scanner scanner = new Scanner(fis);
 
         AvlCalculation runCase = new AvlCalculation();
@@ -110,11 +120,6 @@ public class AvlRunner {
         return runCase;
     }
 
-    public void close() throws InterruptedException, IOException{
-        sendCommand("\nq\n");
-       flush();
-        process.waitFor();
-    }
 
     private void sendCommand(String command) throws IOException{
         stdin.write(command.getBytes());

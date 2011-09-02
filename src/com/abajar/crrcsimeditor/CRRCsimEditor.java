@@ -266,21 +266,30 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
         try {
-            String fileNameTmp =  "crrcsimtmp.avl";
-            this.exportAsAVL(new File(CONFIGURATION_ROOT + "/" + fileNameTmp));
+            String tmpBaseName = "crrcsimtmp";
+            String fileNameTmp =  tmpBaseName + ".avl";
+            String fileNameTmpMass =  tmpBaseName + ".mass";
+
+            File avlExportedFile = new File(CONFIGURATION_ROOT + "/" + fileNameTmp);
+            avlExportedFile.delete();
+
+            File massExportedFile = new File(CONFIGURATION_ROOT + "/" + fileNameTmpMass);
+            massExportedFile.delete();
+
+
+            this.exportAsAVL(avlExportedFile);
+
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), CONFIGURATION_ROOT, fileNameTmp);
             AvlCalculation calculation = avlRunner.getCalculation();
-            avlRunner.close();
+
+            //TODO: Select correct elevator, rudder, aileron
+            Aero aero = new Aero(calculation, 1, 2, 0);
 
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(Aero.class);
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-            //TODO: Select correct elevator, rudder, aileron
-            Aero aero = new Aero(calculation, 1, 2, 0);
             m.marshal(aero, fos);
-
             fos.close();
         } catch (JAXBException ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);

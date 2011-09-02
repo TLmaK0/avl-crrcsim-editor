@@ -72,7 +72,6 @@ public class AvlRunnerTest {
 
         AvlRunner instance = new AvlRunner("C://Programs//simulation//aviation//avl//bin/avl",".","test.avl");
         AvlCalculation runCase = instance.getCalculation();
-        instance.close();
         assertTrue(runCase.getConfiguration().getBref() != 0);
         assertTrue(runCase.getConfiguration().getSref() != 0);
         assertTrue(runCase.getConfiguration().getCref() != 0);
