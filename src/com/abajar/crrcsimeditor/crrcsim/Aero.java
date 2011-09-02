@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,7 +32,7 @@ public class Aero {
 //  </aero>
 
     private int version = 1;
-    private int units = 0;
+    private int units = 1;
     private Reference ref = new Reference();  //ref
     private Miscellaneous misc = new Miscellaneous(); //misc
     private PitchMoment pitchMoment = new PitchMoment(); //m
@@ -40,6 +41,55 @@ public class Aero {
     private SideForce sideForce = new SideForce();                                      //Y
     private RollMomment rollMomment = new RollMomment();    //l
     private YawMomment yawMomment = new YawMomment(); //n
+
+
+    public Aero(){
+
+    }
+
+    public Aero(AvlCalculation avlCalculation, int elevatorPosition, int rudderPosition, int aileronPosition){
+        ref.setChord(avlCalculation.getConfiguration().getCref());
+        ref.setSpan(avlCalculation.getConfiguration().getBref());
+        ref.setArea(avlCalculation.getConfiguration().getSref());
+        ref.setSpeed(avlCalculation.getConfiguration().getVelocity());
+
+        misc.setAlpha_0(avlCalculation.getConfiguration().getAlpha());
+        //TODO: eta_loc, CG_arm, span_eff
+
+        pitchMoment.setCm_0(avlCalculation.getConfiguration().getCmtot());
+        pitchMoment.setCm_a(avlCalculation.getStabilityDerivatives().getCma());
+        pitchMoment.setCm_q(avlCalculation.getStabilityDerivatives().getCmq());
+        pitchMoment.setCm_de(avlCalculation.getStabilityDerivatives().getCmd()[elevatorPosition]);
+
+        lift.setCL_0(avlCalculation.getConfiguration().getCLtot());
+        //TODO: CL_max, CL_min
+        lift.setCL_a(avlCalculation.getStabilityDerivatives().getCLa());
+        lift.setCL_q(avlCalculation.getStabilityDerivatives().getCLq());   //TODO: check CL_q to CLq instead of Clq
+        lift.setCL_de(avlCalculation.getStabilityDerivatives().getCld()[elevatorPosition]);
+        lift.setCL_drop(0);     //TODO: check CL_drop parameter
+        lift.setCL_CD0(0);      //TODO: check CL_CD0 parameter
+
+        drag.setCD_prof(avlCalculation.getConfiguration().getCDvis());
+        //TODO: Uexp_CD, CD_stall, CD_CLsq, CD_AIsq, CD_ELsq
+
+        sideForce.setCY_b(avlCalculation.getStabilityDerivatives().getCYb());
+        sideForce.setCY_p(avlCalculation.getStabilityDerivatives().getCYp());
+        sideForce.setCY_r(avlCalculation.getStabilityDerivatives().getCYr());
+        sideForce.setCY_dr(avlCalculation.getStabilityDerivatives().getCYd()[rudderPosition]);
+        sideForce.setCY_da(avlCalculation.getStabilityDerivatives().getCYd()[aileronPosition]);
+
+        rollMomment.setCl_b(avlCalculation.getStabilityDerivatives().getClb());
+        rollMomment.setCl_p(avlCalculation.getStabilityDerivatives().getClp());
+        rollMomment.setCl_r(avlCalculation.getStabilityDerivatives().getClr());
+        rollMomment.setCl_dr(avlCalculation.getStabilityDerivatives().getCld()[rudderPosition]);
+        rollMomment.setCl_da(avlCalculation.getStabilityDerivatives().getCld()[aileronPosition]);
+
+        yawMomment.setCn_b(avlCalculation.getStabilityDerivatives().getCnb());
+        yawMomment.setCn_p(avlCalculation.getStabilityDerivatives().getCnp());
+        yawMomment.setCn_r(avlCalculation.getStabilityDerivatives().getCnr());
+        yawMomment.setCn_dr(avlCalculation.getStabilityDerivatives().getCnd()[rudderPosition]);
+        yawMomment.setCn_da(avlCalculation.getStabilityDerivatives().getCnd()[aileronPosition]);        
+    }
 
     /**
      * @return the version

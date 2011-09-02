@@ -269,7 +269,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String fileNameTmp =  "crrcsimtmp.avl";
             this.exportAsAVL(new File(CONFIGURATION_ROOT + "/" + fileNameTmp));
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), CONFIGURATION_ROOT, fileNameTmp);
-            AvlCalculation st = avlRunner.getCalculation();
+            AvlCalculation calculation = avlRunner.getCalculation();
             avlRunner.close();
 
             FileOutputStream fos = new FileOutputStream(file);
@@ -277,7 +277,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
             Marshaller m = context.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-            Aero aero = new Aero();
+            //TODO: Select correct elevator, rudder, aileron
+            Aero aero = new Aero(calculation, 1, 2, 0);
             m.marshal(aero, fos);
 
             fos.close();
