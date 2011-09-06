@@ -68,6 +68,7 @@ public class Aero {
         lift.setCL_de(avlCalculation.getStabilityDerivatives().getCld()[elevatorPosition]);
         lift.setCL_drop(0);     //TODO: check CL_drop parameter
         lift.setCL_CD0(0);      //TODO: check CL_CD0 parameter
+        lift.setCL_0(avlCalculation.getConfiguration().getCLtot());
 
         drag.setCD_prof(avlCalculation.getConfiguration().getCDvis());
         //TODO: Uexp_CD, CD_stall, CD_CLsq, CD_AIsq, CD_ELsq

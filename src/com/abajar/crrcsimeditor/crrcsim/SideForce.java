@@ -24,7 +24,7 @@ public class SideForce {
     /**
      * @return the CY_b
      */
-    @XmlAttribute
+    @XmlAttribute(name="CY_b")
     public float getCY_b() {
         return CY_b;
     }
@@ -39,7 +39,7 @@ public class SideForce {
     /**
      * @return the CY_p
      */
-    @XmlAttribute
+    @XmlAttribute(name="CY_p")
     public float getCY_p() {
         return CY_p;
     }
@@ -54,7 +54,7 @@ public class SideForce {
     /**
      * @return the CY_r
      */
-    @XmlAttribute
+    @XmlAttribute(name="CY_r")
     public float getCY_r() {
         return CY_r;
     }
@@ -69,7 +69,7 @@ public class SideForce {
     /**
      * @return the CY_dr
      */
-    @XmlAttribute
+    @XmlAttribute(name="CY_dr")
     public float getCY_dr() {
         return CY_dr;
     }
@@ -84,7 +84,7 @@ public class SideForce {
     /**
      * @return the CY_da
      */
-    @XmlAttribute
+    @XmlAttribute(name="CY_da")
     public float getCY_da() {
         return CY_da;
     }

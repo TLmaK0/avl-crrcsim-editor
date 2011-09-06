@@ -22,7 +22,7 @@ public class Drag {
     /**
      * @return the CD_prof
      */
-    @XmlAttribute
+    @XmlAttribute(name="CD_prof")
     public float getCD_prof() {
         return CD_prof;
     }
@@ -37,7 +37,7 @@ public class Drag {
     /**
      * @return the Uexp_CD
      */
-    @XmlAttribute
+    @XmlAttribute(name="Uexp_CD")
     public float getUexp_CD() {
         return Uexp_CD;
     }
@@ -52,7 +52,7 @@ public class Drag {
     /**
      * @return the CD_stall
      */
-    @XmlAttribute
+    @XmlAttribute(name="CD_stall")
     public float getCD_stall() {
         return CD_stall;
     }
@@ -67,7 +67,7 @@ public class Drag {
     /**
      * @return the CD_CLsq
      */
-    @XmlAttribute
+    @XmlAttribute(name="CD_CLsq")
     public float getCD_CLsq() {
         return CD_CLsq;
     }
@@ -82,7 +82,7 @@ public class Drag {
     /**
      * @return the CD_AIsq
      */
-    @XmlAttribute
+    @XmlAttribute(name="CD_AIsq")
     public float getCD_AIsq() {
         return CD_AIsq;
     }
@@ -97,7 +97,7 @@ public class Drag {
     /**
      * @return the CD_ELsq
      */
-    @XmlAttribute
+    @XmlAttribute(name="CD_ELsq")
     public float getCD_ELsq() {
         return CD_ELsq;
     }

@@ -20,7 +20,7 @@ public class Miscellaneous {
     /**
      * @return the Alpha_0
      */
-    @XmlAttribute
+    @XmlAttribute(name="Alpha_0")
     public float getAlpha_0() {
         return Alpha_0;
     }
@@ -35,7 +35,7 @@ public class Miscellaneous {
     /**
      * @return the eta_loc
      */
-    @XmlAttribute
+    @XmlAttribute(name="eta_loc")
     public float getEta_loc() {
         return eta_loc;
     }
@@ -50,7 +50,7 @@ public class Miscellaneous {
     /**
      * @return the CG_arm
      */
-    @XmlAttribute
+    @XmlAttribute(name="CG_arm")
     public float getCG_arm() {
         return CG_arm;
     }
@@ -65,7 +65,7 @@ public class Miscellaneous {
     /**
      * @return the span_eff
      */
-    @XmlAttribute
+    @XmlAttribute(name="span_eff")
     public float getSpan_eff() {
         return span_eff;
     }

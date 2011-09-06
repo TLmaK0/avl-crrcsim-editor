@@ -24,7 +24,7 @@ public class RollMomment {
     /**
      * @return the Cl_b
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cl_b")
     public float getCl_b() {
         return Cl_b;
     }
@@ -39,7 +39,7 @@ public class RollMomment {
     /**
      * @return the Cl_p
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cl_p")
     public float getCl_p() {
         return Cl_p;
     }
@@ -54,7 +54,7 @@ public class RollMomment {
     /**
      * @return the Cl_r
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cl_r")
     public float getCl_r() {
         return Cl_r;
     }
@@ -69,7 +69,7 @@ public class RollMomment {
     /**
      * @return the Cl_dr
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cl_dr")
     public float getCl_dr() {
         return Cl_dr;
     }
@@ -84,7 +84,7 @@ public class RollMomment {
     /**
      * @return the Cl_da
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cl_da")
     public float getCl_da() {
         return Cl_da;
     }

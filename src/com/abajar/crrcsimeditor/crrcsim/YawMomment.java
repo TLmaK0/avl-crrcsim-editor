@@ -22,7 +22,7 @@ public class YawMomment {
     /**
      * @return the Cn_b
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cn_b")
     public float getCn_b() {
         return Cn_b;
     }
@@ -37,7 +37,7 @@ public class YawMomment {
     /**
      * @return the Cn_p
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cn_p")
     public float getCn_p() {
         return Cn_p;
     }
@@ -52,7 +52,7 @@ public class YawMomment {
     /**
      * @return the Cn_r
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cn_r")
     public float getCn_r() {
         return Cn_r;
     }
@@ -67,7 +67,7 @@ public class YawMomment {
     /**
      * @return the Cn_dr
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cn_dr")
     public float getCn_dr() {
         return Cn_dr;
     }
@@ -82,7 +82,7 @@ public class YawMomment {
     /**
      * @return the Cn_da
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cn_da")
     public float getCn_da() {
         return Cn_da;
     }

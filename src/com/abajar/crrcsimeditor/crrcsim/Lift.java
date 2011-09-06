@@ -26,7 +26,7 @@ public class Lift {
     /**
      * @return the CL_0
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_0")
     public float getCL_0() {
         return CL_0;
     }
@@ -41,7 +41,7 @@ public class Lift {
     /**
      * @return the CL_max
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_max")
     public float getCL_max() {
         return CL_max;
     }
@@ -56,7 +56,7 @@ public class Lift {
     /**
      * @return the CL_min
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_min")
     public float getCL_min() {
         return CL_min;
     }
@@ -71,7 +71,7 @@ public class Lift {
     /**
      * @return the CL_a
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_a")
     public float getCL_a() {
         return CL_a;
     }
@@ -86,7 +86,7 @@ public class Lift {
     /**
      * @return the CL_q
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_q")
     public float getCL_q() {
         return CL_q;
     }
@@ -101,7 +101,7 @@ public class Lift {
     /**
      * @return the CL_de
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_de")
     public float getCL_de() {
         return CL_de;
     }
@@ -116,7 +116,7 @@ public class Lift {
     /**
      * @return the CL_drop
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_drop")
     public float getCL_drop() {
         return CL_drop;
     }
@@ -131,7 +131,7 @@ public class Lift {
     /**
      * @return the CL_CD0
      */
-    @XmlAttribute
+    @XmlAttribute(name="CL_CD0")
     public float getCL_CD0() {
         return CL_CD0;
     }
