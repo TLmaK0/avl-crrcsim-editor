@@ -11,9 +11,25 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.AVLGeometry;
+import com.abajar.crrcsimeditor.avl.geometry.Body;
+import com.abajar.crrcsimeditor.avl.geometry.Control;
+import com.abajar.crrcsimeditor.avl.geometry.Section;
+import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.avl.mass.MassObject;
+import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
+import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
 import java.io.File;
+import java.util.EnumSet;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableColumn;
+import javax.swing.tree.DefaultTreeModel;
+import static java.util.EnumSet.of;
 
 /**
  *
@@ -45,10 +61,19 @@ public class MainFrame extends javax.swing.JFrame {
         topViewButton = new javax.swing.JButton();
         frontViewButton = new javax.swing.JButton();
         rightViewButton = new javax.swing.JButton();
-        addSurfaceButton = new javax.swing.JButton();
         view3DIFrame = new javax.swing.JInternalFrame();
         jPanel1 = new javax.swing.JPanel();
+        jInternalFrame3 = new javax.swing.JInternalFrame();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        modelPropertiesTable = new javax.swing.JTable();
         jInternalFrame2 = new javax.swing.JInternalFrame();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        avlTree = new javax.swing.JTree();
+        addSurfaceButton = new javax.swing.JButton();
+        addSectionButton = new javax.swing.JButton();
+        addControlButton = new javax.swing.JButton();
+        addMassButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -91,25 +116,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
-        addSurfaceButton.setText(resourceMap.getString("addSurfaceButton.text")); // NOI18N
-        addSurfaceButton.setName("addSurfaceButton"); // NOI18N
-        addSurfaceButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                addSurfaceButtonMouseClicked(evt);
-            }
-        });
-
         javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
         jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
         jInternalFrame1Layout.setHorizontalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame1Layout.createSequentialGroup()
-                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rightViewButton))
-                    .addComponent(addSurfaceButton))
+                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(rightViewButton))
                 .addContainerGap(11, Short.MAX_VALUE))
         );
         jInternalFrame1Layout.setVerticalGroup(
@@ -120,12 +135,10 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(frontViewButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rightViewButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addSurfaceButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jInternalFrame1.setBounds(0, 0, 80, 150);
+        jInternalFrame1.setBounds(0, 0, 80, 120);
         jDesktopPane1.add(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         view3DIFrame.setMaximizable(true);
@@ -160,21 +173,139 @@ public class MainFrame extends javax.swing.JFrame {
         view3DIFrame.setBounds(90, 10, 310, 180);
         jDesktopPane1.add(view3DIFrame, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        jInternalFrame3.setName("jInternalFrame3"); // NOI18N
+        jInternalFrame3.setVisible(true);
+
+        jScrollPane2.setName("jScrollPane2"); // NOI18N
+
+        modelPropertiesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        modelPropertiesTable.setName("modelPropertiesTable"); // NOI18N
+        jScrollPane2.setViewportView(modelPropertiesTable);
+
+        javax.swing.GroupLayout jInternalFrame3Layout = new javax.swing.GroupLayout(jInternalFrame3.getContentPane());
+        jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
+        jInternalFrame3Layout.setHorizontalGroup(
+            jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
+        );
+        jInternalFrame3Layout.setVerticalGroup(
+            jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
+        );
+
+        jInternalFrame3.setBounds(120, 190, 360, 166);
+        jDesktopPane1.add(jInternalFrame3, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         jInternalFrame2.setName("jInternalFrame2"); // NOI18N
         jInternalFrame2.setVisible(true);
+
+        jScrollPane1.setName("jScrollPane1"); // NOI18N
+
+        avlTree.setModel(this.getTreeModel());
+        avlTree.setName("avlTree"); // NOI18N
+        avlTree.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
+                avlTreeValueChanged(evt);
+            }
+        });
+        jScrollPane1.setViewportView(avlTree);
+
+        addSurfaceButton.setText(resourceMap.getString("addSurfaceButton.text")); // NOI18N
+        addSurfaceButton.setEnabled(false);
+        addSurfaceButton.setName("addSurfaceButton"); // NOI18N
+        addSurfaceButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSurfaceButtonActionPerformed(evt);
+            }
+        });
+
+        addSectionButton.setText(resourceMap.getString("addSectionButton.text")); // NOI18N
+        addSectionButton.setEnabled(false);
+        addSectionButton.setName("addSectionButton"); // NOI18N
+        addSectionButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSectionButtonActionPerformed(evt);
+            }
+        });
+
+        addControlButton.setText(resourceMap.getString("addControlButton.text")); // NOI18N
+        addControlButton.setEnabled(false);
+        addControlButton.setName("addControlButton"); // NOI18N
+        addControlButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addControlButtonActionPerformed(evt);
+            }
+        });
+
+        addMassButton.setText(resourceMap.getString("addMassButton.text")); // NOI18N
+        addMassButton.setEnabled(false);
+        addMassButton.setName("addMassButton"); // NOI18N
+        addMassButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addMassButtonActionPerformed(evt);
+            }
+        });
+
+        deleteButton.setText(resourceMap.getString("deleteButton.text")); // NOI18N
+        deleteButton.setEnabled(false);
+        deleteButton.setName("deleteButton"); // NOI18N
+        deleteButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jInternalFrame2Layout = new javax.swing.GroupLayout(jInternalFrame2.getContentPane());
         jInternalFrame2.getContentPane().setLayout(jInternalFrame2Layout);
         jInternalFrame2Layout.setHorizontalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 440, Short.MAX_VALUE)
+            .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 244, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addSurfaceButton)
+                    .addComponent(addSectionButton)
+                    .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(addMassButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(addControlButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(114, Short.MAX_VALUE))
+            .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                    .addGap(382, 382, 382)
+                    .addComponent(deleteButton)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jInternalFrame2Layout.setVerticalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 175, Short.MAX_VALUE)
+            .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(addSurfaceButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addSectionButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addControlButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addMassButton)
+                .addContainerGap(64, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+            .addGroup(jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jInternalFrame2Layout.createSequentialGroup()
+                    .addGap(71, 71, 71)
+                    .addComponent(deleteButton)
+                    .addContainerGap(91, Short.MAX_VALUE)))
         );
 
-        jInternalFrame2.setBounds(30, 220, 450, 210);
+        jInternalFrame2.setBounds(40, 310, 465, 224);
         jDesktopPane1.add(jInternalFrame2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
@@ -256,7 +387,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
         );
 
         pack();
@@ -318,10 +449,6 @@ public class MainFrame extends javax.swing.JFrame {
     private void jMenu1ComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_jMenu1ComponentShown
     }//GEN-LAST:event_jMenu1ComponentShown
 
-    private void addSurfaceButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSurfaceButtonMouseClicked
-        controller.showAvlEditor();
-}//GEN-LAST:event_addSurfaceButtonMouseClicked
-
     private void rightViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rightViewButtonMouseClicked
         controller.showRightView();
 }//GEN-LAST:event_rightViewButtonMouseClicked
@@ -334,9 +461,56 @@ public class MainFrame extends javax.swing.JFrame {
         controller.showTopView();
 }//GEN-LAST:event_topViewButtonMouseClicked
 
+    private void avlTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_avlTreeValueChanged
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)evt.getPath().getLastPathComponent();
+
+        EnumSet<ENABLE_BUTTONS> options = treeNode.getOptions();
+        addSurfaceButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SURFACE));
+        addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
+        addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
+        addMassButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_MASS));
+        deleteButton.setEnabled(options.contains(ENABLE_BUTTONS.DELETE));
+        showModelProperties(treeNode.getUserObject());
+}//GEN-LAST:event_avlTreeValueChanged
+
+    private void addSurfaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSurfaceButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Surface newSurface = this.controller.createSurfaceFor((AVLGeometry)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSurfaceTreeNode(newSurface), treeNode, treeNode.getChildCount());
+}//GEN-LAST:event_addSurfaceButtonActionPerformed
+
+    private void addSectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSectionButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Section newSection = this.controller.createSectionFor((Surface)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSectionTreeNode(newSection), treeNode, treeNode.getChildCount());
+}//GEN-LAST:event_addSectionButtonActionPerformed
+
+    private void addControlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addControlButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Control newControl = this.controller.createControlFor((Section)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createControlTreeNode(newControl), treeNode, treeNode.getChildCount());
+}//GEN-LAST:event_addControlButtonActionPerformed
+
+    private void addMassButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMassButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Mass newMass = this.controller.createMassFor((MassObject)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createMassTreeNode(newMass), treeNode, treeNode.getChildCount());
+}//GEN-LAST:event_addMassButtonActionPerformed
+
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
+        SelectorMutableTreeNode deleteTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getLastPathComponent();
+        SelectorMutableTreeNode parentTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getParentPath().getLastPathComponent();
+        deleteTreeNodeAndObject(parentTreeNode, deleteTreeNode);
+}//GEN-LAST:event_deleteButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addControlButton;
+    private javax.swing.JButton addMassButton;
+    private javax.swing.JButton addSectionButton;
     private javax.swing.JButton addSurfaceButton;
+    private javax.swing.JTree avlTree;
+    private javax.swing.JButton deleteButton;
     private javax.swing.JMenuItem editSetAvlExecutableMenuItem;
     private javax.swing.JMenuItem fileExportAsAVLMenuItem;
     private javax.swing.JMenuItem fileExportAsCRRsimMenuItem;
@@ -345,11 +519,15 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
+    private javax.swing.JInternalFrame jInternalFrame3;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     public javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable modelPropertiesTable;
     private javax.swing.JButton rightViewButton;
     private javax.swing.JButton topViewButton;
     private javax.swing.JInternalFrame view3DIFrame;
@@ -369,4 +547,93 @@ public class MainFrame extends javax.swing.JFrame {
         return view3DIFrame;
     }
 
+    private DefaultTreeModel getTreeModel(){
+        AVL avl = this.controller.avl;
+
+        SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
+        SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS));
+
+        for(Surface surf : avl.getGeometry().getSurfaces()){
+            SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
+            geometryNode.add(surfNode);
+
+            for(Section section:surf.getSections()){
+                SelectorMutableTreeNode sectionNode = createSectionTreeNode(section);
+                surfNode.add(sectionNode);
+
+                for(Control control:section.getControls()){
+                    SelectorMutableTreeNode controlNode = createControlTreeNode(control);
+                    sectionNode.add(controlNode);
+                }
+            }
+        }
+
+        for(Body body : avl.getGeometry().getBodies()){
+            SelectorMutableTreeNode bodyNode = createSelectorMutableTreeNode(body, of(ENABLE_BUTTONS.NONE));
+            geometryNode.add(bodyNode);
+        }
+
+
+//        for(Mass mass:avl.getMass().getMass()){
+//            SelectorMutableTreeNode mNode = new SelectorMutableTreeNode(mass);
+//            massNode.add(mNode);
+//        }
+
+        avlNode.add(geometryNode);
+//        avlNode.add(massNode);
+        return new DefaultTreeModel(avlNode);
+    }
+
+    private SelectorMutableTreeNode createSelectorMutableTreeNode(Object object, EnumSet<ENABLE_BUTTONS> options){
+        SelectorMutableTreeNode smTreeNode = new SelectorMutableTreeNode(object, options);
+        for(Mass mass : ((MassObject)object).getMasses()){
+            smTreeNode.add(createMassTreeNode(mass));
+        }
+        return smTreeNode;
+    }
+
+    public void updateAVLTree(){
+        this.avlTree.setModel(this.getTreeModel());
+    }
+
+    private void showModelProperties(Object userObject) {
+        this.modelPropertiesTable.setModel(AVLModelTableFactory.createTableModel(userObject));
+    }
+
+    private void createColumn(DefaultTableColumnModel tableModel, String name){
+       TableColumn tc =  new TableColumn();
+       tc.setHeaderValue(name);
+       tableModel.addColumn(tc);
+    }
+
+    private SelectorMutableTreeNode createSectionTreeNode(Section section) {
+        return createSelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+    }
+
+    private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
+        return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+    }
+
+    private SelectorMutableTreeNode createControlTreeNode(Control control) {
+        return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+    }
+
+    private SelectorMutableTreeNode createMassTreeNode(Mass mass) {
+        return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.DELETE));
+    }
+
+    private void deleteTreeNodeAndObject(SelectorMutableTreeNode parentTreeNode, SelectorMutableTreeNode deleteTreeNode){
+        ((DefaultTreeModel)this.avlTree.getModel()).removeNodeFromParent(deleteTreeNode);
+
+        if(deleteTreeNode.getUserObject().getClass().equals(Mass.class)){
+            ((MassObject)parentTreeNode.getUserObject()).getMasses().remove((Mass)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Surface.class)){
+            ((AVLGeometry)parentTreeNode.getUserObject()).getSurfaces().remove((Surface)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Section.class)){
+            ((Surface)parentTreeNode.getUserObject()).getSections().remove((Section)deleteTreeNode.getUserObject());
+        }else if(deleteTreeNode.getUserObject().getClass().equals(Control.class)){
+            ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
+        }
+
+    }
 }

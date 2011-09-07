@@ -48,7 +48,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
     SimpleUniverse univ;
     AVL avl;
     MainFrame frame;
-    GeometryEditor geoEditor;
 
     static final String CONFIGURATION_ROOT = ".crrcsimeditor";
     static final String CONFIGURATION_PATH = CONFIGURATION_ROOT + "/configuration.xml";
@@ -100,7 +99,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
             univ.addBranchGraph(scene);
             frame.setVisible(true);
 
-            geoEditor =  new GeometryEditor(this);
 
             updateEnabledEditExportAsCRRCsimMenuItem();
         } catch (FileNotFoundException ex) {
@@ -216,18 +214,11 @@ public class CRRCsimEditor extends SingleFrameApplication {
         fis.close();
     }
 
-    public void showGeoEditor(){
-        geoEditor.setVisible(true);
-    }
-
-    void showAvlEditor() {
-        this.geoEditor.setVisible(true);
-    }
 
     void openFile() {
         try {
                 this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)", "crr"));
-                this.geoEditor.updateAVLTree();
+                this.frame.updateAVLTree();
         } catch (JAXBException ex) {
                 Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }catch (IOException ex) {
