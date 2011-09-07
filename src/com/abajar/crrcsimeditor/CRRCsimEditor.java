@@ -78,11 +78,12 @@ public class CRRCsimEditor extends SingleFrameApplication {
     @Override protected void startup() {
         try {
             frame = new MainFrame(this);
-            frame.setSize(640, 480);
-            frame.setLayout(new BorderLayout());
+            
             Canvas3D canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
-            frame.add("Center", canvas);
-    
+            frame.jPanel1.setLayout(new BorderLayout());
+            frame.jPanel1.setOpaque(false);
+            frame.jPanel1.add("Center", canvas);
+
             univ = new SimpleUniverse(canvas);
             View view = canvas.getView();
             view.setProjectionPolicy(View.PARALLEL_PROJECTION);
@@ -91,7 +92,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             univ.getViewingPlatform().setNominalViewingTransform();
 
             showRightView();
-            
+
             Loader3DS loader3ds = new Loader3DS();
             Scene model3d = loader3ds.load(getClass().getClassLoader().getResource("model/EF2000.3ds"));
             BranchGroup scene = model3d.getSceneGroup();
