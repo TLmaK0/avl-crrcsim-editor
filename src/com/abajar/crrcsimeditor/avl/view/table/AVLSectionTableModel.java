@@ -30,6 +30,7 @@ class AVLSectionTableModel extends AVLTableModel{
         this.section.setNspan((Integer)tableModel.getValueAt(0,5));
         this.section.setSspace((Float)tableModel.getValueAt(0,6));
         this.section.setNACA((String)tableModel.getValueAt(0,7));
+        this.section.setAFILE((String)tableModel.getValueAt(0,8));
     }
 
     @Override
@@ -42,21 +43,43 @@ class AVLSectionTableModel extends AVLTableModel{
           this.section.getAinc(),
           this.section.getNspan(),
           this.section.getSspace(),
-          this.section.getNACA()
+          this.section.getNACA(),
+          this.section.getAFILE()
         }};
     }
 
     @Override
     protected Object[] getColumns() {
-        return new Object[]{"Xle","Yle","Zle","Chord","Ainc","Nspan","Sspace","NACA"};
+        return new Object[]{"Xle","Yle","Zle","Chord","Ainc","Nspan","Sspace","NACA","AFILE"};
     }
 
     @Override
     public Class<?> getColumnClass(int i) {
         Class result = Float.class;
-        if (i == 7) result = String.class;
+        if (i == 7 || i == 8) result = String.class;
         if (i == 5) result = Integer.class;
         return result;
+    }
+
+    @Override
+    public String[] getColumnsHelp() {
+        return new String[]{
+            "airfoil's leading edge X location",
+            "airfoil's leading edge Y location",
+            "airfoil's leading edge Z location",
+            "the airfoil's chord  (trailing edge is at Xle+Chord,Yle,Zle)",
+
+            "incidence angle, taken as a rotation (+ by RH rule) about" + LINE_SEPARATOR
+            + "the surface's spanwise axis projected onto the Y-Z plane",
+            
+            "number of spanwise vortices until the next section [ optional ]",
+
+            "controls the spanwise spacing of the vortices      [ optional ]",
+            
+            "sets the camber line to the NACA 4-digit shape specified",
+
+            "XFoil filename"
+        };
     }
 
 }

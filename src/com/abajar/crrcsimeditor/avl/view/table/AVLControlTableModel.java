@@ -55,4 +55,36 @@ class AVLControlTableModel extends AVLTableModel{
        return new Object[]{"name", "gain",  "Xhinge",  "Xhvec",  "Yhvec",  "Zhvec", "SgnDup"};
     }
 
+    @Override
+    public String[] getColumnsHelp() {
+        return new String[]{
+            "name of control variable",
+
+            "control deflection gain, units:  degrees deflection / control variable" + LINE_SEPARATOR
+            + "Maximun degrees deflection",
+
+            "x/c location of hinge." + LINE_SEPARATOR
+            + "If positive, control surface extent is Xhinge..1  (TE surface)" + LINE_SEPARATOR
+            + "If negative, control surface extent is 0..-Xhinge (LE surface)" + LINE_SEPARATOR
+            + "0.65 means that the hinge is at 65% of the stabilizer's chord," + LINE_SEPARATOR
+            + " so the fixed part of the tail is 65% of the chor",
+
+            "vector giving hinge axis about which surface rotates " + LINE_SEPARATOR
+            + "deflection is rotation about hinge by righthand rule" + LINE_SEPARATOR
+            + "1 puts the hinge along the X axis (0 in otheers)",
+
+            "vector giving hinge axis about which surface rotates " + LINE_SEPARATOR
+            + "deflection is rotation about hinge by righthand rule" + LINE_SEPARATOR
+            + "1 puts the hinge along the Y axis (0 in otheers)",
+
+            "vector giving hinge axis about which surface rotates " + LINE_SEPARATOR
+            + "deflection is rotation about hinge by righthand rule" + LINE_SEPARATOR
+            + "1 puts the hinge along the Z axis (0 in otheers)",
+
+            "sign of deflection for duplicated surface" + LINE_SEPARATOR
+            + "An elevator would have SgnDup = +1" + LINE_SEPARATOR
+            + "An aileron  would have SgnDup = -1"}
+        ;
+    }
+
 }

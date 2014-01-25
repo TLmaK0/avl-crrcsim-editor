@@ -59,4 +59,9 @@ public class AVLMassTableModel extends AVLTableModel {
             "name", "x", "y", "z","xx","yy","zz","xz"
         };
     }
+
+    @Override
+    public String[] getColumnsHelp() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

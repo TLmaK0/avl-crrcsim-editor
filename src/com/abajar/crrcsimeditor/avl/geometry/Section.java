@@ -32,6 +32,7 @@ public class Section  extends MassObject implements AVLSerializable{
     private int Nspan;
     private float Sspace;
     private String NACA="";
+    private String AFILE="";
     private final ArrayList<Control> controls = new ArrayList<Control>();
 
     //TODO: CLAF
@@ -116,23 +117,6 @@ public class Section  extends MassObject implements AVLSerializable{
         return controls;
     }
 
-    @Override
-    public void writeAVLData(OutputStream out) {
-        PrintStream ps = new PrintStream(out);
-        ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
-        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5) + formatInteger(1,6) + formatFloat(1,7) + "\n", this.getXle(),
-                this.getYle(), this.getZle(),
-                this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
-
-        if (!this.getNACA().equals("")){
-            //NACA                      |    (keyword)
-            ps.printf("NACA\n%1$19s\n", this.getNACA());            //4300                      | section NACA camberline
-        }
-        
-        for(Control control : this.getControls()){
-            control.writeAVLData(out);
-        }
-    }
 
     @Override
     public String toString() {
@@ -181,5 +165,40 @@ public class Section  extends MassObject implements AVLSerializable{
         this.Zle = Zle;
     }
 
+    /**
+     * @return the AFILE
+     */
+    public String getAFILE() {
+        return AFILE;
+    }
 
+    /**
+     * @param AFILE the AFILE to set
+     */
+    public void setAFILE(String AFILE) {
+        this.AFILE = AFILE;
+    }
+
+
+    @Override
+    public void writeAVLData(OutputStream out) {
+        PrintStream ps = new PrintStream(out);
+        ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
+        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5) + formatInteger(1,6) + formatFloat(1,7) + "\n", this.getXle(),
+                this.getYle(), this.getZle(),
+                this.getChord(), this.getAinc(), this.getNspan(), this.getSspace());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
+
+        if (!this.getNACA().equals("")){
+            //NACA                      |    (keyword)
+            ps.println("NACA");
+            ps.println(this.getNACA());            //4300                      | section NACA camberline
+        }else{
+            ps.println("AFILE");
+            ps.println(this.getAFILE());
+        }
+
+        for(Control control : this.getControls()){
+            control.writeAVLData(out);
+        }
+    }
 }

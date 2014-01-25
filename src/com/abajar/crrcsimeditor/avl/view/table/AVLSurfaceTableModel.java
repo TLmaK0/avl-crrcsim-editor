@@ -61,4 +61,54 @@ class AVLSurfaceTableModel extends AVLTableModel  {
         if (i == 1 || i == 3) result = Integer.class;
         return result;
     }
+
+    @Override
+    public String[] getColumnsHelp() {
+        return new String[]{
+            "Surface name, ex. Wing",
+
+            "number of chordwise horseshoe vortices placed on the surface" + LINE_SEPARATOR
+            + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex",
+
+            "chordwise vortex spacing parameter" + LINE_SEPARATOR
+            + "3.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "2.0        sine          || |  |   |    |    |     |     |" + LINE_SEPARATOR
+            + "1.0        cosine        ||  |    |      |      |    |  ||" + LINE_SEPARATOR
+            + "0.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "-1.0        cosine        ||  |    |      |      |    |  ||" + LINE_SEPARATOR
+            + "-2.0       -sine          |     |     |    |    |   |  | ||" + LINE_SEPARATOR
+            + "-3.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "The most efficient distribution (best accuracy for a given number of " + LINE_SEPARATOR
+            + "vortices) is usually the cosine (1.0) chordwise and spanwise",
+
+            "number of spanwise horseshoe vortices placed on the surface" + LINE_SEPARATOR
+            + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex",
+
+            "spanwise vortex spacing parameter" + LINE_SEPARATOR
+            + "3.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "2.0        sine          || |  |   |    |    |     |     |" + LINE_SEPARATOR
+            + "1.0        cosine        ||  |    |      |      |    |  ||" + LINE_SEPARATOR
+            + "0.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "-1.0        cosine        ||  |    |      |      |    |  ||" + LINE_SEPARATOR
+            + "-2.0       -sine          |     |     |    |    |   |  | ||" + LINE_SEPARATOR
+            + "-3.0        equal         |   |   |   |   |   |   |   |   |" + LINE_SEPARATOR
+            + "The most efficient distribution (best accuracy for a given number of " + LINE_SEPARATOR
+            + "vortices) is usually the cosine (1.0) chordwise and spanwise",
+
+            "Y position of X-Z plane about which the current surface is" + LINE_SEPARATOR
+            + "reflected to make the duplicate geometric-image surface.",
+
+            "offset added on to all X,Y,Z values in this surface",
+            
+            "offset added on to all X,Y,Z values in this surface",
+            
+            "offset added on to all X,Y,Z values in this surface",
+            
+            "allows convenient changing of the incidence angle" + LINE_SEPARATOR
+            + "of the entire surface without the need to change the Ainc values" + LINE_SEPARATOR
+            + "for all the defining sections.  The rotation is performed about" + LINE_SEPARATOR
+            + "the spanwise axis projected onto the y-z plane"
+
+        };
+    }
 }

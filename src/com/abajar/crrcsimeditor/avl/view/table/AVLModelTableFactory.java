@@ -20,8 +20,8 @@ public class AVLModelTableFactory{
 
     private AVLModelTableFactory(){};
 
-    public static TableModel createTableModel(Object userObject) {
-        TableModel tableModel = null;
+    public static AVLTableModel createTableModel(Object userObject) {
+        AVLTableModel tableModel = null;
         Class aClass = userObject.getClass();
         if (aClass.equals(AVLGeometry.class)) tableModel=new AVLGeometryTableModel((AVLGeometry)userObject).getInitializedTable();
         if (aClass.equals(Surface.class)) tableModel=new AVLSurfaceTableModel((Surface)userObject).getInitializedTable();

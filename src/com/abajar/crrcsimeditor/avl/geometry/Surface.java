@@ -149,7 +149,7 @@ public class Surface extends MassObject implements AVLSerializable {
         ps.printf("#Nchord  Cspace   [Nspan   Sspace]\n" + formatInteger(1) + formatFloat(1,2),
                 this.getNchord(), this.getCspace());
 
-        if (this.getNspan() != 0 || this.getSspace() != 0){
+        if (this.getNspan() != 0){
             ps.printf( formatInteger(1) + formatFloat(1,2),
                     this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
         }

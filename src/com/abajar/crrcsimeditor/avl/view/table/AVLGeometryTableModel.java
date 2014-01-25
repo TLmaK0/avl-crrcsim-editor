@@ -73,4 +73,50 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
         return result;
     }
 
+    @Override
+    public String[] getColumnsHelp() {
+        return new String[] {
+            "Project name",
+            
+            "default freestream Mach number for Prandtl-Glauert correction. http://en.wikipedia.org/wiki/Mach_number. 0 should be ok for RC airplanes",
+
+            "Allow you to draw only a part of the airplane" + LINE_SEPARATOR
+            + "and left AVL to mirror about Y axis" + LINE_SEPARATOR
+            + "1 case is symmetric about Y=0, (X-Z plane is a solid wall)" + LINE_SEPARATOR
+            + "-1  case is antisymmetric about Y=0, (X-Z plane is at const. Cp)" + LINE_SEPARATOR
+            + "0  no Y-symmetry is assumed" + LINE_SEPARATOR
+            + "use 0 by default and draw all elements",
+            
+            "Allow you to draw only a part of the airplane"  + LINE_SEPARATOR
+            + "and left AVL to mirror about Z axis"
+            + "1  case is symmetric about Z=Zsym, (X-Y plane is a solid wall)" + LINE_SEPARATOR
+            + "-1  case is antisymmetric about Z=Zsym, (X-Y plane is at const. Cp)" + LINE_SEPARATOR
+            + "0  no Z-symmetry is assumed (Zsym ignored)" + LINE_SEPARATOR
+            + "use 0 by default and draw all elements",
+
+            "Zsym",
+            
+            "reference area used to define all coefficients (CL, CD, Cm, etc)" + LINE_SEPARATOR
+            + "the area of the wing in square units",
+
+            "reference chord used to define pitching moment (Cm)." + LINE_SEPARATOR
+            + "the chord of the wing http://en.wikipedia.org/wiki/Chord_(aircraft)",
+            
+            "reference span  used to define roll,yaw moments" + LINE_SEPARATOR
+            + "the wing span http://en.wikipedia.org/wiki/Wingspan",
+            
+            "default location about which moments and rotation rates are defined" + LINE_SEPARATOR
+            + "Center of Gravity X axis position",
+            
+            "default location about which moments and rotation rates are defined" + LINE_SEPARATOR
+            + "Center of Gravity Y axis position",
+
+            "default location about which moments and rotation rates are defined" + LINE_SEPARATOR
+            + "Center of Gravity Z axis position",
+
+            "default profile drag coefficient added to geometry, applied at XYZref" + LINE_SEPARATOR
+            + "http://en.wikipedia.org/wiki/Drag_coefficient" + LINE_SEPARATOR
+            + "0.020 seems to be a common default value"};
+    }
+
 }

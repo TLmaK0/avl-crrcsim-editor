@@ -1,0 +1,26 @@
+#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ 
+Geometry
+#Mach
+0.000              
+#iYsym   iZsym    Zsym
+0        0        0.0      
+#Sref    Cref     Bref
+0.18     0.28     0.63     
+#Xref    Yref      Zref
+0.0      0.0      0.0      
+SURFACE
+wing
+#Nchord  Cspace   [Nspan   Sspace]
+8        1.0      8        1.0      
+YDUPLICATE
+0.0      
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+0.0      0.0      0.0      0.56     0.0      8        1.0      
+NACA
+               0006
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+0.0      0.32     0.0      0.10     0.0      8        1.0      
+NACA
+               0006

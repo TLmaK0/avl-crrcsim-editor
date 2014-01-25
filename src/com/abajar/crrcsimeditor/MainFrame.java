@@ -11,6 +11,12 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.ui.ChangeSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import com.abajar.crrcsimeditor.avl.view.table.AVLTableModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
@@ -44,6 +50,15 @@ public class MainFrame extends javax.swing.JFrame {
         this.controller = controller;
 
         initComponents();
+
+        this.modelPropertiesTable.addChangeSelectionListener(new ChangeSelectionListener(){
+
+            @Override
+            public void notify(int rowIndex, int columnIndex) {
+                MainFrame.this.helpTextArea.setText(((AVLTableModel) modelPropertiesTable.getModel()).getColumnsHelp()[columnIndex]);
+            }
+
+        });
     }
 
 
@@ -61,7 +76,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jInternalFrame3 = new javax.swing.JInternalFrame();
         jScrollPane2 = new javax.swing.JScrollPane();
-        modelPropertiesTable = new javax.swing.JTable();
+        modelPropertiesTable = new com.abajar.crrcsimeditor.ui.TableView();
         jInternalFrame4 = new javax.swing.JInternalFrame();
         addSurfaceButton = new javax.swing.JButton();
         addSectionButton = new javax.swing.JButton();
@@ -75,6 +90,10 @@ public class MainFrame extends javax.swing.JFrame {
         topViewButton = new javax.swing.JButton();
         frontViewButton = new javax.swing.JButton();
         rightViewButton = new javax.swing.JButton();
+        jInternalFrame5 = new javax.swing.JInternalFrame();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        helpTextArea = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -100,11 +119,11 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 440, Short.MAX_VALUE)
+            .addGap(0, 434, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 255, Short.MAX_VALUE)
+            .addGap(0, 261, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout view3DIFrameLayout = new javax.swing.GroupLayout(view3DIFrame.getContentPane());
@@ -135,17 +154,22 @@ public class MainFrame extends javax.swing.JFrame {
             }
         ));
         modelPropertiesTable.setName("modelPropertiesTable"); // NOI18N
+        modelPropertiesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                modelPropertiesTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(modelPropertiesTable);
 
         javax.swing.GroupLayout jInternalFrame3Layout = new javax.swing.GroupLayout(jInternalFrame3.getContentPane());
         jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
         jInternalFrame3Layout.setHorizontalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
         );
         jInternalFrame3Layout.setVerticalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
         );
 
         jInternalFrame3.setBounds(0, 0, 780, 80);
@@ -255,7 +279,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jInternalFrame2Layout.setVerticalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
         );
 
         jInternalFrame2.setBounds(0, 80, 250, 268);
@@ -297,7 +321,7 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(frontViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(topViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(rightViewButton))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jInternalFrame1Layout.setVerticalGroup(
             jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -307,11 +331,50 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(frontViewButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rightViewButton)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
 
         jInternalFrame1.setBounds(250, 140, 80, 290);
         jDesktopPane1.add(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        jInternalFrame5.setName("jInternalFrame5"); // NOI18N
+        jInternalFrame5.setVisible(true);
+
+        jPanel2.setName("jPanel2"); // NOI18N
+
+        jScrollPane3.setName("jScrollPane3"); // NOI18N
+
+        helpTextArea.setColumns(20);
+        helpTextArea.setLineWrap(true);
+        helpTextArea.setRows(5);
+        helpTextArea.setText(resourceMap.getString("helpTextArea.text")); // NOI18N
+        helpTextArea.setName("helpTextArea"); // NOI18N
+        jScrollPane3.setViewportView(helpTextArea);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jInternalFrame5Layout = new javax.swing.GroupLayout(jInternalFrame5.getContentPane());
+        jInternalFrame5.getContentPane().setLayout(jInternalFrame5Layout);
+        jInternalFrame5Layout.setHorizontalGroup(
+            jInternalFrame5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jInternalFrame5Layout.setVerticalGroup(
+            jInternalFrame5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jInternalFrame5.setBounds(780, 0, 420, 430);
+        jDesktopPane1.add(jInternalFrame5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
 
@@ -388,7 +451,7 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1201, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -508,6 +571,12 @@ public class MainFrame extends javax.swing.JFrame {
         deleteTreeNodeAndObject(parentTreeNode, deleteTreeNode);
 }//GEN-LAST:event_deleteButtonActionPerformed
 
+    private void modelPropertiesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modelPropertiesTableMouseClicked
+        int col = modelPropertiesTable.columnAtPoint(evt.getPoint());
+        String[] helpTexts = ((AVLTableModel)modelPropertiesTable.getModel()).getColumnsHelp();
+        helpTextArea.setText(helpTexts[col]);
+    }//GEN-LAST:event_modelPropertiesTableMouseClicked
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addControlButton;
@@ -521,19 +590,23 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem fileExportAsCRRsimMenuItem;
     private javax.swing.JMenuItem fileOpenMenuItem;
     private javax.swing.JButton frontViewButton;
+    private javax.swing.JTextArea helpTextArea;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JInternalFrame jInternalFrame1;
     private javax.swing.JInternalFrame jInternalFrame2;
     private javax.swing.JInternalFrame jInternalFrame3;
     private javax.swing.JInternalFrame jInternalFrame4;
+    private javax.swing.JInternalFrame jInternalFrame5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     public javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable modelPropertiesTable;
+    private javax.swing.JScrollPane jScrollPane3;
+    private com.abajar.crrcsimeditor.ui.TableView modelPropertiesTable;
     private javax.swing.JButton rightViewButton;
     private javax.swing.JButton topViewButton;
     private javax.swing.JInternalFrame view3DIFrame;
@@ -641,5 +714,5 @@ public class MainFrame extends javax.swing.JFrame {
             ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
         }
 
-    }
+    }    
 }
