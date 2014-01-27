@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
+import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
@@ -179,6 +180,13 @@ public class CRRCsimEditor extends SingleFrameApplication {
         return mass;
     }
 
+    Body createBodyFor(AVLGeometry aVLGeometry) {
+        Body body = new Body();
+        body.setName("new body");
+        aVLGeometry.getBodies().add(body);
+        return body;
+    }
+
 
     public void exportAsAVL(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
@@ -302,6 +310,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
     private void updateEnabledEditExportAsCRRCsimMenuItem() {
         this.frame.getFileExportAsCRRsimMenuItem().setEnabled(this.configuration.getProperty("avl.path")!=null);
     }
+
 
 
 }

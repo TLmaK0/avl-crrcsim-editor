@@ -36,6 +36,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
+import javax.swing.tree.MutableTreeNode;
 
 /**
  *
@@ -44,7 +45,8 @@ import static java.util.EnumSet.of;
 public class MainFrame extends javax.swing.JFrame {
 
     private CRRCsimEditor controller;
-    
+    private JFileChooser fc = new JFileChooser();
+        
     /** Creates new form MainFrame */
     public MainFrame(CRRCsimEditor controller) {
         this.controller = controller;
@@ -59,6 +61,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
 
         });
+        
     }
 
 
@@ -83,6 +86,7 @@ public class MainFrame extends javax.swing.JFrame {
         addControlButton = new javax.swing.JButton();
         addMassButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
+        addBodyButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         avlTree = new javax.swing.JTree();
@@ -119,7 +123,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 434, Short.MAX_VALUE)
+            .addGap(0, 454, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -137,7 +141,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        view3DIFrame.setBounds(330, 140, 450, 290);
+        view3DIFrame.setBounds(330, 140, 470, 290);
         jDesktopPane1.add(view3DIFrame, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame3.setName("jInternalFrame3"); // NOI18N
@@ -165,14 +169,14 @@ public class MainFrame extends javax.swing.JFrame {
         jInternalFrame3.getContentPane().setLayout(jInternalFrame3Layout);
         jInternalFrame3Layout.setHorizontalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 764, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
         );
         jInternalFrame3Layout.setVerticalGroup(
             jInternalFrame3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
         );
 
-        jInternalFrame3.setBounds(0, 0, 780, 80);
+        jInternalFrame3.setBounds(0, 0, 800, 80);
         jDesktopPane1.add(jInternalFrame3, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame4.setName("jInternalFrame4"); // NOI18N
@@ -224,6 +228,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addBodyButton.setText(resourceMap.getString("addBodyButton.text")); // NOI18N
+        addBodyButton.setEnabled(false);
+        addBodyButton.setName("addBodyButton"); // NOI18N
+        addBodyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBodyButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
@@ -235,10 +248,12 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(addControlButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addMassButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addMassButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addBodyButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteButton)
-                .addGap(205, 205, 205))
+                .addContainerGap())
         );
         jInternalFrame4Layout.setVerticalGroup(
             jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,11 +263,12 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(addSectionButton)
                     .addComponent(addControlButton)
                     .addComponent(addMassButton)
-                    .addComponent(deleteButton))
+                    .addComponent(deleteButton)
+                    .addComponent(addBodyButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jInternalFrame4.setBounds(250, 80, 530, 60);
+        jInternalFrame4.setBounds(250, 80, 550, 60);
         jDesktopPane1.add(jInternalFrame4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame2.setName("jInternalFrame2"); // NOI18N
@@ -355,7 +371,7 @@ public class MainFrame extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -373,7 +389,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jInternalFrame5.setBounds(780, 0, 420, 430);
+        jInternalFrame5.setBounds(800, 0, 400, 430);
         jDesktopPane1.add(jInternalFrame5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
@@ -479,7 +495,6 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     public File showSaveDialog(String extensionDescription, String extension){
-        JFileChooser fc = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
         fc.setFileFilter(filter);
 
@@ -537,6 +552,7 @@ public class MainFrame extends javax.swing.JFrame {
         addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
         addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
         addMassButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_MASS));
+        addBodyButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_BODY));
         deleteButton.setEnabled(options.contains(ENABLE_BUTTONS.DELETE));
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
@@ -577,8 +593,15 @@ public class MainFrame extends javax.swing.JFrame {
         helpTextArea.setText(helpTexts[col]);
     }//GEN-LAST:event_modelPropertiesTableMouseClicked
 
+    private void addBodyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBodyButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Body newBody = this.controller.createBodyFor((AVLGeometry)treeNode.getUserObject()) ;
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createBodyTreeNode(newBody), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addBodyButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addBodyButton;
     private javax.swing.JButton addControlButton;
     private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
@@ -630,7 +653,7 @@ public class MainFrame extends javax.swing.JFrame {
         AVL avl = this.controller.avl;
 
         SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
-        SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS));
+        SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.ADD_BODY));
 
         for(Surface surf : avl.getGeometry().getSurfaces()){
             SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
@@ -648,7 +671,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
         for(Body body : avl.getGeometry().getBodies()){
-            SelectorMutableTreeNode bodyNode = createSelectorMutableTreeNode(body, of(ENABLE_BUTTONS.NONE));
+            SelectorMutableTreeNode bodyNode = createBodyTreeNode(body);
             geometryNode.add(bodyNode);
         }
 
@@ -693,6 +716,11 @@ public class MainFrame extends javax.swing.JFrame {
         return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
     }
 
+
+    private SelectorMutableTreeNode createBodyTreeNode(Body newBody) {
+        return createSelectorMutableTreeNode(newBody, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+    }
+
     private SelectorMutableTreeNode createControlTreeNode(Control control) {
         return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
     }
@@ -714,5 +742,6 @@ public class MainFrame extends javax.swing.JFrame {
             ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
         }
 
-    }    
+    }
+
 }

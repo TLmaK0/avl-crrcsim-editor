@@ -34,18 +34,18 @@
 
                              alpha                beta
                   ----------------    ----------------
- z' force CL |    CLa =   2.761431    CLb =   0.000000
+ z' force CL |    CLa =   1.574623    CLb =   0.000000
  y  force CY |    CYa =   0.000000    CYb =   0.000000
  x' mom.  Cl'|    Cla =   0.000000    Clb =   0.000000
- y  mom.  Cm |    Cma =  -0.683935    Cmb =   0.000000
+ y  mom.  Cm |    Cma =  -0.339705    Cmb =   0.000000
  z' mom.  Cn'|    Cna =   0.000000    Cnb =   0.000000
 
                      roll rate  p'      pitch rate  q'        yaw rate  r'
                   ----------------    ----------------    ----------------
- z' force CL |    CLp =   0.000000    CLq =   5.279872    CLr =   0.000000
+ z' force CL |    CLp =   0.000000    CLq =   3.043578    CLr =   0.000000
  y  force CY |    CYp =   0.000000    CYq =   0.000000    CYr =   0.000000
- x' mom.  Cl'|    Clp =  -0.210830    Clq =   0.000000    Clr =   0.000000
- y  mom.  Cm |    Cmp =   0.000000    Cmq =  -2.764571    Cmr =   0.000000
+ x' mom.  Cl'|    Clp =  -0.486783    Clq =   0.000000    Clr =   0.000000
+ y  mom.  Cm |    Cmp =   0.000000    Cmq =  -1.651911    Cmr =   0.000000
  z' mom.  Cn'|    Cnp =   0.000000    Cnq =   0.000000    Cnr =   0.000000
 
- Neutral point  Xnp =   0.069349
+ Neutral point  Xnp =   0.060407

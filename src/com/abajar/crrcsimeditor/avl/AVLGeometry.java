@@ -114,12 +114,16 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         for(Surface surf : this.getSurfaces()){
             surf.writeAVLData(out);
         }
+
+        for(Body body : this.getBodies()){
+            body.writeAVLData(out);
+        }
     }
 
     @Override
     public void writeAVLMassData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
-        ps.print("Lunit = 0.0254 m\n" +
+        ps.print("Lunit = 0.01 m\n" +
                     "Munit = 0.001 kg\n" +
                     "Tunit = 1.0 s\n" +
                     "g   = 9.81\n" +
