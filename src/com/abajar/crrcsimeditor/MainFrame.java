@@ -37,6 +37,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
 import javax.swing.tree.MutableTreeNode;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -740,6 +741,10 @@ public class MainFrame extends javax.swing.JFrame {
             ((Surface)parentTreeNode.getUserObject()).getSections().remove((Section)deleteTreeNode.getUserObject());
         }else if(deleteTreeNode.getUserObject().getClass().equals(Control.class)){
             ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
+        }else if (deleteTreeNode.getUserObject().getClass().equals(Body.class)){
+            ((AVLGeometry)parentTreeNode.getUserObject()).getBodies().remove((Body)deleteTreeNode.getUserObject());
+        }else{
+            throw new NotImplementedException();
         }
 
     }

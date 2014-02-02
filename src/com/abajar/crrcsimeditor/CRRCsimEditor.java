@@ -71,7 +71,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             @Override
             public void run(){
                 try {
-                        configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file");
+                    configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file");
                 } catch (Exception ex) {
                     Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
                 }
