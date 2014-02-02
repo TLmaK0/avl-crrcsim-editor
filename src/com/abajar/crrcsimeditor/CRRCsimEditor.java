@@ -50,7 +50,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
     AVL avl;
     MainFrame frame;
 
-    static final String CONFIGURATION_ROOT = ".crrcsimeditor";
+    static final String CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor";
     static final String CONFIGURATION_PATH = CONFIGURATION_ROOT + "/configuration.xml";
     Properties configuration;
 
@@ -66,6 +66,17 @@ public class CRRCsimEditor extends SingleFrameApplication {
             //Config file doesn't exists
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.INFO, "Config file doesn't exists");
         }
+
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            @Override
+            public void run(){
+                try {
+                        configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file");
+                } catch (Exception ex) {
+                    Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
 
     
@@ -270,16 +281,17 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String fileNameTmp =  tmpBaseName + ".avl";
             String fileNameTmpMass =  tmpBaseName + ".mass";
 
-            File avlExportedFile = new File(CONFIGURATION_ROOT + "/" + fileNameTmp);
+            String workingFolder = file.getParent();
+            File avlExportedFile = new File(workingFolder + "/" + fileNameTmp);
             avlExportedFile.delete();
 
-            File massExportedFile = new File(CONFIGURATION_ROOT + "/" + fileNameTmpMass);
+            File massExportedFile = new File(workingFolder + "/" + fileNameTmpMass);
             massExportedFile.delete();
 
 
             this.exportAsAVL(avlExportedFile);
 
-            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), CONFIGURATION_ROOT, fileNameTmp);
+            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), workingFolder, fileNameTmp);
             AvlCalculation calculation = avlRunner.getCalculation();
 
             //TODO: Select correct elevator, rudder, aileron

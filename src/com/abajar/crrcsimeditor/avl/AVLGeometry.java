@@ -101,14 +101,14 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
-        ps.printf("%1$s\n", this.getName());
-        ps.printf("#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
-        ps.printf("#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), this.getiZsym(), this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf("#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
-        ps.printf("#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXref(), this.getYref(), this.getZref());          //0.1   0.0   0.0     | Xref   Yref   Zref
+        ps.printf(locale, "%1$s\n", this.getName());
+        ps.printf(locale, "#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
+        ps.printf(locale, "#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), this.getiZsym(), this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
+        ps.printf(locale, "#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf(locale, "#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXref(), this.getYref(), this.getZref());          //0.1   0.0   0.0     | Xref   Yref   Zref
         
         if(this.CDp != 0){
-            ps.printf("#CDp\n%1$-19.4g\n", this.CDp);                                                         //0.020               | CDp  (optional)
+            ps.printf(locale, "#CDp\n%1$-19.4g\n", this.CDp);                                                         //0.020               | CDp  (optional)
         }
         
         for(Surface surf : this.getSurfaces()){
@@ -128,7 +128,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
                     "Tunit = 1.0 s\n" +
                     "g   = 9.81\n" +
                     "rho = 1.225\n");
-        ps.print("#x       y        z        Ixx      Iyy      Izz      [Ixy Ixz Iyz]\n");
+        ps.print("#mass     x       y        z        Ixx      Iyy      Izz\n");
         super.writeAVLMassData(out);
     }
 
@@ -153,7 +153,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     public static String formatFloat(int numberOfValues, int startValue){
         String format ="";
         for(int n=startValue; n < startValue + numberOfValues; n++){
-            format += "%" + n + "$-8.2g ";
+            format += "%" + n + "$-8.1f ";
         }
         return format;
     }

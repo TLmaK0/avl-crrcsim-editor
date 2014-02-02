@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.mass;
 
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.OutputStream;
@@ -17,15 +18,16 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  */
 @XmlRootElement
 public class Mass {
+    protected static final Locale locale = new Locale("en");
     private String name;
+    private float mass;
     private float x;
     private float y;
     private float z;
-    private float Ixx;
-    private float Iyy;
-    private float Izz;
-    private float Ixz;
-
+    private float xLength;
+    private float yLength;
+    private float zLength;
+    
     /**
      * @return the name
      */
@@ -47,9 +49,9 @@ public class Mass {
 
     public void writeAVLMassData(OutputStream out){
         PrintStream ps = new PrintStream(out);
-        ps.printf(formatFloat(7)  + "     ! %8$s\n",
-                this.getX(), this.getY(), this.getZ(),
-                this.getIxx(), this.getIyy(), this.getIzz(), this.getIxz(),
+        ps.printf(locale, formatFloat(7)  + "     ! %8$s\n",
+                this.getMass(), this.getX(), this.getY(), this.getZ(),
+                this.getIxx(), this.getIyy(),this.getIzz(),
                 this.getName());
     }
 
@@ -99,55 +101,76 @@ public class Mass {
      * @return the Ixx
      */
     public float getIxx() {
-        return Ixx;
-    }
-
-    /**
-     * @param Ixx the Ixx to set
-     */
-    public void setIxx(float Ixx) {
-        this.Ixx = Ixx;
+        return getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getzLength(), 2)) / 12;
     }
 
     /**
      * @return the Iyy
      */
     public float getIyy() {
-        return Iyy;
-    }
-
-    /**
-     * @param Iyy the Iyy to set
-     */
-    public void setIyy(float Iyy) {
-        this.Iyy = Iyy;
+        return getMass() * (float) (Math.pow(getxLength(), 2) + Math.pow(getzLength(), 2)) / 12;
     }
 
     /**
      * @return the Izz
      */
     public float getIzz() {
-        return Izz;
+        return getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getxLength(), 2)) / 12;
     }
 
     /**
-     * @param Izz the Izz to set
+     * @return the mass
      */
-    public void setIzz(float Izz) {
-        this.Izz = Izz;
+    public float getMass() {
+        return mass;
     }
 
     /**
-     * @return the Ixz
+     * @param mass the mass to set
      */
-    public float getIxz() {
-        return Ixz;
+    public void setMass(float mass) {
+        this.mass = mass;
     }
 
     /**
-     * @param Ixz the Ixz to set
+     * @return the xLength
      */
-    public void setIxz(float Ixz) {
-        this.Ixz = Ixz;
+    public float getxLength() {
+        return xLength;
+    }
+
+    /**
+     * @param xLength the xLength to set
+     */
+    public void setxLength(float xLength) {
+        this.xLength = xLength;
+    }
+
+    /**
+     * @return the yLength
+     */
+    public float getyLength() {
+        return yLength;
+    }
+
+    /**
+     * @param yLength the yLength to set
+     */
+    public void setyLength(float yLength) {
+        this.yLength = yLength;
+    }
+
+    /**
+     * @return the zLength
+     */
+    public float getzLength() {
+        return zLength;
+    }
+
+    /**
+     * @param zLength the zLength to set
+     */
+    public void setzLength(float zLength) {
+        this.zLength = zLength;
     }
 }

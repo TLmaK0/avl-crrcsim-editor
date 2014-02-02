@@ -184,12 +184,12 @@ public class Section  extends MassObject implements AVLSerializable{
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("SECTION\n");                      //        SECTION                             |  (keyword)
-        ps.printf("#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5), this.getXle(),
+        ps.printf(locale, "#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace\n" + formatFloat(5), this.getXle(),
                 this.getYle(), this.getZle(),
                 this.getChord(), this.getAinc());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
 
         if (this.getNspan() != 0){
-            ps.printf(formatInteger(1,6) + formatFloat(1,7), this.getNspan(), this.getSspace());
+            ps.printf(locale, formatInteger(1,6) + formatFloat(1,7), this.getNspan(), this.getSspace());
         }
         ps.print("\n");
 

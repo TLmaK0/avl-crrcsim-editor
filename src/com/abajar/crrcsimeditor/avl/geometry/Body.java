@@ -99,19 +99,19 @@ public class Body extends MassObject implements AVLSerializable  {
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("BODY\n");                     
-        ps.printf("%1$s\n", this.getName());    
+        ps.printf(locale, "%1$s\n", this.getName());    
 
-        ps.printf("#Nbody  Bspace\n" + formatInteger(1) + formatFloat(1,2),
+        ps.printf(locale, "#Nbody  Bspace\n" + formatInteger(1) + formatFloat(1,2),
                 this.getNbody(), this.getBspace());
 
         ps.print("\n");
 
         ps.print("YDUPLICATE\n");               
-        ps.printf(formatFloat(1) + "\n", this.getYdupl());
+        ps.printf(locale, formatFloat(1) + "\n", this.getYdupl());
 
         if (this.getdX() != 0 ||  this.getdY() != 0 || this.getdZ() != 0){
             ps.print("TRANSLATE\n");                      
-            ps.printf("#dX  dY  dZ\n" + formatFloat(3) + "\n",
+            ps.printf(locale, "#dX  dY  dZ\n" + formatFloat(3) + "\n",
                     this.getdX(), this.getdY(), this.getdZ());
         }
 

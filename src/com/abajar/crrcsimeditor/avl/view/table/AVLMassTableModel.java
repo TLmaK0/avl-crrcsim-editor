@@ -23,26 +23,26 @@ public class AVLMassTableModel extends AVLTableModel {
     @Override
     protected void updateAVL(TableModel tableModel) {
         this.mass.setName((String)tableModel.getValueAt(0, 0));
-        this.mass.setX((Float)tableModel.getValueAt(0, 1));
-        this.mass.setY((Float)tableModel.getValueAt(0, 2));
-        this.mass.setZ((Float)tableModel.getValueAt(0, 3));
-        this.mass.setIxx((Float)tableModel.getValueAt(0,4));
-        this.mass.setIyy((Float)tableModel.getValueAt(0,5));
-        this.mass.setIzz((Float)tableModel.getValueAt(0,6));
-        this.mass.setIxz((Float)tableModel.getValueAt(0,7));
+        this.mass.setMass((Float)tableModel.getValueAt(0, 1));
+        this.mass.setX((Float)tableModel.getValueAt(0, 2));
+        this.mass.setY((Float)tableModel.getValueAt(0, 3));
+        this.mass.setZ((Float)tableModel.getValueAt(0, 4));
+        this.mass.setxLength((Float)tableModel.getValueAt(0,5));
+        this.mass.setyLength((Float)tableModel.getValueAt(0,6));
+        this.mass.setzLength((Float)tableModel.getValueAt(0,7));
     }
 
     @Override
     protected Object[][] getData() {
         return new Object[][]{{
           this.mass.getName(),
+          this.mass.getMass(),
           this.mass.getX(),
           this.mass.getY(),
           this.mass.getZ(),
-          this.mass.getIxx(),
-          this.mass.getIyy(),
-          this.mass.getIzz(),
-          this.mass.getIxz()
+          this.mass.getxLength(),
+          this.mass.getyLength(),
+          this.mass.getzLength(),
         }};
     }
 
@@ -56,12 +56,28 @@ public class AVLMassTableModel extends AVLTableModel {
     @Override
     protected Object[] getColumns() {
         return new Object[]{
-            "name", "x", "y", "z","xx","yy","zz","xz"
+            "name", "mass", "x gravity center", "y gravityc center", "z gravity center", "x length", "y length", "z length"
         };
     }
 
     @Override
     public String[] getColumnsHelp() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new String[]{
+            "name. Mass objects must have absolute position.",
+            
+            "weight",
+
+            "x location of item's own CG",
+            
+            "y location of item's own CG",
+
+            "z location of item's own CG",
+            
+            "object longitude over the x axis",
+            
+            "object longitude over the y axis",
+            
+            "object longitude over the z axis",
+        };
     }
 }

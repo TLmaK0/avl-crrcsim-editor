@@ -8,6 +8,7 @@ package com.abajar.crrcsimeditor.avl.mass;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -17,6 +18,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author hfreire
  */
 public class MassObject {
+    protected static final Locale locale = Mass.locale;
+
     private final ArrayList<Mass> masses = new ArrayList<Mass>();
 
     /**

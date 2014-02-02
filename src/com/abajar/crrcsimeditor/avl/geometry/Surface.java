@@ -144,29 +144,29 @@ public class Surface extends MassObject implements AVLSerializable {
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
-        ps.printf("%1$s\n", this.getName());                                        //Main Wing            | surface name string
+        ps.printf(locale, "%1$s\n", this.getName());                                        //Main Wing            | surface name string
         
-        ps.printf("#Nchord  Cspace   [Nspan   Sspace]\n" + formatInteger(1) + formatFloat(1,2),
+        ps.printf(locale, "#Nchord  Cspace   [Nspan   Sspace]\n" + formatInteger(1) + formatFloat(1,2),
                 this.getNchord(), this.getCspace());
 
         if (this.getNspan() != 0){
-            ps.printf( formatInteger(1) + formatFloat(1,2),
+            ps.printf(locale,  formatInteger(1) + formatFloat(1,2),
                     this.getNspan(), this.getSspace());                                 //12   1.0  20  -1.5   | Nchord  Cspace   [ Nspan Sspace ]
         }
         ps.print("\n");
 
         ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
-        ps.printf(formatFloat(1) + "\n", this.getYdupl());          //0.0             | Ydupl
+        ps.printf(locale, formatFloat(1) + "\n", this.getYdupl());          //0.0             | Ydupl
 
         if (this.getdX() != 0 ||  this.getdY() != 0 || this.getdZ() != 0){
             ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
-            ps.printf("#dX  dY  dZ\n" + formatFloat(3) + "\n",
+            ps.printf(locale, "#dX  dY  dZ\n" + formatFloat(3) + "\n",
                     this.getdX(), this.getdY(), this.getdZ());              //10.0  0.0  0.5    | dX  dY  dZ
         }
         
         if (this.getdAinc() != 0){
             ps.print("ANGLE\n");                                         //ANGLE       |  (keyword)
-            ps.printf("#dAinc\n" + formatFloat(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
+            ps.printf(locale, "#dAinc\n" + formatFloat(1) + "\n", this.getdAinc());                                                     //2.0         | dAinc
         }
 
         for(Section sect : this.getSections()){

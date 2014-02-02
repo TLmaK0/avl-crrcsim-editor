@@ -1,6 +1,0 @@
-Lunit = 0.0254 m
-Munit = 0.001 kg
-Tunit = 1.0 s
-g   = 9.81
-rho = 1.225
-#x       y        z        Ixx      Iyy      Izz      [Ixy Ixz Iyz]

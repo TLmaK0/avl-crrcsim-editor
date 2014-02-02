@@ -709,20 +709,20 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private SelectorMutableTreeNode createSectionTreeNode(Section section) {
-        return createSelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+        return createSelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE));
     }
 
     private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
-        return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+        return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.DELETE));
     }
 
 
     private SelectorMutableTreeNode createBodyTreeNode(Body newBody) {
-        return createSelectorMutableTreeNode(newBody, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+        return createSelectorMutableTreeNode(newBody, of(ENABLE_BUTTONS.DELETE));
     }
 
     private SelectorMutableTreeNode createControlTreeNode(Control control) {
-        return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.DELETE));
+        return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.DELETE));
     }
 
     private SelectorMutableTreeNode createMassTreeNode(Mass mass) {
