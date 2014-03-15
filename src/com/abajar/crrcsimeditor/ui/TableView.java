@@ -5,10 +5,15 @@
 
 package com.abajar.crrcsimeditor.ui;
 
+import java.awt.Component;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.util.ArrayList;
+import java.util.EventObject;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.TableCellEditor;
+import javax.swing.text.JTextComponent;
 
 /**
  *
@@ -16,6 +21,14 @@ import javax.swing.JTable;
  */
 public class TableView extends JTable{
     private ArrayList<ChangeSelectionListener> changeSelectionListeners = new ArrayList<ChangeSelectionListener>();
+
+    public TableView() {
+         setDefaultEditor(Integer.class, new CellEditorInteger(new JTextField()));
+         setDefaultEditor(String.class, new CellEditorString(new JTextField()));
+         setDefaultEditor(Float.class, new CellEditorFloat(new JTextField()));
+    }
+
+
 
     @Override
     public void changeSelection(int rowIndex, int columnIndex, boolean toggle, boolean extend) {
@@ -32,5 +45,4 @@ public class TableView extends JTable{
             changeSelectionListener.notify(rowIndex, columnIndex);
         }
     }
-
 }

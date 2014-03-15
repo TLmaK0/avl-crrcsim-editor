@@ -150,7 +150,7 @@ public class AvlRunner {
                 logger.log(Level.FINE, "[AVL out]{0}", line);
             }
 
-        //brCleanUp.close();
+        brCleanUp.close();
     }
 
     private Float readFloat(String pattern, Scanner scanner){

@@ -50,8 +50,8 @@ public class AvlRunnerTest {
     @Test
     public void testCalculate() throws Exception {
         System.out.println("calculate");
-        String fileCrrTest="../sample/plane.crr";
-        String fileTest = "test.avl";
+        String fileCrrTest="./sample/asond/asond.crr";
+        String fileTest = "./sample/asond/asondGenerated.avl";
         File file = new File(fileTest);
         AVL avl = new AVL();
         FileInputStream fis = new FileInputStream(fileCrrTest);
@@ -70,8 +70,8 @@ public class AvlRunnerTest {
         avl.getGeometry().writeAVLMassData(fos);
         fos.close();
 
-        AvlRunner instance = new AvlRunner("C://Programs//simulation//aviation//avl//bin/avl",".","test.avl");
-        AvlCalculation runCase = instance.getCalculation();
+        AvlRunner instance = new AvlRunner("avl","sample/asond","asond.avl");
+        AvlCalculation runCase = instance.getCalculation(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
         assertTrue(runCase.getConfiguration().getBref() != 0);
         assertTrue(runCase.getConfiguration().getSref() != 0);
         assertTrue(runCase.getConfiguration().getCref() != 0);
@@ -84,24 +84,24 @@ public class AvlRunnerTest {
         assertTrue(runCase.getStabilityDerivatives().getCma() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCmq() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCLa() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCmd()[1] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCmd()[avl.getElevatorPosition()] != 0);
         assertTrue(runCase.getStabilityDerivatives().getCLq() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCLd()[1] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCLd()[avl.getElevatorPosition()] != 0);
         assertTrue(runCase.getStabilityDerivatives().getCYb() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCYp() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCYr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYd()[0] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYd()[2] == 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYd()[avl.getRudderPosition()] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCYd()[avl.getAileronPosition()] == 0);
         assertTrue(runCase.getStabilityDerivatives().getClb() != 0);
         assertTrue(runCase.getStabilityDerivatives().getClp() != 0);
         assertTrue(runCase.getStabilityDerivatives().getClr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCld()[0] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCld()[2] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCld()[avl.getRudderPosition()] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCld()[avl.getAileronPosition()] != 0);
         assertTrue(runCase.getStabilityDerivatives().getCnb() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCnp() != 0);
         assertTrue(runCase.getStabilityDerivatives().getCnr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnd()[0] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnd()[2] == 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnd()[avl.getRudderPosition()] != 0);
+        assertTrue(runCase.getStabilityDerivatives().getCnd()[avl.getAileronPosition()] == 0);
 
 
     }
