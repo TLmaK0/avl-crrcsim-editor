@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import java.io.BufferedReader;
@@ -27,9 +28,9 @@ public class AvlRunner {
         InputStream stderr;
         InputStream stdout;
         Process process;
-        String avlPath;
-        String avlFileName;
-        String executionPath;
+        final String avlPath;
+        final String avlFileName;
+        final String executionPath;
         final float VELOCITY = 30; // 30m/s
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
 
@@ -124,6 +125,7 @@ public class AvlRunner {
     private void sendCommand(String command) throws IOException{
         stdin.write(command.getBytes());
         stdin.flush();
+        System.out.println("Sending command: " + command);
     }
 
     private void flush() throws IOException{

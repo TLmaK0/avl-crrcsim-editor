@@ -295,7 +295,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             AvlCalculation calculation = avlRunner.getCalculation();
 
             //TODO: Select correct elevator, rudder, aileron
-            Aero aero = new Aero(calculation, 1, 2, 0);
+            Aero aero = new Aero(calculation, this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
 
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(Aero.class);
@@ -303,7 +303,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             m.marshal(aero, fos);
             fos.close();
-        } catch (JAXBException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

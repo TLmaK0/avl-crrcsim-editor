@@ -17,6 +17,10 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
  * @author hfreire
  */
 public class Control extends MassObject implements AVLSerializable {
+    public static final int AILERON = 0;
+    public static final int ELEVATOR = 1;
+    public static final int RUDDER = 2;
+
     private String name;
     private float gain;
     private float Xhinge;
@@ -24,6 +28,7 @@ public class Control extends MassObject implements AVLSerializable {
     private float Yhvec;
     private float Zhvec;
     private float SgnDup;
+    private int type;
 
     /**
      * @return the name
@@ -85,7 +90,7 @@ public class Control extends MassObject implements AVLSerializable {
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("CONTROL\n");                                                          //        CONTROL                              | (keyword)
-        ps.printf(locale, "#name, gain,  Xhinge,  XYZhvec,  SgnDup\n%1$s " + formatFloat(6, 2)  + "\n",
+        ps.printf(locale, "#name,     gain,    Xhinge,  XYZhvec, SgnDup\n%1$-10s " + formatFloat(6, 2)  + "\n",
                 this.getName(), this.getGain(), this.getXhinge(),
                 this.getXhvec(), this.getYhvec(),
                 this.getZhvec(), this.getSgnDup()) ;                                                                   //elevator  1.0  0.6   0. 1. 0.   1.0  | name, gain,  Xhinge,  XYZhvec,  SgnDup
@@ -136,6 +141,20 @@ public class Control extends MassObject implements AVLSerializable {
      */
     public void setZhvec(float Zhvec) {
         this.Zhvec = Zhvec;
+    }
+
+    /**
+     * @return the type
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(int type) {
+        this.type = type;
     }
 
 

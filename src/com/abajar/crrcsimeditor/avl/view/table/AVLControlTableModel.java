@@ -28,6 +28,7 @@ class AVLControlTableModel extends AVLTableModel{
         this.control.setYhvec(((Float)tableModel.getValueAt(0, 4)));
         this.control.setZhvec(((Float)tableModel.getValueAt(0, 5)));
         this.control.setSgnDup((Float)tableModel.getValueAt(0, 6));
+        this.control.setType((Integer)tableModel.getValueAt(0, 7));
     }
 
     @Override
@@ -39,7 +40,8 @@ class AVLControlTableModel extends AVLTableModel{
             this.control.getXhvec(),
             this.control.getYhvec(),
             this.control.getZhvec(),
-            this.control.getSgnDup()
+            this.control.getSgnDup(),
+            this.control.getType()
         }};
     }
 
@@ -47,12 +49,13 @@ class AVLControlTableModel extends AVLTableModel{
     public Class<?> getColumnClass(int i) {
         Class result = Float.class;
         if (i == 0) result = String.class;
+        else if (i == 7) result = Integer.class;
         return result;
     }
 
     @Override
     protected Object[] getColumns() {
-       return new Object[]{"name", "gain",  "Xhinge",  "Xhvec",  "Yhvec",  "Zhvec", "SgnDup"};
+       return new Object[]{"name", "gain",  "Xhinge",  "Xhvec",  "Yhvec",  "Zhvec", "SgnDup", "type of control"};
     }
 
     @Override
@@ -83,8 +86,13 @@ class AVLControlTableModel extends AVLTableModel{
 
             "sign of deflection for duplicated surface" + LINE_SEPARATOR
             + "An elevator would have SgnDup = +1" + LINE_SEPARATOR
-            + "An aileron  would have SgnDup = -1"}
-        ;
+            + "An aileron  would have SgnDup = -1",
+            
+            "type of control:" + LINE_SEPARATOR
+            + "0 -> aileron" + LINE_SEPARATOR
+            + "1 -> elevator" + LINE_SEPARATOR
+            + "2 -> rudder"
+        };
     }
 
 }

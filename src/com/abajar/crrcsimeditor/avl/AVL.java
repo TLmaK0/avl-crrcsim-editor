@@ -28,6 +28,18 @@ public class AVL implements Serializable{
         this.geometry = geometry;
     }
 
+    public int getAileronPosition() throws Exception{
+        return this.geometry.getAileronPosition();
+    }
+
+    public int getElevatorPosition() throws Exception{
+        return this.geometry.getElevatorPosition();
+    }
+
+    public int getRudderPosition() throws Exception{
+        return this.geometry.getRudderPosition();
+    }
+
     @Override
     public String toString() {
         return "AVL";

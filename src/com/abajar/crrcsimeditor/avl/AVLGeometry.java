@@ -8,6 +8,8 @@ package com.abajar.crrcsimeditor.avl;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
+import com.abajar.crrcsimeditor.avl.geometry.Control;
+import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -16,6 +18,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.omg.CosNaming.NamingContextPackage.NotFoundReason;
 
 /**
  *
@@ -103,8 +107,8 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         ps.print("#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ \n");
         ps.printf(locale, "%1$s\n", this.getName());
         ps.printf(locale, "#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
-        ps.printf(locale, "#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), this.getiZsym(), this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf(locale, "#Sref    Cref     Bref\n" + formatFloat(3) + "\n", this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf(locale, "#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), (int)this.getiZsym(), (int)this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
+        ps.printf(locale, "#Sref    Cref     Bref\n" + formatFloat(3) + "\n", (int)this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
         ps.printf(locale, "#Xref    Yref      Zref\n" + formatFloat(3) + "\n", this.getXref(), this.getYref(), this.getZref());          //0.1   0.0   0.0     | Xref   Yref   Zref
         
         if(this.CDp != 0){
@@ -153,7 +157,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     public static String formatFloat(int numberOfValues, int startValue){
         String format ="";
         for(int n=startValue; n < startValue + numberOfValues; n++){
-            format += "%" + n + "$-8.1f ";
+            format += "%" + n + "$-9s";
         }
         return format;
     }
@@ -298,5 +302,30 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         this.Zref = Zref;
     }
 
+    int getAileronPosition() throws Exception {
+        return getControlPosition(Control.AILERON, "Aileron");
+    }
 
+    int getElevatorPosition() throws Exception {
+        return getControlPosition(Control.ELEVATOR, "Elevator");
+    }
+
+    int getRudderPosition() throws Exception {
+        return getControlPosition(Control.RUDDER, "Rudder");
+    }
+
+    private int getControlPosition(int controlType, String controlName) throws Exception{
+        ArrayList<Integer> controls = new ArrayList<Integer>();
+        for(Surface surface: this.getSurfaces()){
+            for(Section section: surface.getSections()){
+                for(Control control: section.getControls()){
+                    if (!controls.contains(control.getType())){
+                        if (control.getType() == controlType) return controls.size();
+                        controls.add(control.getType());
+                    }
+                }
+            }
+        }
+        throw new Exception(controlName + " not found");
+    }
 }

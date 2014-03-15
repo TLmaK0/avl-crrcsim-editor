@@ -143,6 +143,7 @@ public class Surface extends MassObject implements AVLSerializable {
     @Override
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
+        ps.print("\n#=======================================\n");                             //        SURFACE              | (keyword)
         ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
         ps.printf(locale, "%1$s\n", this.getName());                                        //Main Wing            | surface name string
         
