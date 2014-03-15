@@ -8,6 +8,7 @@ package com.abajar.crrcsimeditor.avl.connectivity;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
+import com.abajar.crrcsimeditor.avl.runcase.StabilityDerivatives;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,12 +48,19 @@ public class AvlRunner {
         stdout = process.getInputStream ();
     }
 
-    public AvlCalculation getCalculation() throws IOException, InterruptedException{
+    public AvlCalculation getCalculation(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
         sendCommand("oper\n");
+        
+        //setting pitch moment 0
+        if (elevatorPosition != -1) sendCommand("d" + elevatorPosition + " pm 0");
+        
+        //setting velocity
         sendCommand("c1\n");
         sendCommand("v\n");
         sendCommand(VELOCITY + "\n\n");        //setting velocity
         sendCommand("s\n\n");
+
+        //execute run case
         sendCommand("x\n");
 
         String resultFile = this.avlFileName.replace(".avl", ".st");
@@ -71,51 +79,58 @@ public class AvlRunner {
         Scanner scanner = new Scanner(fis);
 
         AvlCalculation runCase = new AvlCalculation();
-        runCase.getConfiguration().setVelocity(VELOCITY);
+        Configuration config = runCase.getConfiguration();
 
-        runCase.getConfiguration().setSref(readFloat("Sref =", scanner));
-        runCase.getConfiguration().setCref(readFloat("Cref =", scanner));
-        runCase.getConfiguration().setBref(readFloat("Bref =", scanner));
+        config.setVelocity(VELOCITY);
 
-        runCase.getConfiguration().setAlpha(readFloat("Alpha =", scanner));
+        config.setSref(readFloat("Sref =", scanner));
+        config.setCref(readFloat("Cref =", scanner));
+        config.setBref(readFloat("Bref =", scanner));
 
-        runCase.getConfiguration().setCmtot(readFloat("Cmtot =", scanner));
-        runCase.getConfiguration().setCLtot(readFloat("CLtot =", scanner));
-        runCase.getConfiguration().setCDvis(readFloat("CDvis =", scanner));
+        config.setAlpha(readFloat("Alpha =", scanner));
 
-        runCase.getStabilityDerivatives().setCLa(readFloat("CLa = ", scanner));
-        runCase.getStabilityDerivatives().setCYb(readFloat("CYb = ", scanner));
-        runCase.getStabilityDerivatives().setClb(readFloat("Clb = ", scanner));
-        runCase.getStabilityDerivatives().setCma(readFloat("Cma = ", scanner));
-        runCase.getStabilityDerivatives().setCnb(readFloat("Cnb = ", scanner));
-        runCase.getStabilityDerivatives().setCLq(readFloat("CLq = ", scanner));
-        runCase.getStabilityDerivatives().setCYp(readFloat("CYp = ", scanner));
-        runCase.getStabilityDerivatives().setCYr(readFloat("CYr = ", scanner));
-        runCase.getStabilityDerivatives().setClp(readFloat("Clp = ", scanner));
-        runCase.getStabilityDerivatives().setClr(readFloat("Clr = ", scanner));
-        runCase.getStabilityDerivatives().setCmq(readFloat("Cmq = ", scanner));
-        runCase.getStabilityDerivatives().setCnp(readFloat("Cnp = ", scanner));
-        runCase.getStabilityDerivatives().setCnr(readFloat("Cnr = ", scanner));
+        config.setCmtot(readFloat("Cmtot =", scanner));
+        config.setCLtot(readFloat("CLtot =", scanner));
+        config.setCDvis(readFloat("CDvis =", scanner));
 
-        runCase.getStabilityDerivatives().getCLd()[0] = readFloat("CLd1 =", scanner);
-        runCase.getStabilityDerivatives().getCLd()[1] = readFloat("CLd2 =", scanner);
-        runCase.getStabilityDerivatives().getCLd()[2] = readFloat("CLd3 =", scanner);
+        StabilityDerivatives std = runCase.getStabilityDerivatives();
+        std.setCLa(readFloat("CLa = ", scanner));
+        std.setCYb(readFloat("CYb = ", scanner));
+        std.setClb(readFloat("Clb = ", scanner));
+        std.setCma(readFloat("Cma = ", scanner));
+        std.setCnb(readFloat("Cnb = ", scanner));
+        std.setCLq(readFloat("CLq = ", scanner));
+        std.setCYp(readFloat("CYp = ", scanner));
+        std.setCYr(readFloat("CYr = ", scanner));
+        std.setClp(readFloat("Clp = ", scanner));
+        std.setClr(readFloat("Clr = ", scanner));
+        std.setCmq(readFloat("Cmq = ", scanner));
+        std.setCnp(readFloat("Cnp = ", scanner));
+        std.setCnr(readFloat("Cnr = ", scanner));
 
-        runCase.getStabilityDerivatives().getCYd()[0] = readFloat("CYd1 =", scanner);
-        runCase.getStabilityDerivatives().getCYd()[1] = readFloat("CYd2 =", scanner);
-        runCase.getStabilityDerivatives().getCYd()[2] = readFloat("CYd3 =", scanner);
+        boolean check1 = (elevatorPosition == 1 || rudderPosition == 1 || aileronPosition == 1);
+        boolean check2 = (elevatorPosition == 2 || rudderPosition == 2 || aileronPosition == 2);
+        boolean check3 = (elevatorPosition == 3 || rudderPosition == 3 || aileronPosition == 3);
+        
+        if (check1) std.getCLd()[0] = readFloat("CLd1 =", scanner);
+        if (check2) std.getCLd()[1] = readFloat("CLd2 =", scanner);
+        if (check3) std.getCLd()[2] = readFloat("CLd3 =", scanner);
 
-        runCase.getStabilityDerivatives().getCld()[0] = readFloat("Cld1 =", scanner);
-        runCase.getStabilityDerivatives().getCld()[1] = readFloat("Cld2 =", scanner);
-        runCase.getStabilityDerivatives().getCld()[2] = readFloat("Cld3 =", scanner);
+        if (check1) std.getCYd()[0] = readFloat("CYd1 =", scanner);
+        if (check2) std.getCYd()[1] = readFloat("CYd2 =", scanner);
+        if (check3) std.getCYd()[2] = readFloat("CYd3 =", scanner);
 
-        runCase.getStabilityDerivatives().getCmd()[0] = readFloat("Cmd1 =", scanner);
-        runCase.getStabilityDerivatives().getCmd()[1] = readFloat("Cmd2 =", scanner);
-        runCase.getStabilityDerivatives().getCmd()[2] = readFloat("Cmd3 =", scanner);
+        if (check1) std.getCld()[0] = readFloat("Cld1 =", scanner);
+        if (check2) std.getCld()[1] = readFloat("Cld2 =", scanner);
+        if (check3) std.getCld()[2] = readFloat("Cld3 =", scanner);
 
-        runCase.getStabilityDerivatives().getCnd()[0] = readFloat("Cnd1 =", scanner);
-        runCase.getStabilityDerivatives().getCnd()[1] = readFloat("Cnd2 =", scanner);
-        runCase.getStabilityDerivatives().getCnd()[2] = readFloat("Cnd3 =", scanner);
+        if (check1) std.getCmd()[0] = readFloat("Cmd1 =", scanner);
+        if (check2) std.getCmd()[1] = readFloat("Cmd2 =", scanner);
+        if (check3) std.getCmd()[2] = readFloat("Cmd3 =", scanner);
+
+        if (check1) std.getCnd()[0] = readFloat("Cnd1 =", scanner);
+        if (check2) std.getCnd()[1] = readFloat("Cnd2 =", scanner);
+        if (check3) std.getCnd()[2] = readFloat("Cnd3 =", scanner);
 
         scanner.close();
         return runCase;
@@ -125,15 +140,14 @@ public class AvlRunner {
     private void sendCommand(String command) throws IOException{
         stdin.write(command.getBytes());
         stdin.flush();
-        System.out.println("Sending command: " + command);
+        logger.log(Level.FINE, "Sending command: {0}", command);
     }
 
     private void flush() throws IOException{
         String line;
          BufferedReader brCleanUp =  new BufferedReader (new InputStreamReader (stdout));
             while ((line = brCleanUp.readLine ()) != null) {
-                //logger.log(Level.INFO, "[AVL out] {0}", line);
-                System.out.println("[AVL out]" + line);
+                logger.log(Level.FINE, "[AVL out]{0}", line);
             }
 
         //brCleanUp.close();
@@ -141,11 +155,11 @@ public class AvlRunner {
 
     private Float readFloat(String pattern, Scanner scanner){
         scanner.findWithinHorizon(pattern, 0);
-        logger.log(Level.INFO, "Search: {0}", pattern);
+        logger.log(Level.FINE, "Search: {0}", pattern);
         String value = scanner.next();
-        logger.log(Level.INFO, "Found: {0}", value);
+        logger.log(Level.FINE, "Found: {0}", value);
         Float realValue = Float.parseFloat(value);
-        logger.log(Level.INFO, "Float: {0}", realValue);
+        logger.log(Level.FINE, "Float: {0}", realValue);
         return realValue;
     }
 }

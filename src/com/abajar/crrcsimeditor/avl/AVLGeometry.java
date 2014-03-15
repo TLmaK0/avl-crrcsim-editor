@@ -326,6 +326,6 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
                 }
             }
         }
-        throw new Exception(controlName + " not found");
+        return -1;
     }
 }

@@ -45,6 +45,7 @@ import org.jdesktop.application.SingleFrameApplication;
  * The main class of the application.
  */
 public class CRRCsimEditor extends SingleFrameApplication {
+    static Logger logger = Logger.getLogger(CRRCsimEditor.class.getName());
 
     SimpleUniverse univ;
     AVL avl;
@@ -64,7 +65,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH));
         } catch (IOException ex) {
             //Config file doesn't exists
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.INFO, "Config file doesn't exists");
+            logger.log(Level.INFO, "Config file doesn't exists");
         }
 
         Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -73,7 +74,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
                 try {
                     configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file");
                 } catch (Exception ex) {
-                    Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+                    logger.log(Level.FINE, null, ex);
                 }
             }
         });
@@ -114,7 +115,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
             updateEnabledEditExportAsCRRCsimMenuItem();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -239,11 +240,11 @@ public class CRRCsimEditor extends SingleFrameApplication {
                 this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)", "crr"));
                 this.frame.updateAVLTree();
         } catch (JAXBException ex) {
-                Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+                logger.log(Level.FINE, null, ex);
         }catch (IOException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -251,9 +252,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
         try {
             this.saveAs(this.frame.showSaveDialog("CRRCsim editor file (*.crr)", "crr"));
         }catch (JAXBException ex) {
-             Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+             logger.log(Level.FINE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -261,7 +262,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         try {
             this.exportAsAVL(this.frame.showSaveDialog("AVL file (*.avl)","avl"));
         } catch (IOException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -269,9 +270,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
         try {
             this.exportAsCRRCsim(this.frame.showSaveDialog("CRRCsim file (*.xml)", "xml"));
         } catch (InterruptedException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -292,7 +293,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             this.exportAsAVL(avlExportedFile);
 
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), workingFolder, fileNameTmp);
-            AvlCalculation calculation = avlRunner.getCalculation();
+            AvlCalculation calculation = avlRunner.getCalculation(this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
 
             //TODO: Select correct elevator, rudder, aileron
             Aero aero = new Aero(calculation, this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
@@ -304,7 +305,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.marshal(aero, fos);
             fos.close();
         } catch (Exception ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
@@ -315,7 +316,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         try {
             this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null);
         } catch (IOException ex) {
-            Logger.getLogger(CRRCsimEditor.class.getName()).log(Level.SEVERE, null, ex);
+            logger.log(Level.FINE, null, ex);
         }
     }
 
