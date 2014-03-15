@@ -31,9 +31,4 @@ public abstract class CellEditor extends DefaultCellEditor{
         }
         return editorComponent;
     }
-
-    @Override
-    public Object getCellEditorValue() {
-        return super.getCellEditorValue();
-    }
 }

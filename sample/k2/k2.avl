@@ -1,0 +1,59 @@
+#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ 
+Jose's Custom K2 3M SAILPLANE
+#Mach
+0.000              
+#iYsym   iZsym    Zsym
+0        0        0        
+#Sref    Cref     Bref
+1000     8.0      125.0    
+#Xref    Yref      Zref
+3.75     0.0      0.0      
+
+#=======================================
+SURFACE
+Wing
+#Nchord  Cspace   [Nspan   Sspace]
+5        1.0      
+YDUPLICATE
+0.0      
+ANGLE
+#dAinc
+1.0      
+
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+0.0      0.0      0.0      7.625    0.0      7        7        
+AFILE0.0      0.8026   
+mh32.dat
+
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+0.25     24.0     1.25     7.375    0.0      9        9        
+AFILE0.0      0.797    
+mh32.dat
+
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+2.75     50.0     4.106    5.18     0.0      5        5        
+AFILE0.0      0.7142   
+mh32.dat
+
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+4.25     56.0     4.7728   3.75     0.0      5        5        
+AFILE0.0      0.7142   
+mh32.dat
+
+SECTION
+#Xle     Yle      Zle      Chord    Ainc     Nspan    Sspace
+5.75     62.0     5.4248   2.8568   0.0      
+AFILE0.0      0.7142   
+mh32.dat
+
+#=======================================
+SURFACE
+Aileron
+#Nchord  Cspace   [Nspan   Sspace]
+4        1.0      
+YDUPLICATE
+0.0      

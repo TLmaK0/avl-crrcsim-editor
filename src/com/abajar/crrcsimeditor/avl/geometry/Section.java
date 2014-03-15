@@ -21,7 +21,6 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 public class Section  extends MassObject implements AVLSerializable{
 
     //TODO: AIRFOIL
-    //TODO: AFILE
     //TODO: DESIGN
 
     private float Xle;
@@ -31,6 +30,8 @@ public class Section  extends MassObject implements AVLSerializable{
     private float Ainc;
     private int Nspan;
     private float Sspace;
+    private float X1;
+    private float X2;
     private String NACA="";
     private String AFILE="";
     private final ArrayList<Control> controls = new ArrayList<Control>();
@@ -189,7 +190,7 @@ public class Section  extends MassObject implements AVLSerializable{
                 this.getChord(), this.getAinc());     //0.0 5.0 0.2   0.50  1.50   5 -2.0   | Xle Yle Zle   Chord Ainc   [ Nspan Sspace ]
 
         if (this.getNspan() != 0){
-            ps.printf(locale, formatInteger(1,6) + formatFloat(1,7), this.getNspan(), this.getSspace());
+            ps.printf(locale, formatInteger(1) + formatFloat(1), this.getNspan(), this.getSspace());
         }
         ps.print("\n");
 
@@ -198,12 +199,42 @@ public class Section  extends MassObject implements AVLSerializable{
             ps.println("NACA");
             ps.println(this.getNACA());            //4300                      | section NACA camberline
         }else{
-            ps.println("AFILE");
+            ps.print("AFILE");
+            if (this.getX1()!=0 || this.getX2()!=0) ps.printf(locale, " " + formatFloat(2), this.getX1(), this.getX2());
+            ps.println();
             ps.println(this.getAFILE());
         }
 
         for(Control control : this.getControls()){
             control.writeAVLData(out);
         }
+    }
+
+    /**
+     * @return the x
+     */
+    public float getX1() {
+        return X1;
+    }
+
+    /**
+     * @param x the x to set
+     */
+    public void setX1(float x) {
+        this.X1 = x;
+    }
+
+    /**
+     * @return the y
+     */
+    public float getX2() {
+        return X2;
+    }
+
+    /**
+     * @param y the y to set
+     */
+    public void setX2(float y) {
+        this.X2 = y;
     }
 }
