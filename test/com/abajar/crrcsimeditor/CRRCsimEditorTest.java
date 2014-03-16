@@ -5,8 +5,6 @@
 
 package com.abajar.crrcsimeditor;
 
-import java.nio.file.Path;
-import java.nio.file.Files;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +35,12 @@ public class CRRCsimEditorTest {
 
     @Before
     public void setUp() throws IOException {
-        Files.deleteIfExists(file.toPath());
+        if (file.exists()) file.delete();
     }
 
     @After
     public void tearDown() throws IOException {
-        Files.deleteIfExists(file.toPath());
+        if (file.exists()) file.delete();
     }
 
     @Test

@@ -12,7 +12,6 @@ import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import javax.swing.table.TableModel;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  *
@@ -31,7 +30,7 @@ public class AVLModelTableFactory{
         if (aClass.equals(Control.class)) tableModel=new AVLControlTableModel((Control)userObject).getInitializedTable();
         if (aClass.equals(Mass.class)) tableModel=new AVLMassTableModel((Mass)userObject).getInitializedTable();
         if (aClass.equals(Body.class)) tableModel=new AVLBodyTableModel((Body)userObject).getInitializedTable();
-        if (tableModel == null) throw new NotImplementedException();
+        if (tableModel == null) throw new IllegalArgumentException();
         return tableModel;
     }
 

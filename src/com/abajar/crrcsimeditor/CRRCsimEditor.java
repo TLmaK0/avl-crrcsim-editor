@@ -18,7 +18,6 @@ import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
-import com.sun.javaws.Main;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
