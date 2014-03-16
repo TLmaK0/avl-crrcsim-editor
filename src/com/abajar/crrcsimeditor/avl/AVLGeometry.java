@@ -14,6 +14,8 @@ import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -30,6 +32,8 @@ import org.omg.CosNaming.NamingContextPackage.NotFoundReason;
     MassObject.class
 })
 public class AVLGeometry extends MassObject implements AVLSerializable{
+    final static Logger logger = Logger.getLogger(AVLGeometry.class.getName());
+
     private String name = "Geometry";
     private float Mach;
 
@@ -303,24 +307,27 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     }
 
     int getAileronPosition() throws Exception {
-        return getControlPosition(Control.AILERON, "Aileron");
+        return getControlPosition(Control.AILERON);
     }
 
     int getElevatorPosition() throws Exception {
-        return getControlPosition(Control.ELEVATOR, "Elevator");
+        return getControlPosition(Control.ELEVATOR);
     }
 
     int getRudderPosition() throws Exception {
-        return getControlPosition(Control.RUDDER, "Rudder");
+        return getControlPosition(Control.RUDDER);
     }
 
-    private int getControlPosition(int controlType, String controlName) throws Exception{
+    private int getControlPosition(int controlType) throws Exception{
         ArrayList<Integer> controls = new ArrayList<Integer>();
         for(Surface surface: this.getSurfaces()){
             for(Section section: surface.getSections()){
                 for(Control control: section.getControls()){
                     if (!controls.contains(control.getType())){
-                        if (control.getType() == controlType) return controls.size();
+                        if (control.getType() == controlType) {
+                            logger.log(Level.FINE, "Control {0} found at {1}", new Object[]{controlType, controls.size()});
+                            return controls.size();
+                        }
                         controls.add(control.getType());
                     }
                 }

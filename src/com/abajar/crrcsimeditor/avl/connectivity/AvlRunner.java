@@ -50,7 +50,8 @@ public class AvlRunner {
 
     public AvlCalculation getCalculation(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
         sendCommand("oper\n");
-        
+        sendCommand("g\n");
+
         //setting pitch moment 0
         if (elevatorPosition != -1) sendCommand("d" + elevatorPosition + " pm 0");
         
@@ -108,9 +109,9 @@ public class AvlRunner {
         std.setCnp(readFloat("Cnp = ", scanner));
         std.setCnr(readFloat("Cnr = ", scanner));
 
-        boolean check1 = (elevatorPosition == 1 || rudderPosition == 1 || aileronPosition == 1);
-        boolean check2 = (elevatorPosition == 2 || rudderPosition == 2 || aileronPosition == 2);
-        boolean check3 = (elevatorPosition == 3 || rudderPosition == 3 || aileronPosition == 3);
+        boolean check1 = (elevatorPosition == 0 || rudderPosition == 0 || aileronPosition == 0);
+        boolean check2 = (elevatorPosition == 1 || rudderPosition == 1 || aileronPosition == 1);
+        boolean check3 = (elevatorPosition == 2 || rudderPosition == 2 || aileronPosition == 2);
         
         if (check1) std.getCLd()[0] = readFloat("CLd1 =", scanner);
         if (check2) std.getCLd()[1] = readFloat("CLd2 =", scanner);
@@ -155,11 +156,9 @@ public class AvlRunner {
 
     private Float readFloat(String pattern, Scanner scanner){
         scanner.findWithinHorizon(pattern, 0);
-        logger.log(Level.FINE, "Search: {0}", pattern);
         String value = scanner.next();
-        logger.log(Level.FINE, "Found: {0}", value);
         Float realValue = Float.parseFloat(value);
-        logger.log(Level.FINE, "Float: {0}", realValue);
+        logger.log(Level.FINE, "{0} {1}", new Object[]{pattern, realValue});
         return realValue;
     }
 }

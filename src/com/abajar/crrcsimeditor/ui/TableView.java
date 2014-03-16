@@ -26,6 +26,9 @@ public class TableView extends JTable{
          setDefaultEditor(Integer.class, new CellEditorInteger(new JTextField()));
          setDefaultEditor(String.class, new CellEditorString(new JTextField()));
          setDefaultEditor(Float.class, new CellEditorFloat(new JTextField()));
+
+         setDefaultRenderer(Float.class, new CellRenderFloat());
+
     }
 
 

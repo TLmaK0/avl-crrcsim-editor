@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor;
 
+import java.nio.file.Path;
+import java.nio.file.Files;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +23,7 @@ import static org.junit.Assert.*;
  * @author hfreire
  */
 public class CRRCsimEditorTest {
-
+    final File file = new File("test.crr");
     public CRRCsimEditorTest() {
     }
 
@@ -34,11 +36,13 @@ public class CRRCsimEditorTest {
     }
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException {
+        Files.deleteIfExists(file.toPath());
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws IOException {
+        Files.deleteIfExists(file.toPath());
     }
 
     @Test
@@ -47,9 +51,8 @@ public class CRRCsimEditorTest {
 
         CRRCsimEditor instance = new CRRCsimEditor();
         instance.avl.getGeometry().getMasses().add(new Mass());
-        instance.saveAs(new File("test.crr"));
-        instance.open(new File("test.crr"));
-
+        instance.saveAs(this.file);
+        instance.open(this.file);
         assertEquals(instance.avl.getGeometry().getMasses().size(), 1);
     }
 

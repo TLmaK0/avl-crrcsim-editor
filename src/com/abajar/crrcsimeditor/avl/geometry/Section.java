@@ -198,7 +198,7 @@ public class Section  extends MassObject implements AVLSerializable{
             //NACA                      |    (keyword)
             ps.println("NACA");
             ps.println(this.getNACA());            //4300                      | section NACA camberline
-        }else{
+        }else if (!this.getAFILE().equals("")){
             ps.print("AFILE");
             if (this.getX1()!=0 || this.getX2()!=0) ps.printf(locale, " " + formatFloat(2), this.getX1(), this.getX2());
             ps.println();

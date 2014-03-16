@@ -18,14 +18,18 @@ import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.sun.javaws.Main;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
@@ -45,7 +49,7 @@ import org.jdesktop.application.SingleFrameApplication;
  * The main class of the application.
  */
 public class CRRCsimEditor extends SingleFrameApplication {
-    static Logger logger = Logger.getLogger(CRRCsimEditor.class.getName());
+    static final Logger logger = Logger.getLogger(CRRCsimEditor.class.getName());
 
     SimpleUniverse univ;
     AVL avl;
@@ -161,7 +165,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
     /**
      * Main method launching the application.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        LogManager.getLogManager().readConfiguration();
         launch(CRRCsimEditor.class, args);
     }
 

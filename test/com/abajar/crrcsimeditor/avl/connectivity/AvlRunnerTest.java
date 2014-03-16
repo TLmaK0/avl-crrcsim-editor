@@ -5,9 +5,11 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
+import com.abajar.crrcsimeditor.avl.runcase.StabilityDerivatives;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -50,8 +52,8 @@ public class AvlRunnerTest {
     @Test
     public void testCalculate() throws Exception {
         System.out.println("calculate");
-        String fileCrrTest="./sample/asond/asond.crr";
-        String fileTest = "./sample/asond/asondGenerated.avl";
+        String fileCrrTest="./sample/aerosonde/aerosonde.crr";
+        String fileTest = "./sample/aerosonde/aerosonde.avl";
         File file = new File(fileTest);
         AVL avl = new AVL();
         FileInputStream fis = new FileInputStream(fileCrrTest);
@@ -70,38 +72,46 @@ public class AvlRunnerTest {
         avl.getGeometry().writeAVLMassData(fos);
         fos.close();
 
-        AvlRunner instance = new AvlRunner("avl","sample/asond","asond.avl");
-        AvlCalculation runCase = instance.getCalculation(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
-        assertTrue(runCase.getConfiguration().getBref() != 0);
-        assertTrue(runCase.getConfiguration().getSref() != 0);
-        assertTrue(runCase.getConfiguration().getCref() != 0);
-        assertTrue(runCase.getConfiguration().getVelocity() != 0);
-        assertTrue(runCase.getConfiguration().getAlpha() != 0);
-        assertTrue(runCase.getConfiguration().getCmtot() != 0);
-        assertTrue(runCase.getConfiguration().getCLtot() != 0);
-        assertTrue(runCase.getConfiguration().getCDvis() == 0);
+        AvlRunner instance = new AvlRunner("avl","sample/aerosonde","aerosonde.avl");
+
+        int elevatorPosition = avl.getElevatorPosition();
+        int aileronPosition = avl.getRudderPosition();
+        int rudderPosition = avl.getAileronPosition();
         
-        assertTrue(runCase.getStabilityDerivatives().getCma() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCmq() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCLa() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCmd()[avl.getElevatorPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCLq() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCLd()[avl.getElevatorPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYb() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYp() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYd()[avl.getRudderPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCYd()[avl.getAileronPosition()] == 0);
-        assertTrue(runCase.getStabilityDerivatives().getClb() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getClp() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getClr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCld()[avl.getRudderPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCld()[avl.getAileronPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnb() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnp() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnr() != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnd()[avl.getRudderPosition()] != 0);
-        assertTrue(runCase.getStabilityDerivatives().getCnd()[avl.getAileronPosition()] == 0);
+        AvlCalculation runCase = instance.getCalculation(elevatorPosition, rudderPosition, aileronPosition);
+        Configuration config = runCase.getConfiguration();
+        StabilityDerivatives std = runCase.getStabilityDerivatives();
+        
+        assertTrue(config.getBref() != 0);
+        assertTrue(config.getSref() != 0);
+        assertTrue(config.getCref() != 0);
+        assertTrue(config.getVelocity() != 0);
+        assertTrue(config.getAlpha() == 0);
+        assertTrue(config.getCmtot() != 0);
+        assertTrue(config.getCLtot() != 0);
+        assertTrue(config.getCDvis() == 0);
+        
+        assertTrue(std.getCma() != 0);
+        assertTrue(std.getCmq() != 0);
+        assertTrue(std.getCLa() != 0);
+        assertTrue(std.getCmd()[elevatorPosition] != 0);
+        assertTrue(std.getCLq() != 0);
+        assertTrue(std.getCLd()[elevatorPosition] != 0);
+        assertTrue(std.getCYb() != 0);
+        assertTrue(std.getCYp() != 0);
+        assertTrue(std.getCYr() != 0);
+        assertTrue(std.getCYd()[rudderPosition] != 0);
+        assertTrue(std.getCYd()[aileronPosition] != 0);
+        assertTrue(std.getClb() != 0);
+        assertTrue(std.getClp() != 0);
+        assertTrue(std.getClr() != 0);
+        assertTrue(std.getCld()[rudderPosition] != 0);
+        assertTrue(std.getCld()[aileronPosition] != 0);
+        assertTrue(std.getCnb() != 0);
+        assertTrue(std.getCnp() != 0);
+        assertTrue(std.getCnr() != 0);
+        assertTrue(std.getCnd()[rudderPosition] != 0);
+        assertTrue(std.getCnd()[aileronPosition] != 0);
 
 
     }
