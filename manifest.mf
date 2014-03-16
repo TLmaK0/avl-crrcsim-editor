@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: . ./lib
-X-COMMENT: Main-Class will be added automatically by build
-
