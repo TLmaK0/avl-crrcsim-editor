@@ -90,7 +90,7 @@ public class Control extends MassObject implements AVLSerializable {
     public void writeAVLData(OutputStream out) {
         PrintStream ps = new PrintStream(out);
         ps.print("CONTROL\n");                                                          //        CONTROL                              | (keyword)
-        ps.printf(locale, "#name,     gain,    Xhinge,  XYZhvec, SgnDup\n%1$-10s " + formatFloat(6, 2)  + "\n",
+        ps.printf(locale, "#name,     gain,     Xhinge,   XYZhvec,  SgnDup\n%1$-10s " + formatFloat(6, 2)  + "\n",
                 this.getName(), this.getGain(), this.getXhinge(),
                 this.getXhvec(), this.getYhvec(),
                 this.getZhvec(), this.getSgnDup()) ;                                                                   //elevator  1.0  0.6   0. 1. 0.   1.0  | name, gain,  Xhinge,  XYZhvec,  SgnDup

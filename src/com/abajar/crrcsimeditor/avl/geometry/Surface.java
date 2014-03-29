@@ -147,7 +147,7 @@ public class Surface extends MassObject implements AVLSerializable {
         ps.print("SURFACE\n");                             //        SURFACE              | (keyword)
         ps.printf(locale, "%1$s\n", this.getName());                                        //Main Wing            | surface name string
         
-        ps.printf(locale, "#Nchord  Cspace   [Nspan   Sspace]\n" + formatInteger(1) + formatFloat(1,2),
+        ps.printf(locale, "#Nchord  Cspace    [Nspan    Sspace]\n" + formatInteger(1) + formatFloat(1,2),
                 this.getNchord(), this.getCspace());
 
         if (this.getNspan() != 0){
@@ -161,7 +161,7 @@ public class Surface extends MassObject implements AVLSerializable {
 
         if (this.getdX() != 0 ||  this.getdY() != 0 || this.getdZ() != 0){
             ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
-            ps.printf(locale, "#dX  dY  dZ\n" + formatFloat(3) + "\n",
+            ps.printf(locale, "#dX       dY       dZ\n" + formatFloat(3) + "\n",
                     this.getdX(), this.getdY(), this.getdZ());              //10.0  0.0  0.5    | dX  dY  dZ
         }
         

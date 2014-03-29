@@ -49,8 +49,14 @@ public class AvlRunner {
     }
 
     public AvlCalculation getCalculation(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
+        String resultFile = this.avlFileName.replace(".avl", ".st");
+        new File(this.executionPath + "/" + resultFile).delete();
+
+        String runFile = this.avlFileName.replace(".avl", ".run");
+        new File(this.executionPath + "/" + runFile).delete();
+
         sendCommand("oper\n");
-        sendCommand("g\n");
+        sendCommand("g\n\n");
 
         //setting pitch moment 0
         if (elevatorPosition != -1) sendCommand("d" + elevatorPosition + " pm 0");
@@ -63,12 +69,6 @@ public class AvlRunner {
 
         //execute run case
         sendCommand("x\n");
-
-        String resultFile = this.avlFileName.replace(".avl", ".st");
-        new File(this.executionPath + "/" + resultFile).delete();
-
-        String runFile = this.avlFileName.replace(".avl", ".run");
-        new File(this.executionPath + "/" + runFile).delete();
 
         sendCommand("st\n");
         sendCommand(resultFile + "\n");
