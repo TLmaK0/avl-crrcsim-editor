@@ -59,7 +59,7 @@ public class AvlRunner {
         sendCommand("g\n\n");
 
         //setting pitch moment 0
-        if (elevatorPosition != -1) sendCommand("d" + elevatorPosition + " pm 0");
+        if (elevatorPosition != -1) sendCommand("d" + (elevatorPosition + 1) + " pm 0\n");
         
         //setting velocity
         sendCommand("c1\n");

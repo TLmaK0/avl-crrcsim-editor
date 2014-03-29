@@ -325,8 +325,9 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
                 for(Control control: section.getControls()){
                     if (!controls.contains(control.getType())){
                         if (control.getType() == controlType) {
-                            logger.log(Level.FINE, "Control {0} found at {1}", new Object[]{controlType, controls.size()});
-                            return controls.size();
+                            int position = controls.size();
+                            logger.log(Level.FINE, "Control {0} found at {1}", new Object[]{controlType, position});
+                            return position;
                         }
                         controls.add(control.getType());
                     }

@@ -45,7 +45,6 @@ import javax.swing.tree.MutableTreeNode;
 public class MainFrame extends javax.swing.JFrame {
 
     private CRRCsimEditor controller;
-    private JFileChooser fc = new JFileChooser();
         
     /** Creates new form MainFrame */
     public MainFrame(CRRCsimEditor controller) {
@@ -481,8 +480,8 @@ public class MainFrame extends javax.swing.JFrame {
         controller.exportAsAVL();
     }//GEN-LAST:event_fileExportAsAVLMenuItemActionPerformed
 
-    public File showOpenDialog(String extensionDescription, String...extension){
-        JFileChooser fc = new JFileChooser();
+    public File showOpenDialog(String path, String extensionDescription, String...extension){
+        JFileChooser fc = new JFileChooser(path);
         
         if (extension.length>0){
             FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
@@ -494,10 +493,11 @@ public class MainFrame extends javax.swing.JFrame {
         return file;
     }
 
-    public File showSaveDialog(String extensionDescription, String extension){
+    public File showSaveDialog(String path, String extensionDescription, String extension){
+        JFileChooser fc = new JFileChooser(path);
+
         FileNameExtensionFilter filter = new FileNameExtensionFilter(extensionDescription, extension);
         fc.setFileFilter(filter);
-
         fc.showSaveDialog(this);
 
         File file = fc.getSelectedFile();

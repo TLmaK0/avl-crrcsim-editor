@@ -58,8 +58,13 @@ public class Aero {
         ref.setArea(config.getSref());
         ref.setSpeed(config.getVelocity());
 
-        misc.setAlpha_0(config.getAlpha());
-        //TODO: eta_loc, CG_arm, span_eff
+        misc.setAlpha_0((float)(config.getAlpha() * Math.PI / 180));
+
+        misc.setEta_loc(0.3f); //eta_loc for stall model http://en.wikipedia.org/wiki/Pseudorapidity
+        misc.setCG_arm(0.25f); //The typical value CG_arm = 0.25 means that the point of application of the averaged dCL is 0.25*chord ahead of the CG.
+        misc.setSpan_eff(0.95f); //span efficiency: Effective span, 0.95 for most planes, 0.85 flying wing.
+
+        //TODO: eta_loc, CG_arm, span_eff add to editor
 
         pitchMoment.setCm_0(config.getCmtot());
         pitchMoment.setCm_a(std.getCma());
@@ -67,17 +72,26 @@ public class Aero {
         if (elevatorPosition != -1) pitchMoment.setCm_de(std.getCmd()[elevatorPosition]);
 
         lift.setCL_0(config.getCLtot());
-        //TODO: CL_max, CL_min
+
+        //TODO: CL_max, CL_min add to editor
+        lift.setCL_max(1.1f);
+        lift.setCL_min(-0.6f);
+
         lift.setCL_a(std.getCLa());
-        lift.setCL_q(std.getCLq());   //TODO: check CL_q to CLq instead of Clq
+        lift.setCL_q(std.getCLq()); 
         if (elevatorPosition != -1) lift.setCL_de(std.getCld()[elevatorPosition]);
-        lift.setCL_drop(0);     //TODO: check CL_drop parameter
-        lift.setCL_CD0(0);      //TODO: check CL_CD0 parameter
+        lift.setCL_drop(0.1f);     //CL drop during stall break //TODO: CL_drop add to editor
+        lift.setCL_CD0(0);      //CL at minimum profile //TODO: CL_CD0 add to editor
         lift.setCL_0(config.getCLtot());
 
         drag.setCD_prof(config.getCDvis());
-        //TODO: Uexp_CD, CD_stall, CD_CLsq, CD_AIsq, CD_ELsq
 
+        drag.setUexp_CD(0.5f); //CD Re-scaling exponent //TODO: Uexp_CD add to editor
+        drag.setCD_stall(0.5f); //drag coeff. during stalling //TODO: CD_stall add to editor
+        drag.setCD_CLsq(0.01f); //d(CD)/d(CL^2), curvature of parabolic profile polar: 0.01 composites, 0.015 saggy ships, 0.02 beat up ship //TODO: CD_CLsq add to editor
+        drag.setCD_AIsq(0.01f); //drag due to aileron deflection //TODO: CD_AIsq add to editor
+        drag.setCD_ELsq(0f); //drag due to elevon deflection //TODO: CD_ELsq add to editor
+        
         sideForce.setCY_b(std.getCYb());
         sideForce.setCY_p(std.getCYp());
         sideForce.setCY_r(std.getCYr());

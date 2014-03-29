@@ -241,7 +241,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void openFile() {
         try {
-                this.open(this.frame.showOpenDialog("CRRCsim editor file (*.crr)", "crr"));
+                String path = this.configuration.getProperty("crrcsim.save", "~/");
+                File file = this.frame.showOpenDialog(path, "CRRCsim editor file (*.crr)", "crr");
+                this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
+                this.open(file);
                 this.frame.updateAVLTree();
         } catch (JAXBException ex) {
                 logger.log(Level.FINE, null, ex);
@@ -254,7 +257,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void saveFile() {
         try {
-            this.saveAs(this.frame.showSaveDialog("CRRCsim editor file (*.crr)", "crr"));
+            String path = this.configuration.getProperty("crrcsim.save", "~/");
+            File file = this.frame.showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr");
+            this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
+            this.saveAs(file);
         }catch (JAXBException ex) {
              logger.log(Level.FINE, null, ex);
         } catch (IOException ex) {
@@ -264,7 +270,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void exportAsAVL() {
         try {
-            this.exportAsAVL(this.frame.showSaveDialog("AVL file (*.avl)","avl"));
+            String path = this.configuration.getProperty("crrcsim.save", "~/");
+            File file = this.frame.showSaveDialog(path, "AVL file (*.avl)","avl");
+            this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
+            this.exportAsAVL(file);
         } catch (IOException ex) {
             logger.log(Level.FINE, null, ex);
         }
@@ -272,7 +281,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     void exportAsCRRCsim() {
         try {
-            this.exportAsCRRCsim(this.frame.showSaveDialog("CRRCsim file (*.xml)", "xml"));
+            String path = this.configuration.getProperty("crrcsim.save", "~/");
+            File file = this.frame.showSaveDialog(path, "CRRCsim file (*.xml)", "xml");
+            this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
+            this.exportAsCRRCsim(file);
         } catch (InterruptedException ex) {
             logger.log(Level.FINE, null, ex);
         } catch (IOException ex) {
@@ -295,7 +307,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
 
             this.exportAsAVL(avlExportedFile);
-
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), workingFolder, fileNameTmp);
             AvlCalculation calculation = avlRunner.getCalculation(this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
 
@@ -314,7 +325,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
     }
 
     void setAvlExecutable() {
-        File file = this.frame.showOpenDialog("AVL executable");
+        String path = this.configuration.getProperty("avl.path", "~/");
+        File file = this.frame.showOpenDialog(path, "AVL executable");
         this.configuration.setProperty("avl.path", file.getAbsolutePath());
         updateEnabledEditExportAsCRRCsimMenuItem();
         try {
