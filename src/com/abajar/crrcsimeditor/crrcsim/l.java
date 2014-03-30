@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-public class RollMomment {
+public class l {
     //    <l Cl_b="..." Cl_p="..." Cl_r="..." Cl_dr="..." Cl_da="..." />
     private float Cl_b;
     private float Cl_p;

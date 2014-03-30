@@ -12,7 +12,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-class AVLBodyTableModel extends AVLTableModel  {
+class AVLBodyTableModel extends CRRCSimTableModel  {
 
     final Body body;
     protected AVLBodyTableModel(Body body) {
@@ -20,7 +20,7 @@ class AVLBodyTableModel extends AVLTableModel  {
     }
 
     @Override
-    protected void updateAVL(TableModel tableModel) {
+    protected void updateObject(TableModel tableModel) {
         this.body.setName((String)tableModel.getValueAt(0, 0));
         this.body.setNbody((Integer)tableModel.getValueAt(0, 1));
         this.body.setBspace((Float)tableModel.getValueAt(0, 2));

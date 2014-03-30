@@ -24,7 +24,7 @@ public abstract class CellEditor extends DefaultCellEditor{
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         final JTextField ec = (JTextField) editorComponent;
-        ec.setText(value.toString());
+        if (value != null) ec.setText(value.toString());
         if (isSelected) {
             ec.selectAll();
         }

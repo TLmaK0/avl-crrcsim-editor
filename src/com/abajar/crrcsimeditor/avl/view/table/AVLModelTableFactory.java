@@ -11,6 +11,8 @@ import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Description;
 import javax.swing.table.TableModel;
 
 /**
@@ -21,8 +23,8 @@ public class AVLModelTableFactory{
 
     private AVLModelTableFactory(){};
 
-    public static AVLTableModel createTableModel(Object userObject) {
-        AVLTableModel tableModel = null;
+    public static CRRCSimTableModel createTableModel(Object userObject) {
+        CRRCSimTableModel tableModel = null;
         Class aClass = userObject.getClass();
         if (aClass.equals(AVLGeometry.class)) tableModel=new AVLGeometryTableModel((AVLGeometry)userObject).getInitializedTable();
         if (aClass.equals(Surface.class)) tableModel=new AVLSurfaceTableModel((Surface)userObject).getInitializedTable();
@@ -30,6 +32,7 @@ public class AVLModelTableFactory{
         if (aClass.equals(Control.class)) tableModel=new AVLControlTableModel((Control)userObject).getInitializedTable();
         if (aClass.equals(Mass.class)) tableModel=new AVLMassTableModel((Mass)userObject).getInitializedTable();
         if (aClass.equals(Body.class)) tableModel=new AVLBodyTableModel((Body)userObject).getInitializedTable();
+        if (aClass.equals(CRRCSim.class)) tableModel = new AeroplaneTableModel((CRRCSim)userObject).getInitializedTable();
         if (tableModel == null) throw new IllegalArgumentException();
         return tableModel;
     }

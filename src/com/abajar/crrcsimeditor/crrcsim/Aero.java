@@ -40,9 +40,9 @@ public class Aero {
     private PitchMoment pitchMoment = new PitchMoment(); //m
     private Lift lift = new Lift();
     private Drag drag = new Drag();
-    private SideForce sideForce = new SideForce();                                      //Y
-    private RollMomment rollMomment = new RollMomment();    //l
-    private YawMomment yawMomment = new YawMomment(); //n
+    private Y Y = new Y();                                      //sideForce
+    private l l = new l();    //rollMomment
+    private n n = new n(); //yawMomment
 
 
     public Aero(){
@@ -92,23 +92,27 @@ public class Aero {
         drag.setCD_AIsq(0.01f); //drag due to aileron deflection //TODO: CD_AIsq add to editor
         drag.setCD_ELsq(0f); //drag due to elevon deflection //TODO: CD_ELsq add to editor
         
-        sideForce.setCY_b(std.getCYb());
-        sideForce.setCY_p(std.getCYp());
-        sideForce.setCY_r(std.getCYr());
-        if (rudderPosition != -1) sideForce.setCY_dr(std.getCYd()[rudderPosition]);
-        if (aileronPosition != -1)sideForce.setCY_da(std.getCYd()[aileronPosition]);
+        Y.setCY_b(std.getCYb());
+        Y.setCY_p(std.getCYp());
+        Y.setCY_r(std.getCYr());
+        if (rudderPosition != -1) Y.setCY_dr(std.getCYd()[rudderPosition]);
+        if (aileronPosition != -1)Y.setCY_da(std.getCYd()[aileronPosition]);
 
-        rollMomment.setCl_b(std.getClb());
-        rollMomment.setCl_p(std.getClp());
-        rollMomment.setCl_r(std.getClr());
-        if (rudderPosition != -1) rollMomment.setCl_dr(std.getCld()[rudderPosition]);
-        if (aileronPosition != -1) rollMomment.setCl_da(std.getCld()[aileronPosition]);
+        l.setCl_b(std.getClb());
+        l.setCl_p(std.getClp());
+        l.setCl_r(std.getClr());
+        if (rudderPosition != -1) l.setCl_dr(std.getCld()[rudderPosition]);
+        if (aileronPosition != -1) l.setCl_da(std.getCld()[aileronPosition]);
 
-        yawMomment.setCn_b(std.getCnb());
-        yawMomment.setCn_p(std.getCnp());
-        yawMomment.setCn_r(std.getCnr());
-        if (rudderPosition != -1) yawMomment.setCn_dr(std.getCnd()[rudderPosition]);
-        if (aileronPosition != -1)yawMomment.setCn_da(std.getCnd()[aileronPosition]);
+        n.setCn_b(std.getCnb());
+        n.setCn_p(std.getCnp());
+        n.setCn_r(std.getCnr());
+        if (rudderPosition != -1) n.setCn_dr(std.getCnd()[rudderPosition]);
+        if (aileronPosition != -1)n.setCn_da(std.getCnd()[aileronPosition]);
+
+        //TODO: add flap section
+        //TODO: add spoilder section
+        //TODO: add retract section
     }
 
     /**
@@ -185,23 +189,23 @@ public class Aero {
      * @return the sideForce
      */
     @XmlElement(name="Y")
-    public SideForce getSideForce() {
-        return sideForce;
+    public Y getSideForce() {
+        return Y;
     }
 
     /**
      * @return the rollMomment
      */
     @XmlElement(name="l")
-    public RollMomment getRollMomment() {
-        return rollMomment;
+    public l getRollMomment() {
+        return l;
     }
 
     /**
      * @return the yawMomment
      */
     @XmlElement(name="n")
-    public YawMomment getYawMomment() {
-        return yawMomment;
+    public n getYawMomment() {
+        return n;
     }
 }

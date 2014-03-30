@@ -109,7 +109,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jDesktopPane1" alignment="0" pref="433" max="32767" attributes="0"/>
+          <Component id="jDesktopPane1" alignment="0" pref="516" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -130,7 +130,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="330" y="140" width="470" height="290" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="330" y="160" width="470" height="360" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -163,7 +163,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="261" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="331" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -248,7 +248,7 @@
                       <Component id="addBodyButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="deleteButton" min="-2" max="-2" attributes="1"/>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace pref="14" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -256,7 +256,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="addSurfaceButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addSurfaceButton" min="-2" max="-2" attributes="0"/>
                           <Component id="addSectionButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="addControlButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="addMassButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -275,6 +275,9 @@
                 <Property name="enabled" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="addSurfaceButton" noResource="true"/>
               </Properties>
+              <AccessibilityProperties>
+                <Property name="AccessibleContext.accessibleName" type="java.lang.String" resourceKey="addSurfaceButton.AccessibleContext.accessibleName"/>
+              </AccessibilityProperties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addSurfaceButtonActionPerformed"/>
               </Events>
@@ -338,7 +341,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="0" y="80" width="250" height="268" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="0" y="80" width="250" height="440" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -353,7 +356,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" alignment="0" pref="239" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" alignment="0" pref="411" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>
@@ -393,7 +396,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="250" y="140" width="80" height="290" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="250" y="160" width="80" height="360" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -418,7 +421,7 @@
                       <Component id="frontViewButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rightViewButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="180" max="32767" attributes="0"/>
+                      <EmptySpace pref="250" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -460,7 +463,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="800" y="0" width="400" height="430" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="800" y="0" width="400" height="520" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -490,7 +493,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane3" alignment="0" pref="401" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" alignment="0" pref="491" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>

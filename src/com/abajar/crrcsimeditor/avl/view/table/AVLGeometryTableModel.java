@@ -15,7 +15,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-public class AVLGeometryTableModel extends AVLTableModel implements TableModelListener {
+public class AVLGeometryTableModel extends CRRCSimTableModel implements TableModelListener {
     private final AVLGeometry aVLGeometry;
     protected AVLGeometryTableModel(AVLGeometry aVLGeometry){
         this.aVLGeometry = aVLGeometry;
@@ -45,7 +45,7 @@ public class AVLGeometryTableModel extends AVLTableModel implements TableModelLi
     }
 
     @Override
-    public void updateAVL(TableModel tableModel){
+    public void updateObject(TableModel tableModel){
         aVLGeometry.setName( (String) tableModel.getValueAt(0,0));
         aVLGeometry.setMach( (Float) tableModel.getValueAt(0,1));
 

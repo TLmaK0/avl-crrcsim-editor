@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.avl.AVL;
@@ -55,11 +57,9 @@ public class AvlRunnerTest {
         String fileCrrTest="./sample/aerosonde/aerosonde.crr";
         String fileTest = "./sample/aerosonde/aerosonde.avl";
         File file = new File(fileTest);
-        AVL avl = new AVL();
         FileInputStream fis = new FileInputStream(fileCrrTest);
-        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
-        Unmarshaller u = context.createUnmarshaller();
-        avl.setGeometry((AVLGeometry)u.unmarshal(fis));
+        CRRCSim crrcsim = new CRRCSimFactory().createFromXml(fis);
+        AVL avl = crrcsim.getAvl();
         fis.close();
 
         FileOutputStream fos = new FileOutputStream(file);
@@ -86,9 +86,9 @@ public class AvlRunnerTest {
         assertTrue(config.getSref() != 0);
         assertTrue(config.getCref() != 0);
         assertTrue(config.getVelocity() != 0);
-        assertTrue(config.getAlpha() == 0);
-        assertTrue(config.getCmtot() != 0);
-        assertTrue(config.getCLtot() != 0);
+        assertTrue(config.getAlpha() != 0);
+        assertTrue(config.getCmtot() == 0);
+        assertTrue(config.getCLtot() == 0);
         assertTrue(config.getCDvis() == 0);
         
         assertTrue(std.getCma() != 0);

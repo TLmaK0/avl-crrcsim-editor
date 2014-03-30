@@ -14,7 +14,6 @@ package com.abajar.crrcsimeditor;
 import com.abajar.crrcsimeditor.ui.ChangeSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import com.abajar.crrcsimeditor.avl.view.table.AVLTableModel;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.abajar.crrcsimeditor.avl.AVL;
@@ -28,6 +27,10 @@ import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
 import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
+import com.abajar.crrcsimeditor.avl.view.table.CRRCSimTableModel;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
 import java.io.File;
 import java.util.EnumSet;
 import javax.swing.JFileChooser;
@@ -56,7 +59,7 @@ public class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void notify(int rowIndex, int columnIndex) {
-                MainFrame.this.helpTextArea.setText(((AVLTableModel) modelPropertiesTable.getModel()).getColumnsHelp()[columnIndex]);
+                MainFrame.this.helpTextArea.setText(((CRRCSimTableModel) modelPropertiesTable.getModel()).getColumnsHelp()[columnIndex]);
             }
 
         });
@@ -126,7 +129,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 261, Short.MAX_VALUE)
+            .addGap(0, 331, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout view3DIFrameLayout = new javax.swing.GroupLayout(view3DIFrame.getContentPane());
@@ -140,7 +143,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        view3DIFrame.setBounds(330, 140, 470, 290);
+        view3DIFrame.setBounds(330, 160, 470, 360);
         jDesktopPane1.add(view3DIFrame, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame3.setName("jInternalFrame3"); // NOI18N
@@ -252,7 +255,7 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(addBodyButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(deleteButton)
-                .addContainerGap())
+                .addContainerGap(14, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
             jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,6 +269,8 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(addBodyButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        addSurfaceButton.getAccessibleContext().setAccessibleName(resourceMap.getString("addSurfaceButton.AccessibleContext.accessibleName")); // NOI18N
 
         jInternalFrame4.setBounds(250, 80, 550, 60);
         jDesktopPane1.add(jInternalFrame4, javax.swing.JLayeredPane.DEFAULT_LAYER);
@@ -294,10 +299,10 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jInternalFrame2Layout.setVerticalGroup(
             jInternalFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 239, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE)
         );
 
-        jInternalFrame2.setBounds(0, 80, 250, 268);
+        jInternalFrame2.setBounds(0, 80, 250, 440);
         jDesktopPane1.add(jInternalFrame2, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame1.setName("jInternalFrame1"); // NOI18N
@@ -346,10 +351,10 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(frontViewButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rightViewButton)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addContainerGap(250, Short.MAX_VALUE))
         );
 
-        jInternalFrame1.setBounds(250, 140, 80, 290);
+        jInternalFrame1.setBounds(250, 160, 80, 360);
         jDesktopPane1.add(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame5.setName("jInternalFrame5"); // NOI18N
@@ -374,7 +379,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jInternalFrame5Layout = new javax.swing.GroupLayout(jInternalFrame5.getContentPane());
@@ -388,7 +393,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jInternalFrame5.setBounds(800, 0, 400, 430);
+        jInternalFrame5.setBounds(800, 0, 400, 520);
         jDesktopPane1.add(jInternalFrame5, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jMenuBar1.setName("jMenuBar1"); // NOI18N
@@ -470,7 +475,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
         );
 
         pack();
@@ -589,7 +594,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void modelPropertiesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modelPropertiesTableMouseClicked
         int col = modelPropertiesTable.columnAtPoint(evt.getPoint());
-        String[] helpTexts = ((AVLTableModel)modelPropertiesTable.getModel()).getColumnsHelp();
+        String[] helpTexts = ((CRRCSimTableModel)modelPropertiesTable.getModel()).getColumnsHelp();
         helpTextArea.setText(helpTexts[col]);
     }//GEN-LAST:event_modelPropertiesTableMouseClicked
 
@@ -650,10 +655,19 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private DefaultTreeModel getTreeModel(){
-        AVL avl = this.controller.avl;
+        SelectorMutableTreeNode airplaneNode = new SelectorMutableTreeNode(this.controller.crrcsim);
+
+        AVL avl = this.controller.crrcsim.getAvl();
 
         SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
+        airplaneNode.add(avlNode);
+
+        for(Change change : this.controller.crrcsim.getChangelog()){
+            airplaneNode.add(new SelectorMutableTreeNode(change));
+        }
+
         SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.ADD_BODY));
+        avlNode.add(geometryNode);
 
         for(Surface surf : avl.getGeometry().getSurfaces()){
             SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
@@ -676,14 +690,7 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
 
-//        for(Mass mass:avl.getMass().getMass()){
-//            SelectorMutableTreeNode mNode = new SelectorMutableTreeNode(mass);
-//            massNode.add(mNode);
-//        }
-
-        avlNode.add(geometryNode);
-//        avlNode.add(massNode);
-        return new DefaultTreeModel(avlNode);
+        return new DefaultTreeModel(airplaneNode);
     }
 
     private SelectorMutableTreeNode createSelectorMutableTreeNode(Object object, EnumSet<ENABLE_BUTTONS> options){
@@ -699,7 +706,8 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void showModelProperties(Object userObject) {
-        this.modelPropertiesTable.setModel(AVLModelTableFactory.createTableModel(userObject));
+        CRRCSimTableModel tableModel = AVLModelTableFactory.createTableModel(userObject);
+        if (tableModel != null) this.modelPropertiesTable.setModel(tableModel);
     }
 
     private void createColumn(DefaultTableColumnModel tableModel, String name){
@@ -729,6 +737,10 @@ public class MainFrame extends javax.swing.JFrame {
         return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.DELETE));
     }
 
+    private MutableTreeNode createChangeNode(Change newChange) {
+        return new SelectorMutableTreeNode(newChange, of(ENABLE_BUTTONS.DELETE));
+    }
+
     private void deleteTreeNodeAndObject(SelectorMutableTreeNode parentTreeNode, SelectorMutableTreeNode deleteTreeNode){
         ((DefaultTreeModel)this.avlTree.getModel()).removeNodeFromParent(deleteTreeNode);
 
@@ -742,10 +754,13 @@ public class MainFrame extends javax.swing.JFrame {
             ((Section)parentTreeNode.getUserObject()).getControls().remove((Control)deleteTreeNode.getUserObject());
         }else if (deleteTreeNode.getUserObject().getClass().equals(Body.class)){
             ((AVLGeometry)parentTreeNode.getUserObject()).getBodies().remove((Body)deleteTreeNode.getUserObject());
+        }else if (deleteTreeNode.getUserObject().getClass().equals(Change.class)){
+            ((CRRCSim)parentTreeNode.getUserObject()).getChangelog().remove((Change)deleteTreeNode.getUserObject());
         }else{
             throw new IllegalArgumentException();
         }
 
     }
+
 
 }

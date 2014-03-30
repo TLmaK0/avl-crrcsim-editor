@@ -15,10 +15,10 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-public abstract class AVLTableModel extends DefaultTableModel implements TableModelListener {
+public abstract class CRRCSimTableModel extends DefaultTableModel implements TableModelListener {
     protected final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    protected AVLTableModel getInitializedTable(){
+    protected CRRCSimTableModel getInitializedTable(){
        this.setDataVector(getData(), getColumns());
        this.addTableModelListener(this);
        return this;
@@ -27,7 +27,7 @@ public abstract class AVLTableModel extends DefaultTableModel implements TableMo
     @Override
     public void tableChanged(TableModelEvent tme) {
         TableModel tableModel = (TableModel)tme.getSource();
-        updateAVL(tableModel);
+        updateObject(tableModel);
     }
 
 
@@ -45,7 +45,7 @@ public abstract class AVLTableModel extends DefaultTableModel implements TableMo
         return returnValue;
     }
     
-    protected abstract void updateAVL(TableModel tableModel);
+    protected abstract void updateObject(TableModel tableModel);
     protected abstract Object[][] getData();
     protected abstract Object[] getColumns();
     public abstract String[] getColumnsHelp();

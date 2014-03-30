@@ -15,6 +15,10 @@ import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.crrcsim.Aero;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -40,7 +44,6 @@ import javax.vecmath.Vector3f;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -51,7 +54,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
     static final Logger logger = Logger.getLogger(CRRCsimEditor.class.getName());
 
     SimpleUniverse univ;
-    AVL avl;
+    CRRCSim crrcsim;
     MainFrame frame;
 
     static final String CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor";
@@ -62,7 +65,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         File dir = new File(CONFIGURATION_ROOT);
         if (!dir.exists()) dir.mkdir();
 
-        avl = new AVL();
+        crrcsim = new CRRCSimFactory().create();
         configuration = new Properties();
         try {
             configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH));
@@ -149,8 +152,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
         VpTG.setTransform(Trfcamera);
     }
 
-    public AVL getAvl(){
-        return this.avl;
+    public CRRCSim getCRRCSim(){
+        return this.crrcsim;
     }
 
     /**
@@ -196,6 +199,12 @@ public class CRRCsimEditor extends SingleFrameApplication {
         return mass;
     }
 
+    public Change createChangeFor(CRRCSim crrcsim) {
+        Change change = new Change();
+        crrcsim.getChangelog().add(change);
+        return change;
+    }
+
     Body createBodyFor(AVLGeometry aVLGeometry) {
         Body body = new Body();
         body.setName("new body");
@@ -206,35 +215,31 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     public void exportAsAVL(File file) throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
-        this.avl.getGeometry().writeAVLData(fos);
+        this.crrcsim.getAvl().getGeometry().writeAVLData(fos);
         fos.close();
 
         String fileMassPath = file.getPath().replace(".avl", ".mass");
         File fileMass = new File(fileMassPath);
         fos = new FileOutputStream(fileMass);
-        this.avl.getGeometry().writeAVLMassData(fos);
+        this.crrcsim.getAvl().getGeometry().writeAVLMassData(fos);
         fos.close();
     }
 
     void saveAs(File file) throws IOException, JAXBException {
         FileOutputStream fos = new FileOutputStream(file);
         
-        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
+        JAXBContext context = JAXBContext.newInstance(CRRCSim.class);
 
         Marshaller m = context.createMarshaller();
         m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        m.marshal(this.avl.getGeometry(), fos);
+        m.marshal(this.crrcsim, fos);
         fos.close();
     }
 
     void open(File file) throws IOException, ClassNotFoundException, JAXBException {
         FileInputStream fis = new FileInputStream(file);
-        JAXBContext context = JAXBContext.newInstance(AVLGeometry.class);
-
-        Unmarshaller u = context.createUnmarshaller();
-
-        this.avl.setGeometry((AVLGeometry)u.unmarshal(fis));
+        this.crrcsim = new CRRCSimFactory().createFromXml(fis);
         fis.close();
     }
 
@@ -308,10 +313,11 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
             this.exportAsAVL(avlExportedFile);
             AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), workingFolder, fileNameTmp);
-            AvlCalculation calculation = avlRunner.getCalculation(this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
+            AVL avl = this.crrcsim.getAvl();
+            AvlCalculation calculation = avlRunner.getCalculation(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
 
             //TODO: Select correct elevator, rudder, aileron
-            Aero aero = new Aero(calculation, this.avl.getElevatorPosition(), this.avl.getRudderPosition(), this.avl.getAileronPosition());
+            Aero aero = new Aero(calculation, avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
 
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(Aero.class);
@@ -339,7 +345,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
     private void updateEnabledEditExportAsCRRCsimMenuItem() {
         this.frame.getFileExportAsCRRsimMenuItem().setEnabled(this.configuration.getProperty("avl.path")!=null);
     }
-
 
 
 }

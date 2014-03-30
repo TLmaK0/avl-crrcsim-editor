@@ -12,7 +12,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-class AVLSurfaceTableModel extends AVLTableModel  {
+class AVLSurfaceTableModel extends CRRCSimTableModel  {
 
     final Surface surface;
     protected AVLSurfaceTableModel(Surface surface) {
@@ -20,7 +20,7 @@ class AVLSurfaceTableModel extends AVLTableModel  {
     }
 
     @Override
-    protected void updateAVL(TableModel tableModel) {
+    protected void updateObject(TableModel tableModel) {
         this.surface.setName((String)tableModel.getValueAt(0, 0));
         this.surface.setNchord((Integer)tableModel.getValueAt(0, 1));
         this.surface.setCspace((Float)tableModel.getValueAt(0, 2));

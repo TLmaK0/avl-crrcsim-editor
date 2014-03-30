@@ -12,7 +12,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-class AVLSectionTableModel extends AVLTableModel{
+class AVLSectionTableModel extends CRRCSimTableModel{
 
     final Section section;
 
@@ -21,7 +21,7 @@ class AVLSectionTableModel extends AVLTableModel{
     }
 
     @Override
-    protected void updateAVL(TableModel tableModel) {
+    protected void updateObject(TableModel tableModel) {
         this.section.setXle((Float)tableModel.getValueAt(0,0));
         this.section.setYle((Float)tableModel.getValueAt(0,1));
         this.section.setZle((Float)tableModel.getValueAt(0,2));

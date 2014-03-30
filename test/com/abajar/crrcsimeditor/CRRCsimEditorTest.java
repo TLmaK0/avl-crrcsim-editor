@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.File;
 import java.io.IOException;
@@ -48,10 +49,11 @@ public class CRRCsimEditorTest {
         System.out.println("showGeoEditor");
 
         CRRCsimEditor instance = new CRRCsimEditor();
-        instance.avl.getGeometry().getMasses().add(new Mass());
+        AVL avl = instance.crrcsim.getAvl();
+        avl.getGeometry().getMasses().add(new Mass());
         instance.saveAs(this.file);
         instance.open(this.file);
-        assertEquals(instance.avl.getGeometry().getMasses().size(), 1);
+        assertEquals(avl.getGeometry().getMasses().size(), 1);
     }
 
 }

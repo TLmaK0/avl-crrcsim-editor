@@ -12,7 +12,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-class AVLControlTableModel extends AVLTableModel{
+class AVLControlTableModel extends CRRCSimTableModel{
 
     final Control control;
     protected  AVLControlTableModel(Control control) {
@@ -20,7 +20,7 @@ class AVLControlTableModel extends AVLTableModel{
     }
 
     @Override
-    protected void updateAVL(TableModel tableModel) {
+    protected void updateObject(TableModel tableModel) {
         this.control.setName((String)tableModel.getValueAt(0, 0));
         this.control.setGain((Float)tableModel.getValueAt(0, 1));
         this.control.setXhinge((Float)tableModel.getValueAt(0, 2));

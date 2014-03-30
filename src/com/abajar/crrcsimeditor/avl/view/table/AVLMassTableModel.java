@@ -12,7 +12,7 @@ import javax.swing.table.TableModel;
  *
  * @author hfreire
  */
-public class AVLMassTableModel extends AVLTableModel {
+public class AVLMassTableModel extends CRRCSimTableModel {
 
     private final Mass mass;
     
@@ -21,7 +21,7 @@ public class AVLMassTableModel extends AVLTableModel {
     }
     
     @Override
-    protected void updateAVL(TableModel tableModel) {
+    protected void updateObject(TableModel tableModel) {
         this.mass.setName((String)tableModel.getValueAt(0, 0));
         this.mass.setMass((Float)tableModel.getValueAt(0, 1));
         this.mass.setX((Float)tableModel.getValueAt(0, 2));
