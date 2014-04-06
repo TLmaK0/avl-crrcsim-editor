@@ -13,14 +13,39 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  *
  * @author Hugo
  */
-@XmlRootElement
+@XmlRootElement(name="CRRCSim_airplane")
+@XmlType(propOrder={"description","changelog","aero"})
 public class CRRCSim {
 
+    /**
+    <CRRCSim_airplane version="2">
+  <description>
+    <en>
+        This plane has been automatically converted from superzagi.air.
+        Please update this text if you know more about it.
+    </en>
+  </description>
+  <changelog>
+    <change>
+      <date>Unknown</date>
+      <author>CRRCSim 0.9.5</author>
+      <en>Automatically converted from .air file.</en>
+    </change>
+    <change>
+      <date>Please write date.</date>
+      <author>Please write your name and email.</author>
+      <en>Please write down what you changed.</en>
+    </change>
+  </changelog>
+       */
+    
     public static class Changelog extends ArrayList<Change>{
 
         public Changelog() {
@@ -60,6 +85,7 @@ public class CRRCSim {
     /**
      * @return the avl
      */
+    @XmlTransient
     public AVL getAvl() {
         return avl;
     }

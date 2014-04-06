@@ -89,6 +89,7 @@ public class MainFrame extends javax.swing.JFrame {
         addMassButton = new javax.swing.JButton();
         deleteButton = new javax.swing.JButton();
         addBodyButton = new javax.swing.JButton();
+        addChangeButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         avlTree = new javax.swing.JTree();
@@ -239,22 +240,34 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addChangeButton.setText(resourceMap.getString("addChangeLogButton.text")); // NOI18N
+        addChangeButton.setEnabled(false);
+        addChangeButton.setName("addChangeLogButton"); // NOI18N
+        addChangeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addChangeLogButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
             jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jInternalFrame4Layout.createSequentialGroup()
-                .addComponent(addSurfaceButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addSectionButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addControlButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addMassButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addBodyButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(deleteButton)
+                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                        .addComponent(addSurfaceButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addSectionButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addControlButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addMassButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addBodyButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteButton))
+                    .addComponent(addChangeButton))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
@@ -267,12 +280,13 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(addMassButton)
                     .addComponent(deleteButton)
                     .addComponent(addBodyButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(addChangeButton))
         );
 
         addSurfaceButton.getAccessibleContext().setAccessibleName(resourceMap.getString("addSurfaceButton.AccessibleContext.accessibleName")); // NOI18N
 
-        jInternalFrame4.setBounds(250, 80, 550, 60);
+        jInternalFrame4.setBounds(250, 80, 550, 80);
         jDesktopPane1.add(jInternalFrame4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame2.setName("jInternalFrame2"); // NOI18N
@@ -559,6 +573,7 @@ public class MainFrame extends javax.swing.JFrame {
         addMassButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_MASS));
         addBodyButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_BODY));
         deleteButton.setEnabled(options.contains(ENABLE_BUTTONS.DELETE));
+        addChangeButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CHANGELOG));
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
@@ -604,9 +619,16 @@ public class MainFrame extends javax.swing.JFrame {
         ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createBodyTreeNode(newBody), treeNode, treeNode.getChildCount());
     }//GEN-LAST:event_addBodyButtonActionPerformed
 
+    private void addChangeLogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addChangeLogButtonActionPerformed
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+        Change change = this.controller.createChangeFor((CRRCSim) treeNode.getUserObject());
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createChangeNode(change), treeNode, treeNode.getChildCount());
+    }//GEN-LAST:event_addChangeLogButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBodyButton;
+    private javax.swing.JButton addChangeButton;
     private javax.swing.JButton addControlButton;
     private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
@@ -655,7 +677,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private DefaultTreeModel getTreeModel(){
-        SelectorMutableTreeNode airplaneNode = new SelectorMutableTreeNode(this.controller.crrcsim);
+        SelectorMutableTreeNode airplaneNode = new SelectorMutableTreeNode(this.controller.crrcsim, of(ENABLE_BUTTONS.ADD_CHANGELOG));
 
         AVL avl = this.controller.crrcsim.getAvl();
 
@@ -761,6 +783,8 @@ public class MainFrame extends javax.swing.JFrame {
         }
 
     }
+
+
 
 
 }

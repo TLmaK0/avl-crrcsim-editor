@@ -63,7 +63,7 @@ public class CRRCSimFactory {
         s.append(buf, 0, n);
         fc.position(0);
         int version = 10;
-        if (s.toString().contains("<crrcSim>")) version = 13;
+        if (s.toString().contains("<crrcSim")) version = 13;
         return version;
     }
 
