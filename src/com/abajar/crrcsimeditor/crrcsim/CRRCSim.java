@@ -6,6 +6,8 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +25,20 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name="CRRCSim_airplane")
 @XmlType(propOrder={"description","changelog","aero"})
 public class CRRCSim {
+
+    /**
+     * @return the config
+     */
+    public Config getConfig() {
+        return config;
+    }
+
+    /**
+     * @param config the config to set
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 
     /**
     <CRRCSim_airplane version="2">
@@ -44,6 +60,33 @@ public class CRRCSim {
       <en>Please write down what you changed.</en>
     </change>
   </changelog>
+     <aero version="1" units="0">
+    <ref chord="0.551667" span="6.55" area="3.61111" speed="19.685" />
+    <misc Alpha_0="0.0349066" eta_loc="0.3" CG_arm="0.25" span_eff="0.95" />
+    <m Cm_0="-0.0112663" Cm_a="-0.575335" Cm_q="-11.4975" Cm_de="-0.597537" />
+    <lift CL_0="0.563172" CL_max="1.1" CL_min="-0.6" CL_a="5.5036" CL_q="7.50999"
+       CL_de="0.162" CL_drop="0.5" CL_CD0="0" />
+    <drag CD_prof="0.02" Uexp_CD="-0.5" CD_stall="0" CD_CLsq="0.01" CD_AIsq="0"
+       CD_ELsq="0" />
+    <Y CY_b="-0.41561" CY_p="-0.42382" CY_r="0.29754" CY_dr="0" CY_da="-0.13589" />
+    <l Cl_b="-0.250926" Cl_p="-0.611798" Cl_r="0.139581" Cl_dr="0"
+       Cl_da="-0.00307921" />
+    <n Cn_b="0.0567069" Cn_p="-0.0740898" Cn_r="-0.0687755" Cn_dr="0"
+       Cn_da="0.0527143" />
+  </aero>
+  <config version="1">
+    <descr_long>
+      <en>Automatically converted from sovereign.air.</en>
+    </descr_long>
+    <descr_short>
+      <en>default</en>
+    </descr_short>
+    <mass_inertia version="1" units="0" Mass="0.0450782" I_xx="0.0664259"
+       I_yy="0.0162819" I_zz="0.081474" I_xz="0.000771958" />
+    <sound version="1">
+      <sample filename="" type="0" pitchfactor="0" maxvolume="1" />
+    </sound>
+  </config>
        */
     
     public static class Changelog extends ArrayList<Change>{
@@ -58,9 +101,14 @@ public class CRRCSim {
     private final Changelog changelog = new Changelog();
     private Aero aero;
     private AVL avl;
+    private Config config;
 
     protected CRRCSim(){
 
+    }
+
+    public void calculateAero(String avlPath) throws IOException, InterruptedException, Exception{
+        this.setAero(new AeroFactory().createFromAvl(avlPath, this.avl));
     }
 
     @Override

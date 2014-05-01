@@ -6,6 +6,7 @@
 package com.abajar.crrcsimeditor.avl.connectivity;
 
 import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.avl.AVLS;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.avl.runcase.StabilityDerivatives;
@@ -16,6 +17,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,36 +30,50 @@ import java.util.logging.Logger;
  * @author hfreire
  */
 public class AvlRunner {
-        OutputStream stdin;
-        InputStream stderr;
-        InputStream stdout;
-        Process process;
-        final String avlPath;
-        final String avlFileName;
-        final String executionPath;
-        final float VELOCITY = 30; // 30m/s
-    final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
+    OutputStream stdin;
+    InputStream stderr;
+    InputStream stdout;
+    Process process;
+    final String avlPath;
+    final Path avlFileName;
+    final Path executionPath;
+    final float VELOCITY = 30; // 30m/s
+    private AvlCalculation result;
 
-    public AvlRunner(String avlPath, String executionPath, String fileName) throws IOException{
+    final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
+    private final String avlFileBase;
+
+    public AvlRunner(String avlPath, AVL avl) throws IOException, InterruptedException, Exception{
         this.avlPath = avlPath;
-        this.avlFileName = fileName;
-        this.executionPath = executionPath;
-        ProcessBuilder pb = new ProcessBuilder(avlPath, this.avlFileName);
-        pb.directory(new File(executionPath).getAbsoluteFile());
+        this.executionPath = Files.createTempDirectory("chrrcsim_");
+        this.avlFileBase = this.executionPath.toString() + "/crrcsim_tmp";
+        this.avlFileName = Paths.get(this.avlFileBase + ".avl");
+
+        AVLS.avlToFile(avl, avlFileName);
+
+        ProcessBuilder pb = new ProcessBuilder(avlPath, this.avlFileName.toString());
+        pb.directory(executionPath.toFile().getAbsoluteFile());
+
         pb.redirectErrorStream(true);
 
         process = pb.start();
         stdin = process.getOutputStream ();
         stdout = process.getInputStream ();
+
+        this.run(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
+
+        stdin.close();
+        stdout.close();
+        Files.delete(Paths.get(avlFileBase + ".avl"));
+        Files.delete(Paths.get(avlFileBase + ".mass"));
+        Files.delete(Paths.get(avlFileBase + ".st"));
+        Files.delete(Paths.get(avlFileBase + ".run"));
+        Files.delete(this.executionPath);
     }
 
-    public AvlCalculation getCalculation(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
-        String resultFile = this.avlFileName.replace(".avl", ".st");
-        new File(this.executionPath + "/" + resultFile).delete();
-
-        String runFile = this.avlFileName.replace(".avl", ".run");
-        new File(this.executionPath + "/" + runFile).delete();
-
+    private void run(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
+        String resultFile = this.avlFileName.toString().replace(".avl", ".st");
+        
         sendCommand("oper\n");
         sendCommand("g\n\n");
 
@@ -74,12 +93,13 @@ public class AvlRunner {
         sendCommand(resultFile + "\n");
         sendCommand("\nq\n");
         flush();
+        
         process.waitFor();
 
-        InputStream fis = new FileInputStream(new File(this.executionPath + "/" +  resultFile));
+        InputStream fis = new FileInputStream(new File(resultFile));
         Scanner scanner = new Scanner(fis);
 
-        AvlCalculation runCase = new AvlCalculation();
+        AvlCalculation runCase = new AvlCalculation(elevatorPosition, rudderPosition, aileronPosition);
         Configuration config = runCase.getConfiguration();
 
         config.setVelocity(VELOCITY);
@@ -134,9 +154,12 @@ public class AvlRunner {
         if (check3) std.getCnd()[2] = readFloat("Cnd3 =", scanner);
 
         scanner.close();
-        return runCase;
+        this.result = runCase;
     }
 
+    public AvlCalculation getCalculation(){
+        return this.result;
+    }
 
     private void sendCommand(String command) throws IOException{
         stdin.write(command.getBytes());

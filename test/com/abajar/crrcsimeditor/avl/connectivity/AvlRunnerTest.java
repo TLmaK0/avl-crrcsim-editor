@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import java.nio.file.Paths;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
@@ -56,29 +57,18 @@ public class AvlRunnerTest {
         System.out.println("calculate");
         String fileCrrTest="./sample/aerosonde/aerosonde.crr";
         String fileTest = "./sample/aerosonde/aerosonde.avl";
-        File file = new File(fileTest);
         FileInputStream fis = new FileInputStream(fileCrrTest);
         CRRCSim crrcsim = new CRRCSimFactory().createFromXml(fis);
         AVL avl = crrcsim.getAvl();
         fis.close();
 
-        FileOutputStream fos = new FileOutputStream(file);
-        avl.getGeometry().writeAVLData(fos);
-        fos.close();
-
-        String fileMassPath = file.getPath().replace(".avl", ".mass");
-        File fileMass = new File(fileMassPath);
-        fos = new FileOutputStream(fileMass);
-        avl.getGeometry().writeAVLMassData(fos);
-        fos.close();
-
-        AvlRunner instance = new AvlRunner("avl","sample/aerosonde","aerosonde.avl");
+        AvlRunner instance = new AvlRunner("avl", avl);
 
         int elevatorPosition = avl.getElevatorPosition();
         int aileronPosition = avl.getRudderPosition();
         int rudderPosition = avl.getAileronPosition();
-        
-        AvlCalculation runCase = instance.getCalculation(elevatorPosition, rudderPosition, aileronPosition);
+
+        AvlCalculation runCase = instance.getCalculation();
         Configuration config = runCase.getConfiguration();
         StabilityDerivatives std = runCase.getStabilityDerivatives();
         

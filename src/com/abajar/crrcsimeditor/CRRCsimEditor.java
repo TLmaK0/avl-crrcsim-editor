@@ -6,6 +6,7 @@ package com.abajar.crrcsimeditor;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
+import com.abajar.crrcsimeditor.avl.AVLS;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
@@ -29,6 +30,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -212,16 +215,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
         return body;
     }
 
-    public void exportAsAVL(File file) throws IOException {
-        FileOutputStream fos = new FileOutputStream(file);
-        this.crrcsim.getAvl().getGeometry().writeAVLData(fos);
-        fos.close();
-
-        String fileMassPath = file.getPath().replace(".avl", ".mass");
-        File fileMass = new File(fileMassPath);
-        fos = new FileOutputStream(fileMass);
-        this.crrcsim.getAvl().getGeometry().writeAVLMassData(fos);
-        fos.close();
+    public void exportAsAVL(Path avlFile) throws IOException {
+        AVLS.avlToFile(this.crrcsim.getAvl(), avlFile);
     }
 
     void saveAs(File file) throws IOException, JAXBException {
@@ -277,7 +272,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String path = this.configuration.getProperty("crrcsim.save", "~/");
             File file = this.frame.showSaveDialog(path, "AVL file (*.avl)","avl");
             this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
-            this.exportAsAVL(file);
+
+            this.exportAsAVL(Paths.get(file.getPath()));
         } catch (IOException ex) {
             logger.log(Level.FINE, null, ex);
         }
@@ -298,25 +294,8 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
         try {
-            String tmpBaseName = "crrcsimtmp";
-            String fileNameTmp =  tmpBaseName + ".avl";
-            String fileNameTmpMass =  tmpBaseName + ".mass";
-
-            String workingFolder = file.getParent();
-            File avlExportedFile = new File(workingFolder + "/" + fileNameTmp);
-            avlExportedFile.delete();
-
-            File massExportedFile = new File(workingFolder + "/" + fileNameTmpMass);
-            massExportedFile.delete();
-
-
-            this.exportAsAVL(avlExportedFile);
-            AvlRunner avlRunner = new AvlRunner(this.configuration.getProperty("avl.path"), workingFolder, fileNameTmp);
-            AVL avl = this.crrcsim.getAvl();
-            AvlCalculation calculation = avlRunner.getCalculation(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
-
-            this.crrcsim.setAero(new Aero(calculation, avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition()));
-
+            this.crrcsim.calculateAero(this.configuration.getProperty("avl.path"));
+            
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(CRRCSim.class);
             Marshaller m = context.createMarshaller();
