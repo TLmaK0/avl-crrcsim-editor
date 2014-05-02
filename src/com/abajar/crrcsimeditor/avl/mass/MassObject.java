@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.avl.mass;
 
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
@@ -17,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author hfreire
  */
-public class MassObject {
+public class MassObject implements Serializable{
     protected static final Locale locale = Mass.locale;
 
     private final ArrayList<Mass> masses = new ArrayList<Mass>();

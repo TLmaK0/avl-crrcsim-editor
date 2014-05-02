@@ -97,7 +97,7 @@ ex.printStackTrace();
         int n = r.read(buf);
         s.append(buf, 0, n);
         fc.position(0);
-        int version = 10;
+        int version = 15;
         if (s.toString().contains("<crrcSim")) version = 13;
         else if (s.toString().contains("<avlGeometry>")) version = 10;
         return version;

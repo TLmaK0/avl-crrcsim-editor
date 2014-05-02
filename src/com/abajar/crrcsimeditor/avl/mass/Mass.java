@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 
 /**
@@ -17,7 +18,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  * @author hfreire
  */
 @XmlRootElement
-public class Mass {
+public class Mass implements Serializable{
     protected static final Locale locale = new Locale("en");
     private String name;
     private float mass;

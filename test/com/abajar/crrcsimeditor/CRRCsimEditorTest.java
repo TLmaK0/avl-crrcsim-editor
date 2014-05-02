@@ -51,13 +51,10 @@ public class CRRCsimEditorTest {
 
     @Test
     public void testOpen() throws IOException, JAXBException, ClassNotFoundException, InterruptedException, Exception {
-        CRRCSim crrcsim = new CRRCSimFactory().create();
-        AVL avl = crrcsim.getAvl();
-        avl.getGeometry().getMasses().add(new Mass());
-        new CRRCSimRepository().restoreFromFile(new File("./sample/aerosonde/aerosonde.crr"));
+        CRRCSim crrcsim = new CRRCSimRepository().restoreFromFile(new File("./sample/aerosonde/aerosonde.crr"));
         new CRRCSimRepository().storeToFile(this.file, crrcsim);
         crrcsim = new CRRCSimRepository().restoreFromFile(this.file);
-        assertEquals(crrcsim.getAvl().getGeometry().getMasses(), 1);
+        assertEquals(0.254, crrcsim.getAvl().getGeometry().getSurfaces().get(0).getSections().get(0).getChord(), 0.0001);
     }
 
 }
