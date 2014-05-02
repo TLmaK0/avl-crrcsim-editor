@@ -6,7 +6,7 @@
 package com.abajar.crrcsimeditor.avl.connectivity;
 
 import java.nio.file.Paths;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
@@ -54,15 +54,11 @@ public class AvlRunnerTest {
      */
     @Test
     public void testCalculate() throws Exception {
-        System.out.println("calculate");
         String fileCrrTest="./sample/aerosonde/aerosonde.crr";
-        String fileTest = "./sample/aerosonde/aerosonde.avl";
-        FileInputStream fis = new FileInputStream(fileCrrTest);
-        CRRCSim crrcsim = new CRRCSimFactory().createFromXml(fis);
+        CRRCSim crrcsim = new CRRCSimRepository().restoreFromFile(new File(fileCrrTest));
         AVL avl = crrcsim.getAvl();
-        fis.close();
-
-        AvlRunner instance = new AvlRunner("avl", avl);
+        
+        AvlRunner instance = new AvlRunner("avl", avl, Paths.get("./sample/aerosonde"));
 
         int elevatorPosition = avl.getElevatorPosition();
         int aileronPosition = avl.getRudderPosition();

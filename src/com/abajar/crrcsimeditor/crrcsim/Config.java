@@ -5,11 +5,13 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Hugo
  */
-public class Config {
+public class Config  implements Serializable{
 
     /**
      * @return the descr_long

@@ -20,6 +20,7 @@ import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 import com.sun.j3d.loaders.Scene;
 import com.sun.j3d.utils.universe.SimpleUniverse;
@@ -216,25 +217,15 @@ public class CRRCsimEditor extends SingleFrameApplication {
     }
 
     public void exportAsAVL(Path avlFile) throws IOException {
-        AVLS.avlToFile(this.crrcsim.getAvl(), avlFile);
+        AVLS.avlToFile(this.crrcsim.getAvl(), avlFile, avlFile.getParent());
     }
 
-    void saveAs(File file) throws IOException, JAXBException {
-        FileOutputStream fos = new FileOutputStream(file);
-        
-        JAXBContext context = JAXBContext.newInstance(CRRCSim.class);
-
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-
-        m.marshal(this.crrcsim, fos);
-        fos.close();
+    void saveAs(File file) throws IOException, JAXBException, InterruptedException, Exception {
+        new CRRCSimRepository().storeToFile(file, crrcsim);
     }
 
     void open(File file) throws IOException, ClassNotFoundException, JAXBException {
-        FileInputStream fis = new FileInputStream(file);
-        this.crrcsim = new CRRCSimFactory().createFromXml(fis);
-        fis.close();
+        this.crrcsim = new CRRCSimRepository().restoreFromFile(file);
     }
 
 
@@ -254,16 +245,16 @@ public class CRRCsimEditor extends SingleFrameApplication {
         }
     }
 
-    void saveFile() {
+    void saveFile() throws InterruptedException, Exception {
         try {
             String path = this.configuration.getProperty("crrcsim.save", "~/");
             File file = this.frame.showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr");
             this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
             this.saveAs(file);
         }catch (JAXBException ex) {
-             logger.log(Level.FINE, null, ex);
+             logger.log(Level.SEVERE, "Error serializing file", ex);
         } catch (IOException ex) {
-            logger.log(Level.FINE, null, ex);
+            logger.log(Level.SEVERE, "Error saving file", ex);
         }
     }
 
@@ -284,7 +275,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String path = this.configuration.getProperty("crrcsim.save", "~/");
             File file = this.frame.showSaveDialog(path, "CRRCsim file (*.xml)", "xml");
             this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
-            this.exportAsCRRCsim(file);
+            this.exportAsCRRCsim(file, Paths.get(path));
         } catch (InterruptedException ex) {
             logger.log(Level.FINE, null, ex);
         } catch (IOException ex) {
@@ -292,9 +283,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
         }
     }
 
-    private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
+    private void exportAsCRRCsim(File file, Path originPath) throws IOException, InterruptedException{
         try {
-            this.crrcsim.calculateAero(this.configuration.getProperty("avl.path"));
+            this.crrcsim.calculateAero(this.configuration.getProperty("avl.path"), file.toPath().getParent());
             
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(CRRCSim.class);

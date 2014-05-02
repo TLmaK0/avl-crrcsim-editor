@@ -8,6 +8,8 @@ package com.abajar.crrcsimeditor.crrcsim;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import java.io.IOException;
+import java.io.Serializable;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,8 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","changelog","aero"})
-public class CRRCSim {
+@XmlType(propOrder={"description","changelog","aero","config","avl"})
+public class CRRCSim implements Serializable{
 
     /**
      * @return the config
@@ -97,18 +99,22 @@ public class CRRCSim {
     }
 
     private String version = "2";
-    private Description description = new Description();
+    private final Description description = new Description();
     private final Changelog changelog = new Changelog();
     private Aero aero;
-    private AVL avl;
+    private final AVL avl;
     private Config config;
 
-    protected CRRCSim(){
-
+    protected CRRCSim(AVL avl){
+        this.avl = avl;
     }
 
-    public void calculateAero(String avlPath) throws IOException, InterruptedException, Exception{
-        this.setAero(new AeroFactory().createFromAvl(avlPath, this.avl));
+    protected CRRCSim(){
+        this(new AVL());
+    }
+
+    public void calculateAero(String avlPath, Path originPath) throws IOException, InterruptedException, Exception{
+        this.aero = new AeroFactory().createFromAvl(avlPath, this.avl, originPath);
     }
 
     @Override
@@ -122,30 +128,15 @@ public class CRRCSim {
     public Description getDescription() {
         return description;
     }
-
-    /**
-     * @param description the description to set
-     */
-    public void setDescription(Description description) {
-        this.description = description;
-    }
-
+    
     /**
      * @return the avl
      */
-    @XmlTransient
     public AVL getAvl() {
         return avl;
     }
 
-    /**
-     * @param avl the avl to set
-     */
-    public void setAvl(AVL avl) {
-        this.avl = avl;
-    }
-
-    public static class Description {
+    public static class Description implements Serializable{
         private String en;
 
         public Description() {
@@ -197,15 +188,10 @@ public class CRRCSim {
     /**
      * @return the aero
      */
+
+    @XmlElement(name="aero")
     public Aero getAero() {
         return aero;
-    }
-
-    /**
-     * @param aero the aero to set
-     */
-    public void setAero(Aero aero) {
-        this.aero = aero;
     }
 
     public static class Change {

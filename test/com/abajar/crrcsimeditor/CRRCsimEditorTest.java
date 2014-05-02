@@ -5,8 +5,13 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.bind.JAXBException;
@@ -45,15 +50,14 @@ public class CRRCsimEditorTest {
     }
 
     @Test
-    public void testOpen() throws IOException, JAXBException, ClassNotFoundException {
-        System.out.println("showGeoEditor");
-
-        CRRCsimEditor instance = new CRRCsimEditor();
-        AVL avl = instance.crrcsim.getAvl();
+    public void testOpen() throws IOException, JAXBException, ClassNotFoundException, InterruptedException, Exception {
+        CRRCSim crrcsim = new CRRCSimFactory().create();
+        AVL avl = crrcsim.getAvl();
         avl.getGeometry().getMasses().add(new Mass());
-        instance.saveAs(this.file);
-        instance.open(this.file);
-        assertEquals(avl.getGeometry().getMasses().size(), 1);
+        new CRRCSimRepository().restoreFromFile(new File("./sample/aerosonde/aerosonde.crr"));
+        new CRRCSimRepository().storeToFile(this.file, crrcsim);
+        crrcsim = new CRRCSimRepository().restoreFromFile(this.file);
+        assertEquals(crrcsim.getAvl().getGeometry().getMasses(), 1);
     }
 
 }

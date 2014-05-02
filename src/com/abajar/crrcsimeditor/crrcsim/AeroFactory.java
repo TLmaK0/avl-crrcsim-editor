@@ -11,14 +11,15 @@ import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
 import com.abajar.crrcsimeditor.avl.runcase.StabilityDerivatives;
 import java.io.IOException;
+import java.nio.file.Path;
 
 /**
  *
  * @author Hugo
  */
 public class AeroFactory {
-    public Aero createFromAvl(String avlPath, AVL avl) throws IOException, InterruptedException, Exception{
-        AvlRunner avlRunner = new AvlRunner(avlPath, avl);
+    public Aero createFromAvl(String avlPath, AVL avl, Path originPath) throws IOException, InterruptedException, Exception{
+        AvlRunner avlRunner = new AvlRunner(avlPath, avl, originPath);
         
         AvlCalculation avlCalculation = avlRunner.getCalculation();
         Aero aero = new Aero();

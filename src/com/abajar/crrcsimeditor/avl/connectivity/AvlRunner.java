@@ -17,9 +17,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -43,13 +46,13 @@ public class AvlRunner {
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
     private final String avlFileBase;
 
-    public AvlRunner(String avlPath, AVL avl) throws IOException, InterruptedException, Exception{
+    public AvlRunner(String avlPath, AVL avl, Path originPath) throws IOException, InterruptedException, Exception{
         this.avlPath = avlPath;
         this.executionPath = Files.createTempDirectory("chrrcsim_");
         this.avlFileBase = this.executionPath.toString() + "/crrcsim_tmp";
         this.avlFileName = Paths.get(this.avlFileBase + ".avl");
 
-        AVLS.avlToFile(avl, avlFileName);
+        AVLS.avlToFile(avl, avlFileName, originPath);
 
         ProcessBuilder pb = new ProcessBuilder(avlPath, this.avlFileName.toString());
         pb.directory(executionPath.toFile().getAbsoluteFile());
@@ -64,11 +67,24 @@ public class AvlRunner {
 
         stdin.close();
         stdout.close();
-        Files.delete(Paths.get(avlFileBase + ".avl"));
-        Files.delete(Paths.get(avlFileBase + ".mass"));
-        Files.delete(Paths.get(avlFileBase + ".st"));
-        Files.delete(Paths.get(avlFileBase + ".run"));
-        Files.delete(this.executionPath);
+        this.removeDirectory(this.executionPath);
+    }
+
+    private void removeDirectory(Path directory) throws IOException{
+        Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+	   @Override
+	   public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+		   Files.delete(file);
+		   return FileVisitResult.CONTINUE;
+	   }
+
+	   @Override
+	   public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+		   Files.delete(dir);
+		   return FileVisitResult.CONTINUE;
+	   }
+
+        });
     }
 
     private void run(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
