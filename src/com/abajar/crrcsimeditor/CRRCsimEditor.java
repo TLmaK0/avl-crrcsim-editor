@@ -277,9 +277,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
             this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
             this.exportAsCRRCsim(file, Paths.get(path));
         } catch (InterruptedException ex) {
-            logger.log(Level.FINE, null, ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
         } catch (IOException ex) {
-            logger.log(Level.FINE, null, ex);
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 
@@ -294,7 +294,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.marshal(this.crrcsim, fos);
             fos.close();
         } catch (Exception ex) {
-            logger.log(Level.FINE, null, ex);
+ex.printStackTrace();
+
+            logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }
 

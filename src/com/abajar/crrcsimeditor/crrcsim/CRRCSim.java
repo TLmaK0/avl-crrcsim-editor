@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","changelog","aero","config","avl"})
+@XmlType(propOrder={"description","changelog","aero","config"})
 public class CRRCSim implements Serializable{
 
     /**
@@ -125,6 +125,7 @@ public class CRRCSim implements Serializable{
     /**
      * @return the description
      */
+    @XmlElement
     public Description getDescription() {
         return description;
     }
