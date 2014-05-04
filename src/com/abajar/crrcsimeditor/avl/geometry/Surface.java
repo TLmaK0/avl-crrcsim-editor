@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElement;
@@ -28,19 +29,82 @@ public class Surface extends MassObject implements AVLSerializable {
     //TODO: NOLOAD
 
     //SECTION
+    @CRRCSimEditorField(text="surface name",
+        help= "Surface name, ex. Wing"
+    )
     private String name = "new surface";
+
+    @CRRCSimEditorField(text="Nchord",
+        help="number of chordwise horseshoe vortices placed on the surface\r\n"
+            + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex"
+    )
     private int Nchord;
+
+    @CRRCSimEditorField(text="Cspace",
+        help="chordwise vortex spacing parameter\r\n"
+            + "3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "2.0        sine          || |  |   |    |    |     |     |\r\n"
+            + "1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "0.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "-1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "-2.0       -sine          |     |     |    |    |   |  | ||\r\n"
+            + "-3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "The most efficient distribution (best accuracy for a given number of \r\n"
+            + "vortices) is usually the cosine (1.0) chordwise and spanwise"
+    )
     private float Cspace;
+
+    @CRRCSimEditorField(text="Nspan",
+        help="number of spanwise horseshoe vortices placed on the surface\r\n"
+            + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex"
+    )
     private int Nspan;
+
+    @CRRCSimEditorField(text="Sspace",
+        help="spanwise vortex spacing parameter\r\n"
+            + "3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "2.0        sine          || |  |   |    |    |     |     |\r\n"
+            + "1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "0.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "-1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "-2.0       -sine          |     |     |    |    |   |  | ||\r\n"
+            + "-3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "The most efficient distribution (best accuracy for a given number of \r\n"
+            + "vortices) is usually the cosine (1.0) chordwise and spanwise"
+    )
     private float Sspace;
 
     //TODO: COMPONENT
     //TODO: SCALE
 
+
+    @CRRCSimEditorField(text="Ydupl",
+        help="Y position of X-Z plane about which the current surface is\r\n"
+            + "reflected to make the duplicate geometric-image surface."
+    )
     private float Ydupl;
+
+    @CRRCSimEditorField(text="Translate dX",
+        help="offset added on to all X,Y,Z values in this surface"
+    )
     private float dX;
+
+    @CRRCSimEditorField(text="Translate dY",
+        help="offset added on to all X,Y,Z values in this surface"
+    )
     private float dY;
+
+    @CRRCSimEditorField(text="Translate dZ",
+        help="offset added on to all X,Y,Z values in this surface"
+    )
     private float dZ;
+
+    @CRRCSimEditorField(text="ANGLE dAinc",
+        help="allows convenient changing of the incidence angle\r\n"
+            + "of the entire surface without the need to change the Ainc values\r\n"
+            + "for all the defining sections.  The rotation is performed about\r\n"
+            + "the spanwise axis projected onto the y-z plane"
+    )
     private float dAinc;
     
     private final ArrayList<Section> sections = new ArrayList<Section>();

@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 public class MassObject implements Serializable{
     protected static final Locale locale = Mass.locale;
-
     private final ArrayList<Mass> masses = new ArrayList<Mass>();
 
     /**

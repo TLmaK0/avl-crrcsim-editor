@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.view.avl;
 
+import java.lang.annotation.Annotation;
+import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.AVL;
@@ -68,6 +70,25 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         return new DefaultTreeModel(airplaneNode);
     }
 
+    public static SelectorMutableTreeNode createNode(Object parentTreeNode, SelectorMutableTreeNode.TYPES type){
+        switch(type){
+            case SECTION:
+                return new SelectorMutableTreeNode(((Surface)parentTreeNode).createSection());
+            case SURFACE:
+                return new SelectorMutableTreeNode(((AVLGeometry)parentTreeNode).createSurface());
+            case CONTROL:
+                return new SelectorMutableTreeNode(((Section)parentTreeNode).createControl());
+            case MASS:
+                return new SelectorMutableTreeNode(((MassObject)parentTreeNode).createMass());
+            case BODY:
+                return new SelectorMutableTreeNode(((AVLGeometry)parentTreeNode).createBody());
+            case CHANGE:
+                return new SelectorMutableTreeNode(((CRRCSim)parentTreeNode).createChange());
+            default:
+                throw new UnsupportedOperationException("Node of type " + type + " not suported");
+        }
+    }
+    
     private List<ENABLE_BUTTONS> extractOptions(Object obj) {
         ArrayList<ENABLE_BUTTONS> newOptions = new ArrayList();
         Class objClass = obj.getClass();

@@ -12,6 +12,7 @@ import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -35,27 +36,95 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 public class AVLGeometry extends MassObject implements AVLSerializable{
     final static Logger logger = Logger.getLogger(AVLGeometry.class.getName());
 
+
+    @CRRCSimEditorField(text="Name",
+        help="Project name"
+    )
     private String name = "Geometry";
+
+    @CRRCSimEditorField(text="Mach",
+        help="default freestream Mach number for Prandtl-Glauert correction. http://en.wikipedia.org/wiki/Mach_number. 0 should be ok for RC airplanes"
+    )
     private float Mach;
 
+
+    @CRRCSimEditorField(text="iYsym",
+        help="Allow you to draw only a part of the airplane\r\n"
+            + "and left AVL to mirror about Y axis\r\n"
+            + "1 case is symmetric about Y=0, (X-Z plane is a solid wall)\r\n"
+            + "-1  case is antisymmetric about Y=0, (X-Z plane is at const. Cp)\r\n"
+            + "0  no Y-symmetry is assumed\r\n"
+            + "use 0 by default and draw all elements"
+    )
     private  int iYsym;
+
+    @CRRCSimEditorField(text="iZsym",
+        help="Allow you to draw only a part of the airplane\r\n"
+            + "and left AVL to mirror about Z axis"
+            + "1  case is symmetric about Z=Zsym, (X-Y plane is a solid wall)\r\n"
+            + "-1  case is antisymmetric about Z=Zsym, (X-Y plane is at const. Cp)\r\n"
+            + "0  no Z-symmetry is assumed (Zsym ignored)\r\n"
+            + "use 0 by default and draw all elements"
+    )
     private  int iZsym;
+
+    @CRRCSimEditorField(text="Zsym",
+        help="Zsym"
+    )
     private float Zsym;
 
+
+    @CRRCSimEditorField(text="Sref",
+        help="reference area used to define all coefficients (CL, CD, Cm, etc)\r\n"
+            + "the area of the wing in square units"
+    )
     private  float Sref;
+
+    @CRRCSimEditorField(text="Cref",
+        help="reference chord used to define pitching moment (Cm).\r\n"
+            + "the chord of the wing http://en.wikipedia.org/wiki/Chord_(aircraft)"
+    )
     private  float Cref;
+
+    @CRRCSimEditorField(text="Bref",
+        help="reference span  used to define roll,yaw moments\r\n"
+            + "the wing span http://en.wikipedia.org/wiki/Wingspan"
+    )
     private  float Bref;
 
+
+    @CRRCSimEditorField(text="Xref",
+        help="default location about which moments and rotation rates are defined\r\n"
+            + "Center of Gravity X axis position"
+    )
     private  float Xref;
+
+    @CRRCSimEditorField(text="Yref",
+        help="default location about which moments and rotation rates are defined\r\n"
+            + "Center of Gravity Y axis position"
+    )
     private  float Yref;
+
+    @CRRCSimEditorField(text="Zref",
+        help="default location about which moments and rotation rates are defined\r\n"
+            + "Center of Gravity Z axis position"
+    )
     private  float Zref;
 
+    
+    @CRRCSimEditorField(text="CDp",
+        help="default profile drag coefficient added to geometry, applied at XYZref\r\n"
+            + "http://en.wikipedia.org/wiki/Drag_coefficient\r\n"
+            + "0.020 seems to be a common default value"
+    )
     private float CDp;
+    
     private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
     private final ArrayList<Body> body = new ArrayList<Body>();
 
     static final long serialVersionUID = 7590357473387179207L;
 
+    
     /**
      * @return the Mach
      */

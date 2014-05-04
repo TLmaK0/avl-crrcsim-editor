@@ -16,6 +16,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface CRRCSimEditorNode {
-
+public @interface CRRCSimEditorField {
+    String text();
+    String help() default "No help";
 }

@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -24,13 +25,60 @@ public class Control extends MassObject implements AVLSerializable {
     public static final int ELEVATOR = 1;
     public static final int RUDDER = 2;
 
+    @CRRCSimEditorField(text="name",
+        help="name of control variable"
+    )
     private String name = "new control";
+
+    @CRRCSimEditorField(text="gain",
+        help="control deflection gain, units:  degrees deflection / control variable\r\n"
+            + "Maximun degrees deflection"
+    )
     private float gain;
+
+    @CRRCSimEditorField(text="Xhinge",
+        help="x/c location of hinge.\r\n"
+            + "If positive, control surface extent is Xhinge..1  (TE surface)\r\n"
+            + "If negative, control surface extent is 0..-Xhinge (LE surface)\r\n"
+            + "0.65 means that the hinge is at 65% of the stabilizer's chord,\r\n"
+            + " so the fixed part of the tail is 65% of the chor"
+    )
     private float Xhinge;
+
+    @CRRCSimEditorField(text="Xhvec",
+        help="vector giving hinge axis about which surface rotates \r\n"
+            + "deflection is rotation about hinge by righthand rule\r\n"
+            + "1 puts the hinge along the X axis (0 in otheers)"
+    )
     private float Xhvec;
+
+    @CRRCSimEditorField(text="Yhvec",
+        help="vector giving hinge axis about which surface rotates \r\n"
+            + "deflection is rotation about hinge by righthand rule\r\n"
+            + "1 puts the hinge along the Y axis (0 in otheers)"
+    )
     private float Yhvec;
+
+    @CRRCSimEditorField(text="Zhvec",
+        help="vector giving hinge axis about which surface rotates \r\n"
+            + "deflection is rotation about hinge by righthand rule\r\n"
+            + "1 puts the hinge along the Z axis (0 in otheers)"
+    )
     private float Zhvec;
+
+    @CRRCSimEditorField(text="SgnDup",
+        help="sign of deflection for duplicated surface\r\n"
+            + "An elevator would have SgnDup = +1\r\n"
+            + "An aileron  would have SgnDup = -1"
+    )
     private float SgnDup;
+
+    @CRRCSimEditorField(text="type of control",
+        help="type of control:\r\n"
+            + "0 -> aileron\r\n"
+            + "1 -> elevator\r\n"
+            + "2 -> rudder"
+    )
     private int type;
 
     /**

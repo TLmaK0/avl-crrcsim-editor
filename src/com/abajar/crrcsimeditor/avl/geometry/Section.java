@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,18 +26,70 @@ public class Section  extends MassObject implements AVLSerializable{
 
     //TODO: AIRFOIL
     //TODO: DESIGN
-
+    @CRRCSimEditorField(text="Xle",
+        help="airfoil's leading edge X location"
+    )
     private float Xle;
+
+    @CRRCSimEditorField(text="Yle",
+        help="airfoil's leading edge Y location"
+    )
     private float Yle;
+
+    @CRRCSimEditorField(text="Zle",
+        help="airfoil's leading edge Z location"
+    )
     private float Zle;
+
+    @CRRCSimEditorField(text="Chord",
+        help="the airfoil's chord  (trailing edge is at Xle+Chord,Yle,Zle)"
+    )
     private float Chord;
+
+    @CRRCSimEditorField(text="Ainc",
+        help="incidence angle, taken as a rotation (+ by RH rule) about\r\n"
+            + "the surface's spanwise axis projected onto the Y-Z plane"
+    )
     private float Ainc;
+
+    @CRRCSimEditorField(text="Nspan",
+        help="number of spanwise vortices until the next section [ optional ]"
+    )
     private int Nspan;
+
+    @CRRCSimEditorField(text="Sspace",
+        help="controls the spanwise spacing of the vortices      [ optional ]"
+    )
     private float Sspace;
+
+    @CRRCSimEditorField(text="NACA",
+        help="sets the camber line to the NACA 4-digit shape specified"
+    )
     private float X1;
+
+    @CRRCSimEditorField(text="AFILE",
+        help="XFoil filename"
+    )
     private float X2;
+
+    @CRRCSimEditorField(text="X1",
+        help="If present, the optional X1 X2 parameters indicate that only the\r\n"
+            + "x/c range X1..X2 from the coordinates is to be assigned to the surface.\r\n"
+            + "If the surface is a 20%-chord flap, for example, then X1 X2\r\n"
+            + "would be 0.80 1.00.  This allows the camber shape to be easily\r\n"
+            + "assigned to any number of surfaces in piecewise manner."
+    )
     private String NACA="";
+
+    @CRRCSimEditorField(text="X2",
+        help="If present, the optional X1 X2 parameters indicate that only the\r\n"
+            + "x/c range X1..X2 from the coordinates is to be assigned to the surface.\r\n"
+            + "If the surface is a 20%-chord flap, for example, then X1 X2\r\n"
+            + "would be 0.80 1.00.  This allows the camber shape to be easily\r\n"
+            + "assigned to any number of surfaces in piecewise manner."
+    )
     private String AFILE="";
+
     private final ArrayList<Control> controls = new ArrayList<Control>();
 
     //TODO: CLAF

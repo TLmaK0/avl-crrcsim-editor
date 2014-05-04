@@ -8,7 +8,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
-import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.IOException;
 import java.io.Serializable;
@@ -109,18 +109,10 @@ public class CRRCSim implements Serializable{
     }
 
     private String version = "2";
-    
     private final Description description = new Description();
-    
-    @CRRCSimEditorNode
     private final Changelog changelog = new Changelog();
-
     private Aero aero;
-    
-    @CRRCSimEditorNode
     private final AVL avl;
-    
-    @CRRCSimEditorNode
     private Config config;
 
     protected CRRCSim(AVL avl){
@@ -215,8 +207,18 @@ public class CRRCSim implements Serializable{
 
     @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
     public static class Change {
+
         private Date date;
+
+
+        @CRRCSimEditorField(text="Author",
+            help="Author's changes"
+        )
         private String author;
+
+        @CRRCSimEditorField(text="Description",
+            help="Description of the change"
+        )
         private String en;
 
         /**

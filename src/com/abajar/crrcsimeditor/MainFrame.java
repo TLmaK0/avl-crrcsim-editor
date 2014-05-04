@@ -26,11 +26,11 @@ import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
-import com.abajar.crrcsimeditor.view.table.avl.AVLModelTableFactory;
 import com.abajar.crrcsimeditor.view.table.avl.CRRCSimTableModel;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
+import com.abajar.crrcsimeditor.view.table.avl.AeroplaneTableModel;
 import java.io.File;
 import java.util.EnumSet;
 import javax.swing.JFileChooser;
@@ -658,31 +658,7 @@ public class MainFrame extends javax.swing.JFrame {
 
     private void createNode(SelectorMutableTreeNode.TYPES type){
         SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-
-        SelectorMutableTreeNode node = null;
-
-        switch(type){
-            case SECTION:
-                node = new SelectorMutableTreeNode(((Surface)treeNode.getUserObject()).createSection());
-                break;
-            case SURFACE:
-                node = new SelectorMutableTreeNode(((AVLGeometry)treeNode.getUserObject()).createSurface());
-                break;
-            case CONTROL:
-                node = new SelectorMutableTreeNode(((Section)treeNode.getUserObject()).createControl());
-                break;
-            case MASS:
-                node = new SelectorMutableTreeNode(((MassObject)treeNode.getUserObject()).createMass());
-                break;
-            case BODY:
-                node = new SelectorMutableTreeNode(((AVLGeometry)treeNode.getUserObject()).createBody());
-                break;
-            case CHANGE:
-                node = new SelectorMutableTreeNode(((CRRCSim)treeNode.getUserObject()).createChange());
-                break;
-            default:
-                throw new UnsupportedOperationException("Node of type " + type + " not suported");
-        }
+        SelectorMutableTreeNode node = SelectorMutableTreeNode.createNode(treeNode.getUserObject(), type);
         ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(node, treeNode, treeNode.getChildCount());
     }
 
@@ -709,7 +685,10 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private void showModelProperties(Object userObject) {
-        CRRCSimTableModel tableModel = AVLModelTableFactory.createTableModel(userObject);
+        CRRCSimTableModel tableModel = null;
+        Class aClass = userObject.getClass();
+        if (aClass.equals(CRRCSim.class)) tableModel = new AeroplaneTableModel((CRRCSim)userObject).getInitializedTable();
+        else tableModel = new CRRCSimTableModel(userObject).getInitializedTable();
         if (tableModel != null) this.modelPropertiesTable.setModel(tableModel);
     }
 

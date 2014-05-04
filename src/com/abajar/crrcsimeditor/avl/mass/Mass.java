@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.mass;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import java.util.Locale;
@@ -23,15 +24,48 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Mass implements Serializable{
     protected static final Locale locale = new Locale("en");
-    private String name;
+
+
+    @CRRCSimEditorField(text="name",
+        help="name. Mass objects must have absolute position."
+    )
+    private String name="new mass";
+
+    @CRRCSimEditorField(text="mass",
+        help="weight"
+    )
     private float mass;
+
+    @CRRCSimEditorField(text="x gravity center",
+        help="x location of item's own CG"
+    )
     private float x;
+
+    @CRRCSimEditorField(text="y gravityc center",
+        help="y location of item's own CG"
+    )
     private float y;
+
+    @CRRCSimEditorField(text="z gravity center",
+        help="z location of item's own CG"
+    )
     private float z;
+
+    @CRRCSimEditorField(text="x inertia",
+        help="object longitude over the x axis"
+    )
     private float xLength;
+
+    @CRRCSimEditorField(text="y inertia",
+        help="object longitude over the y axis"
+    )
     private float yLength;
+
+    @CRRCSimEditorField(text="z inertia",
+        help="object longitude over the z axis"
+    )
     private float zLength;
-    
+
     /**
      * @return the name
      */

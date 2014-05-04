@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
@@ -21,13 +22,51 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Body extends MassObject implements AVLSerializable  {
 
+    @CRRCSimEditorField(text="Body name",
+        help="Body name"
+    )
     private String name = "new body";
+
+    @CRRCSimEditorField(text="Nbody",
+        help="number of source-line nodes"
+    )
     private int Nbody;
+
+    @CRRCSimEditorField(text="Bspace",
+        help="lengthwise node spacing parameter\r\n\r\n"
+            + "3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "2.0        sine          || |  |   |    |    |     |     |\r\n"
+            + "1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "0.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "-1.0        cosine        ||  |    |      |      |    |  ||\r\n"
+            + "-2.0       -sine          |     |     |    |    |   |  | ||\r\n"
+            + "-3.0        equal         |   |   |   |   |   |   |   |   |\r\n"
+            + "The most efficient distribution (best accuracy for a given number of \r\n"
+            + "vortices) is usually the cosine (1.0)"
+    )
     private float Bspace;
+
+    @CRRCSimEditorField(text="Ydupl",
+        help="Y position of X-Z plane about which the current surface is\r\n"
+            + "reflected to make the duplicate geometric-image surface.")
     private float Ydupl;
+
+    @CRRCSimEditorField(text="Translate dX",
+        help="offset added on to all X value in this body")
     private float dX;
+
+    @CRRCSimEditorField(text="Translate dY",
+        help="offset added on to all Y values in this body")
     private float dY;
+
+    @CRRCSimEditorField(text="Translate dZ",
+        help="offset added on to all Z values in this body")
     private float dZ;
+
+    @CRRCSimEditorField(text="BFILE",
+        help="the shape of the body as an 'airfoil' file\r\n"
+            + "which gives the top or side view of the body, which is\r\n"
+            + "assumed to have a round cross-section")
     private String BFILE;
 
     /**

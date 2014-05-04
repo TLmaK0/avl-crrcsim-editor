@@ -13,7 +13,7 @@ import javax.swing.table.TableModel;
  *
  * @author Hugo
  */
-class AeroplaneTableModel extends CRRCSimTableModel{
+public class AeroplaneTableModel extends CRRCSimTableModel{
     final CRRCSim crrcsim;
 
     public AeroplaneTableModel(CRRCSim crrcsim){
