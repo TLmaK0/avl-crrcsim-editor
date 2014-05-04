@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import java.io.OutputStream;
@@ -16,9 +18,10 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
  *
  * @author hfreire
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Body extends MassObject implements AVLSerializable  {
 
-    private String name;
+    private String name = "new body";
     private int Nbody;
     private float Bspace;
     private float Ydupl;

@@ -11,6 +11,8 @@ import com.abajar.crrcsimeditor.avl.geometry.Body;
 import com.abajar.crrcsimeditor.avl.geometry.Control;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -20,8 +22,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
-import org.omg.CosNaming.NamingContextPackage.NotFoundReason;
 
 /**
  *
@@ -31,6 +31,7 @@ import org.omg.CosNaming.NamingContextPackage.NotFoundReason;
 @XmlSeeAlso({
     MassObject.class
 })
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.ADD_BODY})
 public class AVLGeometry extends MassObject implements AVLSerializable{
     final static Logger logger = Logger.getLogger(AVLGeometry.class.getName());
 
@@ -335,5 +336,17 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
             }
         }
         return -1;
+    }
+
+    public Surface createSurface() {
+        Surface surface = new Surface();
+        this.getSurfaces().add(surface);
+        return surface;
+    }
+
+    public Body createBody() {
+        Body body = new Body();
+        this.getBodies().add(body);
+        return body;
     }
 }

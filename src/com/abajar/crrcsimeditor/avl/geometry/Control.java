@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
@@ -16,12 +18,13 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
  *
  * @author hfreire
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Control extends MassObject implements AVLSerializable {
     public static final int AILERON = 0;
     public static final int ELEVATOR = 1;
     public static final int RUDDER = 2;
 
-    private String name;
+    private String name = "new control";
     private float gain;
     private float Xhinge;
     private float Xhvec;

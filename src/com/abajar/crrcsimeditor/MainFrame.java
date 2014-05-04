@@ -24,10 +24,10 @@ import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
-import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode;
-import com.abajar.crrcsimeditor.avl.view.SelectorMutableTreeNode.ENABLE_BUTTONS;
-import com.abajar.crrcsimeditor.avl.view.table.AVLModelTableFactory;
-import com.abajar.crrcsimeditor.avl.view.table.CRRCSimTableModel;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.table.avl.AVLModelTableFactory;
+import com.abajar.crrcsimeditor.view.table.avl.CRRCSimTableModel;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
@@ -39,6 +39,8 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.tree.DefaultTreeModel;
 import static java.util.EnumSet.of;
+import java.util.List;
+import java.util.Set;
 import javax.swing.tree.MutableTreeNode;
 
 /**
@@ -572,7 +574,7 @@ public class MainFrame extends javax.swing.JFrame {
     private void avlTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_avlTreeValueChanged
         SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)evt.getPath().getLastPathComponent();
 
-        EnumSet<ENABLE_BUTTONS> options = treeNode.getOptions();
+        List<ENABLE_BUTTONS> options = treeNode.getOptions();
         addSurfaceButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SURFACE));
         addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
         addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
@@ -584,33 +586,23 @@ public class MainFrame extends javax.swing.JFrame {
 }//GEN-LAST:event_avlTreeValueChanged
 
     private void addSurfaceButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSurfaceButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Surface newSurface = this.controller.createSurfaceFor((AVLGeometry)treeNode.getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSurfaceTreeNode(newSurface), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.SURFACE);
 }//GEN-LAST:event_addSurfaceButtonActionPerformed
 
     private void addSectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSectionButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Section newSection = this.controller.createSectionFor((Surface)treeNode.getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createSectionTreeNode(newSection), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.SECTION);
 }//GEN-LAST:event_addSectionButtonActionPerformed
 
     private void addControlButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addControlButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Control newControl = this.controller.createControlFor((Section)treeNode.getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createControlTreeNode(newControl), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.CONTROL);
 }//GEN-LAST:event_addControlButtonActionPerformed
 
     private void addMassButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addMassButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Mass newMass = this.controller.createMassFor((MassObject)treeNode.getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createMassTreeNode(newMass), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.MASS);
 }//GEN-LAST:event_addMassButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        SelectorMutableTreeNode deleteTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getLastPathComponent();
-        SelectorMutableTreeNode parentTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getParentPath().getLastPathComponent();
-        deleteTreeNodeAndObject(parentTreeNode, deleteTreeNode);
+        deleteTreeNodeAndObject();
 }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void modelPropertiesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modelPropertiesTableMouseClicked
@@ -620,15 +612,11 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_modelPropertiesTableMouseClicked
 
     private void addBodyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBodyButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Body newBody = this.controller.createBodyFor((AVLGeometry)treeNode.getUserObject()) ;
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createBodyTreeNode(newBody), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.BODY);
     }//GEN-LAST:event_addBodyButtonActionPerformed
 
     private void addChangeLogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addChangeLogButtonActionPerformed
-        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
-        Change change = this.controller.createChangeFor((CRRCSim) treeNode.getUserObject());
-        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(createChangeNode(change), treeNode, treeNode.getChildCount());
+        createNode(SelectorMutableTreeNode.TYPES.CHANGE);
     }//GEN-LAST:event_addChangeLogButtonActionPerformed
 
     
@@ -668,6 +656,36 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JInternalFrame view3DIFrame;
     // End of variables declaration//GEN-END:variables
 
+    private void createNode(SelectorMutableTreeNode.TYPES type){
+        SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)this.avlTree.getSelectionPath().getLastPathComponent();
+
+        SelectorMutableTreeNode node = null;
+
+        switch(type){
+            case SECTION:
+                node = new SelectorMutableTreeNode(((Surface)treeNode.getUserObject()).createSection());
+                break;
+            case SURFACE:
+                node = new SelectorMutableTreeNode(((AVLGeometry)treeNode.getUserObject()).createSurface());
+                break;
+            case CONTROL:
+                node = new SelectorMutableTreeNode(((Section)treeNode.getUserObject()).createControl());
+                break;
+            case MASS:
+                node = new SelectorMutableTreeNode(((MassObject)treeNode.getUserObject()).createMass());
+                break;
+            case BODY:
+                node = new SelectorMutableTreeNode(((AVLGeometry)treeNode.getUserObject()).createBody());
+                break;
+            case CHANGE:
+                node = new SelectorMutableTreeNode(((CRRCSim)treeNode.getUserObject()).createChange());
+                break;
+            default:
+                throw new UnsupportedOperationException("Node of type " + type + " not suported");
+        }
+        ((DefaultTreeModel)this.avlTree.getModel()).insertNodeInto(node, treeNode, treeNode.getChildCount());
+    }
+
     /**
      * @return the fileExportAsCRRsimMenuItem
      */
@@ -683,50 +701,7 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     private DefaultTreeModel getTreeModel(){
-        SelectorMutableTreeNode airplaneNode = new SelectorMutableTreeNode(this.controller.crrcsim, of(ENABLE_BUTTONS.ADD_CHANGELOG));
-
-        AVL avl = this.controller.crrcsim.getAvl();
-
-        SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
-        airplaneNode.add(avlNode);
-
-        for(Change change : this.controller.crrcsim.getChangelog()){
-            airplaneNode.add(new SelectorMutableTreeNode(change));
-        }
-
-        SelectorMutableTreeNode geometryNode = createSelectorMutableTreeNode(avl.getGeometry(),of(ENABLE_BUTTONS.ADD_SURFACE, ENABLE_BUTTONS.ADD_MASS, ENABLE_BUTTONS.ADD_BODY));
-        avlNode.add(geometryNode);
-
-        for(Surface surf : avl.getGeometry().getSurfaces()){
-            SelectorMutableTreeNode surfNode = createSurfaceTreeNode(surf);
-            geometryNode.add(surfNode);
-
-            for(Section section:surf.getSections()){
-                SelectorMutableTreeNode sectionNode = createSectionTreeNode(section);
-                surfNode.add(sectionNode);
-
-                for(Control control:section.getControls()){
-                    SelectorMutableTreeNode controlNode = createControlTreeNode(control);
-                    sectionNode.add(controlNode);
-                }
-            }
-        }
-
-        for(Body body : avl.getGeometry().getBodies()){
-            SelectorMutableTreeNode bodyNode = createBodyTreeNode(body);
-            geometryNode.add(bodyNode);
-        }
-
-
-        return new DefaultTreeModel(airplaneNode);
-    }
-
-    private SelectorMutableTreeNode createSelectorMutableTreeNode(Object object, EnumSet<ENABLE_BUTTONS> options){
-        SelectorMutableTreeNode smTreeNode = new SelectorMutableTreeNode(object, options);
-        for(Mass mass : ((MassObject)object).getMasses()){
-            smTreeNode.add(createMassTreeNode(mass));
-        }
-        return smTreeNode;
+        return SelectorMutableTreeNode.generateTreeNode(this.controller.crrcsim);
     }
 
     public void updateAVLTree(){
@@ -744,32 +719,14 @@ public class MainFrame extends javax.swing.JFrame {
        tableModel.addColumn(tc);
     }
 
-    private SelectorMutableTreeNode createSectionTreeNode(Section section) {
-        return createSelectorMutableTreeNode(section, of(ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE));
-    }
-
-    private SelectorMutableTreeNode createSurfaceTreeNode(Surface surf){
-        return createSelectorMutableTreeNode(surf, of(ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.DELETE));
-    }
-
-
-    private SelectorMutableTreeNode createBodyTreeNode(Body newBody) {
-        return createSelectorMutableTreeNode(newBody, of(ENABLE_BUTTONS.DELETE));
-    }
-
-    private SelectorMutableTreeNode createControlTreeNode(Control control) {
-        return createSelectorMutableTreeNode(control, of(ENABLE_BUTTONS.DELETE));
-    }
-
-    private SelectorMutableTreeNode createMassTreeNode(Mass mass) {
-        return new SelectorMutableTreeNode(mass, of(ENABLE_BUTTONS.DELETE));
-    }
-
     private MutableTreeNode createChangeNode(Change newChange) {
-        return new SelectorMutableTreeNode(newChange, of(ENABLE_BUTTONS.DELETE));
+        return new SelectorMutableTreeNode(newChange);
     }
 
-    private void deleteTreeNodeAndObject(SelectorMutableTreeNode parentTreeNode, SelectorMutableTreeNode deleteTreeNode){
+    private void deleteTreeNodeAndObject(){
+        SelectorMutableTreeNode deleteTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getLastPathComponent();
+        SelectorMutableTreeNode parentTreeNode = (SelectorMutableTreeNode) this.avlTree.getSelectionPath().getParentPath().getLastPathComponent();
+
         ((DefaultTreeModel)this.avlTree.getModel()).removeNodeFromParent(deleteTreeNode);
 
         if(deleteTreeNode.getUserObject().getClass().equals(Mass.class)){

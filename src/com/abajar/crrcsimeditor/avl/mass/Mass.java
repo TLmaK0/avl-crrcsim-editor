@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.mass;
 
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,6 +20,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  * @author hfreire
  */
 @XmlRootElement
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Mass implements Serializable{
     protected static final Locale locale = new Locale("en");
     private String name;

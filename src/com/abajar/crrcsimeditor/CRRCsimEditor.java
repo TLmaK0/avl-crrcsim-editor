@@ -156,10 +156,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
         VpTG.setTransform(Trfcamera);
     }
 
-    public CRRCSim getCRRCSim(){
-        return this.crrcsim;
-    }
-
     /**
      * A convenient static getter for the application instance.
      * @return the instance of CRRCsimEditor
@@ -174,46 +170,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
     public static void main(String[] args) throws IOException {
         LogManager.getLogManager().readConfiguration();
         launch(CRRCsimEditor.class, args);
-    }
-
-    public Surface createSurfaceFor(AVLGeometry aVLGeometry) {
-       Surface surface = new Surface();
-       surface.setName("new surface");
-       aVLGeometry.getSurfaces().add(surface);
-       return surface;
-    }
-
-    public Section createSectionFor(Surface surface) {
-       Section section  = new Section();
-       surface.getSections().add(section);
-       return section;
-    }
-
-    public Control createControlFor(Section section) {
-        Control control = new Control();
-        control.setName("new control");
-        section.getControls().add(control);
-        return control;
-    }
-
-    public Mass createMassFor(MassObject massObject) {
-        Mass mass = new Mass();
-        mass.setName(massObject.toString());
-        massObject.getMasses().add(mass);
-        return mass;
-    }
-
-    public Change createChangeFor(CRRCSim crrcsim) {
-        Change change = new Change();
-        crrcsim.getChangelog().add(change);
-        return change;
-    }
-
-    Body createBodyFor(AVLGeometry aVLGeometry) {
-        Body body = new Body();
-        body.setName("new body");
-        aVLGeometry.getBodies().add(body);
-        return body;
     }
 
     public void exportAsAVL(Path avlFile) throws IOException {
@@ -294,8 +250,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.marshal(this.crrcsim, fos);
             fos.close();
         } catch (Exception ex) {
-ex.printStackTrace();
-
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }

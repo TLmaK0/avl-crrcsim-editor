@@ -6,6 +6,8 @@
 package com.abajar.crrcsimeditor.avl.mass;
 
 import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +38,12 @@ public class MassObject implements Serializable{
         for(Mass mass : this.getMasses()){
             mass.writeAVLMassData(out);
         }
+    }
+
+    public Mass createMass() {
+        Mass mass = new Mass();
+        this.getMasses().add(mass);
+        return mass;
     }
 
 }

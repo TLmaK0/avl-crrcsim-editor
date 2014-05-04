@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElement;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
@@ -18,6 +20,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  *
  * @author hfreire
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE})
 public class Section  extends MassObject implements AVLSerializable{
 
     //TODO: AIRFOIL
@@ -236,5 +239,11 @@ public class Section  extends MassObject implements AVLSerializable{
      */
     public void setX2(float y) {
         this.X2 = y;
+    }
+
+    public Control createControl() {
+        Control control = new Control();
+        this.getControls().add(control);
+        return control;
     }
 }

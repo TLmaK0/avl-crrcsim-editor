@@ -5,6 +5,8 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElement;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
@@ -18,6 +20,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
  *
  * @author hfreire
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SECTION, ENABLE_BUTTONS.DELETE})
 public class Surface extends MassObject implements AVLSerializable {
     static final long serialVersionUID = 1138674039288253507L;
     //TODO: NOWAKE
@@ -25,7 +28,7 @@ public class Surface extends MassObject implements AVLSerializable {
     //TODO: NOLOAD
 
     //SECTION
-    private String name;
+    private String name = "new surface";
     private int Nchord;
     private float Cspace;
     private int Nspan;
@@ -131,6 +134,11 @@ public class Surface extends MassObject implements AVLSerializable {
         this.dAinc = dAinc;
     }
 
+    public Section createSection(){
+        Section section = new Section();
+        this.getSections().add(section);
+        return section;
+    }
     /**
      * @return the sections
      */

@@ -91,7 +91,7 @@ public class AvlRunner {
         String resultFile = this.avlFileName.toString().replace(".avl", ".st");
         
         sendCommand("oper\n");
-        sendCommand("g\n\n");
+        //sendCommand("g\n\n");
 
         //setting pitch moment 0
         if (elevatorPosition != -1) sendCommand("d" + (elevatorPosition + 1) + " pm 0\n");

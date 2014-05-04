@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package com.abajar.crrcsimeditor.avl.view.table;
+package com.abajar.crrcsimeditor.view.table.avl;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
