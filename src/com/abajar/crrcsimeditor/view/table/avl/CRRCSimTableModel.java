@@ -20,7 +20,6 @@ import javax.swing.table.TableModel;
  * @author hfreire
  */
 public class CRRCSimTableModel extends DefaultTableModel implements TableModelListener {
-    protected final String LINE_SEPARATOR = System.getProperty("line.separator");
 
     public CRRCSimTableModel getInitializedTable(){
        this.setDataVector(getData(), getColumns());

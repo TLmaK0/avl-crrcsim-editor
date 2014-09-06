@@ -9,6 +9,7 @@ import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.IOException;
 import java.io.Serializable;
@@ -35,6 +36,7 @@ public class CRRCSim implements Serializable{
     /**
      * @return the config
      */
+    @CRRCSimEditorNode
     public Config getConfig() {
         return config;
     }
@@ -100,7 +102,7 @@ public class CRRCSim implements Serializable{
     </sound>
   </config>
        */
-    
+    @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE, ENABLE_BUTTONS.ADD_CHANGELOG})
     public static class Changelog extends ArrayList<Change>{
 
         public Changelog() {
@@ -113,7 +115,7 @@ public class CRRCSim implements Serializable{
     private final Changelog changelog = new Changelog();
     private Aero aero;
     private final AVL avl;
-    private Config config;
+    private Config config = new Config();
 
     protected CRRCSim(AVL avl){
         this.avl = avl;
@@ -143,6 +145,7 @@ public class CRRCSim implements Serializable{
     /**
      * @return the avl
      */
+    @CRRCSimEditorNode
     public AVL getAvl() {
         return avl;
     }
@@ -205,10 +208,9 @@ public class CRRCSim implements Serializable{
         return aero;
     }
 
-    @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
     public static class Change {
 
-        private Date date;
+        private Date date = new Date();
 
 
         @CRRCSimEditorField(text="Author",
@@ -266,7 +268,7 @@ public class CRRCSim implements Serializable{
 
         @Override
         public String toString(){
-            return "changelog";
+            return this.date.toString();
         }
     }
     

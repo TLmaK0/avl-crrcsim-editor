@@ -42,6 +42,7 @@ import static java.util.EnumSet.of;
 import java.util.List;
 import java.util.Set;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -676,8 +677,8 @@ public class MainFrame extends javax.swing.JFrame {
         return view3DIFrame;
     }
 
-    private DefaultTreeModel getTreeModel(){
-        return SelectorMutableTreeNode.generateTreeNode(this.controller.crrcsim);
+    private TreeModel getTreeModel(){
+        return SelectorMutableTreeNode.generateTree(this.controller.crrcsim);
     }
 
     public void updateAVLTree(){

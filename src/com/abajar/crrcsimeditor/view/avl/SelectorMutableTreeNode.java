@@ -5,6 +5,15 @@
 
 package com.abajar.crrcsimeditor.view.avl;
 
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.tree.TreeModel;
+import com.abajar.crrcsimeditor.crrcsim.Config;
 import java.lang.annotation.Annotation;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.geometry.Body;
@@ -31,43 +40,29 @@ import static java.util.EnumSet.of;
  * @author hfreire
  */
 public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
-    public static DefaultTreeModel generateTreeNode(CRRCSim crrcsim){
-        SelectorMutableTreeNode airplaneNode = new SelectorMutableTreeNode(crrcsim);
+    public static TreeModel generateTree(Object obj){
+        return new DefaultTreeModel(generateTreeNode(obj));
+    }
 
-        AVL avl = crrcsim.getAvl();
+    private static MutableTreeNode generateTreeNode(Object obj){
+        SelectorMutableTreeNode node = new SelectorMutableTreeNode(obj);
 
-        SelectorMutableTreeNode avlNode = new SelectorMutableTreeNode(avl);
-        airplaneNode.add(avlNode);
-
-        for(Change change : crrcsim.getChangelog()){
-            airplaneNode.add(new SelectorMutableTreeNode(change));
-        }
-
-        SelectorMutableTreeNode geometryNode = new SelectorMutableTreeNode(avl.getGeometry());
-        avlNode.add(geometryNode);
-
-        for(Surface surf : avl.getGeometry().getSurfaces()){
-            SelectorMutableTreeNode surfNode = new SelectorMutableTreeNode(surf);
-            geometryNode.add(surfNode);
-
-            for(Section section:surf.getSections()){
-                SelectorMutableTreeNode sectionNode = new SelectorMutableTreeNode(section);
-                surfNode.add(sectionNode);
-
-                for(Control control:section.getControls()){
-                    SelectorMutableTreeNode controlNode = new SelectorMutableTreeNode(control);
-                    sectionNode.add(controlNode);
+        for(Method method : obj.getClass().getDeclaredMethods()){
+            if(method.isAnnotationPresent(CRRCSimEditorNode.class)){
+                try {
+                    Object childObj = method.invoke(obj);
+                    node.add(generateTreeNode(childObj));
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(SelectorMutableTreeNode.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(SelectorMutableTreeNode.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(SelectorMutableTreeNode.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
 
-        for(Body body : avl.getGeometry().getBodies()){
-            SelectorMutableTreeNode bodyNode = new SelectorMutableTreeNode(body);
-            geometryNode.add(bodyNode);
-        }
-
-
-        return new DefaultTreeModel(airplaneNode);
+        return node;
     }
 
     public static SelectorMutableTreeNode createNode(Object parentTreeNode, SelectorMutableTreeNode.TYPES type){
@@ -105,7 +100,9 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         SECTION,
         CONTROL,
         MASS,
-        CHANGE
+        CHANGE,
+        CONFIG,
+        SOUND
     }
 
     public enum ENABLE_BUTTONS {
@@ -114,28 +111,23 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_SECTION,
         ADD_CONTROL,
         ADD_MASS,
-        DELETE,
-        ADD_CHANGELOG
+        ADD_CHANGELOG,
+        ADD_CONFIG,
+        ADD_SOUND,
+        DELETE
     }
 
     public SelectorMutableTreeNode(Object obj){
         super(obj);
-    }
-
-    public SelectorMutableTreeNode(Mass mass){
-        super(mass);
-        this.options = this.extractOptions(mass);
-    }
-
-    public SelectorMutableTreeNode(MassObject object) {
-        super(object);
-        this.options = this.extractOptions(object);
-        for(Mass mass : object.getMasses()){
-            this.add(new SelectorMutableTreeNode(mass));
+        
+        if (obj.getClass().isAnnotationPresent(CRRCSimEditor.class)) this.options = this.extractOptions(obj);
+        
+        if (MassObject.class.isAssignableFrom(obj.getClass())){
+            for(Mass mass : ((MassObject)obj).getMasses()){
+                this.add(new SelectorMutableTreeNode(mass));
+            }
         }
     }
-
-
 
     private List<ENABLE_BUTTONS> options = new ArrayList();
 

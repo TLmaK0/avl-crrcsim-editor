@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.Serializable;
 
 /**
@@ -17,6 +18,7 @@ public class AVL implements Serializable{
     /**
      * @return the geometry
      */
+    @CRRCSimEditorNode
     public AVLGeometry getGeometry() {
         return geometry;
     }

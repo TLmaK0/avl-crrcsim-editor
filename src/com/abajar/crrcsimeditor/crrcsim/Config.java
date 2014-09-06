@@ -5,13 +5,40 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
  * @author Hugo
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SOUND})
 public class Config  implements Serializable{
+
+    @CRRCSimEditorField(text="short description",
+        help="Short description of the config"
+    )
+    private String descr_short = "new config";
+
+    @CRRCSimEditorField(text="long description",
+        help="Long description of the config"
+    )
+    private String descr_long;
+
+    private MassInertia mass_inertia = new MassInertia();
+    private Sound sound = new Sound();
+    private Power power = new Power();
+    private Aero aero;
+
+    @Override
+    public String toString() {
+        return this.descr_short;
+    }
+
 
     /**
      * @return the descr_long
@@ -44,6 +71,7 @@ public class Config  implements Serializable{
     /**
      * @return the mass_inertia
      */
+    @CRRCSimEditorNode
     public MassInertia getMass_inertia() {
         return mass_inertia;
     }
@@ -58,6 +86,7 @@ public class Config  implements Serializable{
     /**
      * @return the sound
      */
+    @CRRCSimEditorNode
     public Sound getSound() {
         return sound;
     }
@@ -85,11 +114,36 @@ public class Config  implements Serializable{
 
     public static class MassInertia {
         private String version = "1";
-        private String units;
+        private String units = "1";
+
+        @Override
+        public String toString() {
+            return "mass";
+        }
+
+        @CRRCSimEditorField(text="mass",
+            help="total aireplane mass"
+        )
         private float Mass;
+
+        @CRRCSimEditorField(text="I_xx",
+            help="Inertia xx"
+        )
         private float I_xx;
+
+        @CRRCSimEditorField(text="I_yy",
+            help="Inertia yy"
+        )
         private float I_yy;
+
+        @CRRCSimEditorField(text="I_zz",
+            help="Inertia zz"
+        )
         private float I_zz;
+
+        @CRRCSimEditorField(text="I_xz",
+            help="Inertia xz"
+        )
         private float I_xz;
 
         public MassInertia() {
@@ -195,16 +249,54 @@ public class Config  implements Serializable{
     }
 
     public static class Sound {
-        private Sample sample;
+        private Sample sample = new Sample();
+
+        @Override
+        public String toString(){
+            return this.sample.getFilename();
+        }
+
         public Sound() {
         }
     }
 
     public static class Sample {
-        private String filename;
+        @CRRCSimEditorField(text="sound file",
+            help="name of file for engine sound"
+        )
+        private String filename = "sound.wav";
+
+        @CRRCSimEditorField(text="type",
+            help="Type of sound: 0 glow engine, 1 electric engine, 2 glider sound"
+        )
         private String type;
+
+        @CRRCSimEditorField(text="pitchfactor",
+            help="This number converts from speed of propeller to pitch of engine sound."
+        )
         private float pitchfactor;
+        
+        @CRRCSimEditorField(text="maxvolume",
+            help="The maximum sample volume (0.0 ... 1.0). The loudest sample should be set to 1.0."
+        )
         private float maxvolume;
+
+        @CRRCSimEditorField(text="v_min",
+            help="Only for type=2: minimal velocity (relative to the airplane's \"neutral\" velocity) at which the sound can be heard."
+        )
+        private int v_min;
+
+        @CRRCSimEditorField(text="v_max",
+            help="Only for type=2: velocity (relative to the airplane's \"neutral\" velocity) at which the sound reaches maximum volume."
+        )
+        private int v_max;
+
+
+        @CRRCSimEditorField(text="dist_max",
+            help="Only for type=2: distance at which the sound reaches the minimum volume."
+        )
+        private int dist_max;
+
         public Sample() {
         }
 
@@ -263,11 +355,48 @@ public class Config  implements Serializable{
         public void setMaxvolume(float maxvolume) {
             this.maxvolume = maxvolume;
         }
+
+        /**
+         * @return the v_min
+         */
+        public int getV_min() {
+            return v_min;
+        }
+
+        /**
+         * @param v_min the v_min to set
+         */
+        public void setV_min(int v_min) {
+            this.v_min = v_min;
+        }
+
+        /**
+         * @return the v_max
+         */
+        public int getV_max() {
+            return v_max;
+        }
+
+        /**
+         * @param v_max the v_max to set
+         */
+        public void setV_max(int v_max) {
+            this.v_max = v_max;
+        }
+
+        /**
+         * @return the dist_max
+         */
+        public int getDist_max() {
+            return dist_max;
+        }
+
+        /**
+         * @param dist_max the dist_max to set
+         */
+        public void setDist_max(int dist_max) {
+            this.dist_max = dist_max;
+        }
     }
 
-    private String descr_long;
-    private String descr_short;
-    private MassInertia mass_inertia;
-    private Sound sound;
-    private Aero aero;
 }
