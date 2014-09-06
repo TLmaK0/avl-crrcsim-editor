@@ -13,6 +13,7 @@ import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -151,6 +152,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
      */
     @XmlElementWrapper
     @XmlElement(name="surface")
+    @CRRCSimEditorNode
     public ArrayList<Surface> getSurfaces() {
         return surfaces;
     }

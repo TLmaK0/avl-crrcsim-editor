@@ -11,6 +11,7 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import javax.xml.bind.annotation.XmlElement;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.AVLSerializable;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -170,6 +171,7 @@ public class Section  extends MassObject implements AVLSerializable{
      */
     @XmlElementWrapper
     @XmlElement(name = "control")
+    @CRRCSimEditorNode
     public ArrayList<Control> getControls() {
         return controls;
     }

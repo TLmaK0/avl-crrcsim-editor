@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.geometry;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
@@ -208,6 +209,7 @@ public class Surface extends MassObject implements AVLSerializable {
      */
     @XmlElementWrapper
     @XmlElement(name = "section")
+    @CRRCSimEditorNode
     public ArrayList<Section> getSections() {
         return sections;
     }

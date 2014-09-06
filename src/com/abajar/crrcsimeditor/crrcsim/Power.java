@@ -6,13 +6,14 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author Hugo
  */
-public class Power {
+public class Power implements Serializable {
 
     /**
      * @return the bateries

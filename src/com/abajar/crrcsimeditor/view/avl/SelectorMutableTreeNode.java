@@ -51,7 +51,11 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
             if(method.isAnnotationPresent(CRRCSimEditorNode.class)){
                 try {
                     Object childObj = method.invoke(obj);
-                    node.add(generateTreeNode(childObj));
+                    if (childObj instanceof List<?>) {
+                        for(Object childObjItem : (List)childObj){
+                            node.add(generateTreeNode(childObjItem));
+                        }
+                    }else node.add(generateTreeNode(childObj));
                 } catch (IllegalAccessException ex) {
                     Logger.getLogger(SelectorMutableTreeNode.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (IllegalArgumentException ex) {

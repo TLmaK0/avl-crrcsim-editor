@@ -10,7 +10,6 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  *
@@ -112,7 +111,7 @@ public class Config  implements Serializable{
         this.aero = aero;
     }
 
-    public static class MassInertia {
+    public static class MassInertia implements Serializable {
         private String version = "1";
         private String units = "1";
 
@@ -248,7 +247,7 @@ public class Config  implements Serializable{
         }
     }
 
-    public static class Sound {
+    public static class Sound implements Serializable {
         private Sample sample = new Sample();
 
         @Override
@@ -260,7 +259,7 @@ public class Config  implements Serializable{
         }
     }
 
-    public static class Sample {
+    public static class Sample implements Serializable {
         @CRRCSimEditorField(text="sound file",
             help="name of file for engine sound"
         )

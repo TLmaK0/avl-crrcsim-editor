@@ -44,6 +44,7 @@ public class CRRCSimRepository {
             JAXBContext context;
             int version = this.getVersion(data);
 
+            logger.log(Level.INFO, "Loading file version {0}", version);
             switch(version){
                 case 10:
                     context = JAXBContext.newInstance(AVLGeometry.class);
@@ -63,7 +64,6 @@ public class CRRCSimRepository {
                     break;
             }
         } catch (Exception ex) {
-ex.printStackTrace();
             logger.log(Level.SEVERE, null, ex);
         }
         return crrcsim;
