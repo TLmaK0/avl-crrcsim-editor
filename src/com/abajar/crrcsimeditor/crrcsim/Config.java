@@ -12,6 +12,8 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
  *
@@ -87,6 +89,7 @@ public class Config  implements Serializable{
      * @return the sound
      */
     @CRRCSimEditorNode
+    @XmlElement
     public Sound getSound() {
         return sound;
     }
@@ -294,14 +297,29 @@ public class Config  implements Serializable{
 
         @Override
         public String toString(){
-            return this.sample.getFilename();
+            return "Sound";
         }
 
         public Sound() {
         }
+
+        /**
+         * @return the sample
+         */
+        @CRRCSimEditorNode
+        @XmlElement
+        public Sample getSample() {
+            return sample;
+        }
     }
 
     public static class Sample implements Serializable {
+
+        @Override
+        public String toString() {
+            return this.filename;
+        }
+
         @CRRCSimEditorField(text="sound file",
             help="name of file for engine sound"
         )
@@ -310,7 +328,7 @@ public class Config  implements Serializable{
         @CRRCSimEditorField(text="type",
             help="Type of sound: 0 glow engine, 1 electric engine, 2 glider sound"
         )
-        private String type;
+        private String type="0";
 
         @CRRCSimEditorField(text="pitchfactor",
             help="This number converts from speed of propeller to pitch of engine sound."
@@ -351,6 +369,7 @@ public class Config  implements Serializable{
         /**
          * @param filename the filename to set
          */
+        @XmlAttribute
         public void setFilename(String filename) {
             this.filename = filename;
         }
@@ -358,6 +377,7 @@ public class Config  implements Serializable{
         /**
          * @return the type
          */
+        @XmlAttribute
         public String getType() {
             return type;
         }
@@ -372,6 +392,7 @@ public class Config  implements Serializable{
         /**
          * @return the pitchfactor
          */
+        @XmlAttribute
         public float getPitchfactor() {
             return pitchfactor;
         }
@@ -386,6 +407,7 @@ public class Config  implements Serializable{
         /**
          * @return the maxvolume
          */
+        @XmlAttribute
         public float getMaxvolume() {
             return maxvolume;
         }
@@ -400,6 +422,7 @@ public class Config  implements Serializable{
         /**
          * @return the v_min
          */
+        @XmlAttribute(name="v_min")
         public int getV_min() {
             return v_min;
         }
@@ -414,6 +437,7 @@ public class Config  implements Serializable{
         /**
          * @return the v_max
          */
+        @XmlAttribute(name="v_max")
         public int getV_max() {
             return v_max;
         }
@@ -428,6 +452,7 @@ public class Config  implements Serializable{
         /**
          * @return the dist_max
          */
+        @XmlAttribute(name="dist_max")
         public int getDist_max() {
             return dist_max;
         }
