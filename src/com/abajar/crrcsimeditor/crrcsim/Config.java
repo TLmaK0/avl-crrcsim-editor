@@ -5,11 +5,13 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  *
@@ -70,7 +72,6 @@ public class Config  implements Serializable{
     /**
      * @return the mass_inertia
      */
-    @CRRCSimEditorNode
     public MassInertia getMass_inertia() {
         return mass_inertia;
     }
@@ -111,6 +112,47 @@ public class Config  implements Serializable{
         this.aero = aero;
     }
 
+    void setMass_inertiaFromMasses(ArrayList<Mass> masses) {
+        this.calculateInertiasMasses(masses);
+    }
+
+    private double calculateMomentInertiaFromAxis(float coord1, float coord2, float originalMomentInertia, float mass){
+        //Parallel Axis Teorem http://en.wikipedia.org/wiki/Parallel_axis_theorem
+        //Ixx_0 = I_xx + m * r^2
+        //r = square(y^2 + z^2)
+        //Ixx_0 = I_xx + m * square(y^2 + z^2)^2
+        //Ixx_0 = I_xx + m * y^2 + z^2
+        return originalMomentInertia + mass * (Math.pow(coord1, 2) + Math.pow(coord2, 2));
+    }
+
+    private double calculateProductInertiaFromAxis(float coord1, float coord2, float originalProductInertia, float mass){
+        //Parallel Axes Theorem for Products of Inertia http://homepages.wmich.edu/~kamman/Me659InertiaMatrix.pdf
+        //I_xz_0 = Ixz + m * x * z
+        return originalProductInertia + mass * coord1 * coord2;
+    }
+
+    private void calculateInertiasMasses(ArrayList<Mass> masses) {
+        float I_xx = 0;
+        float I_yy = 0;
+        float I_zz = 0;
+        float I_xz = 0;
+        float totalMass = 0;
+        for(Mass mass: masses){
+            I_xx += calculateMomentInertiaFromAxis(mass.getY(), mass.getZ(), mass.getIxx(), mass.getMass());
+            I_yy += calculateMomentInertiaFromAxis(mass.getX(), mass.getZ(), mass.getIyy(), mass.getMass());
+            I_zz += calculateMomentInertiaFromAxis(mass.getX(), mass.getY(), mass.getIzz(), mass.getMass());
+            I_xz += calculateProductInertiaFromAxis(mass.getX(), mass.getZ(), mass.getIxz(), mass.getMass());
+            totalMass += mass.getMass();
+        }
+
+        //setting and convert to kg * m2
+        this.mass_inertia.setI_xx(I_xx / 10000000);
+        this.mass_inertia.setI_yy(I_yy / 10000000);
+        this.mass_inertia.setI_zz(I_zz / 10000000);
+        this.mass_inertia.setI_xz(I_xz / 10000000);
+        this.mass_inertia.setMass(totalMass / 1000);
+    }
+
     public static class MassInertia implements Serializable {
         private String version = "1";
         private String units = "1";
@@ -126,22 +168,22 @@ public class Config  implements Serializable{
         private float Mass;
 
         @CRRCSimEditorField(text="I_xx",
-            help="Inertia xx"
+            help="Moment of Inertia xx"
         )
         private float I_xx;
 
         @CRRCSimEditorField(text="I_yy",
-            help="Inertia yy"
+            help="Moment of Inertia yy"
         )
         private float I_yy;
 
         @CRRCSimEditorField(text="I_zz",
-            help="Inertia zz"
+            help="Moment of Inertia zz"
         )
         private float I_zz;
 
         @CRRCSimEditorField(text="I_xz",
-            help="Inertia xz"
+            help="Product of Inertia xz"
         )
         private float I_xz;
 

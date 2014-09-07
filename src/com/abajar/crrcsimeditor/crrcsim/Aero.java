@@ -5,9 +5,6 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
-import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
-import com.abajar.crrcsimeditor.avl.runcase.Configuration;
-import com.abajar.crrcsimeditor.avl.runcase.StabilityDerivatives;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

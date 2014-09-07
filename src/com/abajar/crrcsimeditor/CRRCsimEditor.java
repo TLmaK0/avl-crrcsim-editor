@@ -241,7 +241,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
 
     private void exportAsCRRCsim(File file, Path originPath) throws IOException, InterruptedException{
         try {
-            this.crrcsim.calculateAero(this.configuration.getProperty("avl.path"), file.toPath().getParent());
+            this.crrcsim.calculate(this.configuration.getProperty("avl.path"), file.toPath().getParent());
             
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(CRRCSim.class);

@@ -51,18 +51,18 @@ public class Mass implements Serializable{
     )
     private float z;
 
-    @CRRCSimEditorField(text="x inertia",
-        help="object longitude over the x axis"
+    @CRRCSimEditorField(text="x length",
+        help="object length over the x axis"
     )
     private float xLength;
 
-    @CRRCSimEditorField(text="y inertia",
-        help="object longitude over the y axis"
+    @CRRCSimEditorField(text="y length",
+        help="object length over the y axis"
     )
     private float yLength;
 
-    @CRRCSimEditorField(text="z inertia",
-        help="object longitude over the z axis"
+    @CRRCSimEditorField(text="z length",
+        help="object length over the z axis"
     )
     private float zLength;
 
@@ -154,6 +154,14 @@ public class Mass implements Serializable{
      */
     public float getIzz() {
         return getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getxLength(), 2)) / 12;
+    }
+
+    /**
+     * @return the Ixz
+     */
+    public float getIxz(){
+        //Symmetric objects over axis has product of inertia 0
+        return 0;
     }
 
     /**
