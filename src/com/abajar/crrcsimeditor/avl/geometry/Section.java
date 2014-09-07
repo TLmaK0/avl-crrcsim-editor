@@ -63,15 +63,15 @@ public class Section  extends MassObject implements AVLSerializable{
     )
     private float Sspace;
 
-    @CRRCSimEditorField(text="NACA",
-        help="sets the camber line to the NACA 4-digit shape specified"
-    )
-    private float X1;
-
-    @CRRCSimEditorField(text="AFILE",
+   @CRRCSimEditorField(text="AFILE",
         help="XFoil filename"
     )
     private float X2;
+            
+    @CRRCSimEditorField(text="NACA",
+        help="sets the camber line to the NACA 4-digit shape specified"
+    )
+    private String NACA="";
 
     @CRRCSimEditorField(text="X1",
         help="If present, the optional X1 X2 parameters indicate that only the\r\n"
@@ -80,7 +80,7 @@ public class Section  extends MassObject implements AVLSerializable{
             + "would be 0.80 1.00.  This allows the camber shape to be easily\r\n"
             + "assigned to any number of surfaces in piecewise manner."
     )
-    private String NACA="";
+    private float X1;
 
     @CRRCSimEditorField(text="X2",
         help="If present, the optional X1 X2 parameters indicate that only the\r\n"
