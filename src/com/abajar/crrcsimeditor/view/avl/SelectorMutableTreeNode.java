@@ -5,6 +5,11 @@
 
 package com.abajar.crrcsimeditor.view.avl;
 
+import com.abajar.crrcsimeditor.crrcsim.Power.Engine;
+import com.abajar.crrcsimeditor.crrcsim.Power.Data;
+import com.abajar.crrcsimeditor.crrcsim.Power.Shaft;
+import com.abajar.crrcsimeditor.crrcsim.Power;
+import com.abajar.crrcsimeditor.crrcsim.Power.Battery;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
@@ -44,7 +49,7 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         return new DefaultTreeModel(generateTreeNode(obj));
     }
 
-    private static MutableTreeNode generateTreeNode(Object obj){
+    private static SelectorMutableTreeNode generateTreeNode(Object obj){
         SelectorMutableTreeNode node = new SelectorMutableTreeNode(obj);
 
         for(Method method : obj.getClass().getDeclaredMethods()){
@@ -72,17 +77,27 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
     public static SelectorMutableTreeNode createNode(Object parentTreeNode, SelectorMutableTreeNode.TYPES type){
         switch(type){
             case SECTION:
-                return new SelectorMutableTreeNode(((Surface)parentTreeNode).createSection());
+                return generateTreeNode(((Surface)parentTreeNode).createSection());
             case SURFACE:
-                return new SelectorMutableTreeNode(((AVLGeometry)parentTreeNode).createSurface());
+                return generateTreeNode(((AVLGeometry)parentTreeNode).createSurface());
             case CONTROL:
-                return new SelectorMutableTreeNode(((Section)parentTreeNode).createControl());
+                return generateTreeNode(((Section)parentTreeNode).createControl());
             case MASS:
-                return new SelectorMutableTreeNode(((MassObject)parentTreeNode).createMass());
+                return generateTreeNode(((MassObject)parentTreeNode).createMass());
             case BODY:
-                return new SelectorMutableTreeNode(((AVLGeometry)parentTreeNode).createBody());
+                return generateTreeNode(((AVLGeometry)parentTreeNode).createBody());
             case CHANGE:
-                return new SelectorMutableTreeNode(((CRRCSim)parentTreeNode).createChange());
+                return generateTreeNode(((CRRCSim)parentTreeNode).createChange());
+            case BATTERY:
+                return generateTreeNode(((Power)parentTreeNode).createBattery());
+            case SHAFT:
+                return generateTreeNode(((Battery)parentTreeNode).createShaft());
+            case ENGINE:
+                return generateTreeNode(((Shaft)parentTreeNode).createEngine());
+            case DATA:
+                return generateTreeNode(((Engine)parentTreeNode).createData());
+            case DATA_IDLE:
+                return generateTreeNode(((Engine)parentTreeNode).createDataIdle());
             default:
                 throw new UnsupportedOperationException("Node of type " + type + " not suported");
         }
@@ -106,8 +121,9 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         MASS,
         CHANGE,
         CONFIG,
-        SOUND
-    }
+        BATTERY
+    ,   SHAFT, ENGINE, DATA, DATA_IDLE
+    ,   PROPELLER}
 
     public enum ENABLE_BUTTONS {
         ADD_SURFACE,
@@ -118,6 +134,11 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_CHANGELOG,
         ADD_CONFIG,
         ADD_SOUND,
+        ADD_BATTERY,
+        ADD_SHAFT,
+        ADD_ENGINE,
+        ADD_DATA,
+        ADD_DATA_IDLE,
         DELETE
     }
 

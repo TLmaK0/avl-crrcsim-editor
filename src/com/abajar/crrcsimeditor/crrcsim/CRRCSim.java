@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
+import com.abajar.crrcsimeditor.crrcsim.Power.Battery;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
@@ -52,6 +53,12 @@ public class CRRCSim implements Serializable{
         Change change = new Change();
         this.getChangelog().add(change);
         return change;
+    }
+
+    public Battery createBattery() {
+        Battery battery = new Battery();
+        this.config.getPower().getBateries().add(null);
+        return battery;
     }
 
     /**

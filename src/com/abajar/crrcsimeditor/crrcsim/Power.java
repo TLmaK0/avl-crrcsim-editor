@@ -5,8 +5,10 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -16,8 +18,22 @@ import javax.xml.bind.annotation.XmlElement;
  *
  * @author Hugo
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_BATTERY})
 public class Power implements Serializable {
-    public static class Data {
+
+    public Battery createBattery() {
+        Battery battery = new Battery();
+        this.getBateries().add(battery);
+        return battery;
+    }
+    
+    public static class Data implements Serializable {
+
+        @Override
+        public String toString() {
+            return "Data";
+        }
+
         private static final String helpData = "Add 2 engine data at least. Use http://www.ecalc.ch/ to calculate Current, Voltage and rpms (you don't need to touch general settings)."
             + "First row use manufacturer data:"
             + "     Voltage = no-load Current: V"
@@ -99,9 +115,17 @@ public class Power implements Serializable {
         public void setRpms(float rpms) {
             this.rpms = rpms;
         }
+
+        
     }
 
-    public static class DataIdle {
+    public static class DataIdle implements Serializable {
+
+        @Override
+        public String toString() {
+            return "DataIdle";
+        }
+
         @CRRCSimEditorField(text="Voltage",
             help="Voltage at idle"
         )
@@ -149,18 +173,25 @@ public class Power implements Serializable {
      */
     @CRRCSimEditorNode
     @XmlElement
-    public ArrayList<Batery> getBateries() {
+    public ArrayList<Battery> getBateries() {
         return bateries;
     }
 
     /**
      * @param bateries the bateries to set
      */
-    public void setBateries(ArrayList<Batery> bateries) {
+    public void setBateries(ArrayList<Battery> bateries) {
         this.bateries = bateries;
     }
 
-    public static class Engine {
+    @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_DATA, ENABLE_BUTTONS.ADD_DATA_IDLE})
+    public static class Engine implements Serializable{
+
+        @Override
+        public String toString() {
+            return "Engine";
+        }
+
         @CRRCSimEditorField(text="J_M",
             help="J_M, the engine's rotor's inertia, can be found in the manufacturer's data sheet,\r\n" +
                 "or it has to be guessed. You can estimate it by regarding\r\n" +
@@ -169,8 +200,8 @@ public class Power implements Serializable {
         )
         private float J_M;
 
-        private ArrayList<Data> data;
-        private ArrayList<DataIdle> dataIdle;
+        private ArrayList<Data> data = new ArrayList<Data>();
+        private ArrayList<DataIdle> dataIdle = new ArrayList<DataIdle>();
 
         private Gearing gearing = new Gearing();
 
@@ -247,9 +278,27 @@ public class Power implements Serializable {
         public void setDataIdle(ArrayList<DataIdle> dataIdle) {
             this.dataIdle = dataIdle;
         }
+
+        public Data createData() {
+            Data newData = new Data();
+            this.getData().add(newData);
+            return newData;
+        }
+
+        public DataIdle createDataIdle() {
+            DataIdle newDataIdle = new DataIdle();
+            this.getDataIdle().add(newDataIdle);
+            return newDataIdle;
+        }
     }
 
-    public static class Gearing {
+    public static class Gearing implements Serializable{
+
+        @Override
+        public String toString() {
+            return "Gearing";
+        }
+
         @CRRCSimEditorField(text="J",
             help="Inertia"
         )
@@ -258,7 +307,7 @@ public class Power implements Serializable {
         @CRRCSimEditorField(text="i",
             help="Given omega is the speed of the shaft, i*omega is the speed of the device which is connected to the shaft using this gearing. "
         )
-        private float i;
+        private float i=1;
         public Gearing() {
         }
 
@@ -291,7 +340,13 @@ public class Power implements Serializable {
         }
     }
 
-    public static class Propeller {
+    public static class Propeller implements Serializable {
+
+        @Override
+        public String toString() {
+            return "Propeller";
+        }
+
         @CRRCSimEditorField(text="D",
             help="meters"
         )
@@ -373,7 +428,7 @@ public class Power implements Serializable {
         }
     }
     
-    private ArrayList<Batery> bateries = new ArrayList<Batery>();
+    private ArrayList<Battery> bateries = new ArrayList<Battery>();
     public Power() {
     }
 
@@ -382,7 +437,14 @@ public class Power implements Serializable {
         return "Power";
     }
 
-    public static class Batery {
+    @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SHAFT})
+    public static class Battery implements Serializable {
+
+        @Override
+        public String toString() {
+            return "Battery";
+        }
+
         @CRRCSimEditorField(text="Throttle_min",
             help="Lower limit for throttle input. Set to >0 if you want a behaviour of"+
                 "a piston engine: once started, it keeps running with at least that throttle."+
@@ -418,13 +480,12 @@ public class Power implements Serializable {
         private String U_0rel;
 
         private ArrayList<Shaft> shafts = new ArrayList<Shaft>();
-        public Batery() {
+        public Battery() {
         }
 
         /**
          * @return the throttle_min
          */
-        @CRRCSimEditorNode
         @XmlAttribute
         public int getThrottle_min() {
             return throttle_min;
@@ -452,10 +513,93 @@ public class Power implements Serializable {
         public void setShafts(ArrayList<Shaft> shafts) {
             this.shafts = shafts;
         }
+
+        /**
+         * @return the C
+         */
+        public float getC() {
+            return C;
+        }
+
+        /**
+         * @param C the C to set
+         */
+        public void setC(float C) {
+            this.C = C;
+        }
+
+        /**
+         * @return the R_I
+         */
+        public int getR_I() {
+            return R_I;
+        }
+
+        /**
+         * @param R_I the R_I to set
+         */
+        public void setR_I(int R_I) {
+            this.R_I = R_I;
+        }
+
+        /**
+         * @return the U_off
+         */
+        public float getU_off() {
+            return U_off;
+        }
+
+        /**
+         * @param U_off the U_off to set
+         */
+        public void setU_off(float U_off) {
+            this.U_off = U_off;
+        }
+
+        /**
+         * @return the U_0
+         */
+        public float getU_0() {
+            return U_0;
+        }
+
+        /**
+         * @param U_0 the U_0 to set
+         */
+        public void setU_0(float U_0) {
+            this.U_0 = U_0;
+        }
+
+        /**
+         * @return the U_0rel
+         */
+        public String getU_0rel() {
+            return U_0rel;
+        }
+
+        /**
+         * @param U_0rel the U_0rel to set
+         */
+        public void setU_0rel(String U_0rel) {
+            this.U_0rel = U_0rel;
+        }
+
+        public Object createShaft() {
+            Shaft shaft = new Shaft();
+            this.getShafts().add(shaft);
+            return shaft;
+        }
     }
 
 
-    public static class Shaft {
+    @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_ENGINE})
+    public static class Shaft implements Serializable {
+
+        @Override
+        public String toString() {
+            return "Shaft";
+        }
+
         @CRRCSimEditorField(text="J",
             help="Inertia in kg m^2"
         )
@@ -522,6 +666,8 @@ public class Power implements Serializable {
         /**
          * @return the propeller
          */
+        @CRRCSimEditorNode
+        @XmlElement
         public Propeller getPropeller() {
             return propeller;
         }
@@ -531,6 +677,12 @@ public class Power implements Serializable {
          */
         public void setPropeller(Propeller propeller) {
             this.propeller = propeller;
+        }
+
+        public Engine createEngine() {
+            Engine engine = new Engine();
+            this.getEngines().add(engine);
+            return engine;
         }
     }
 }

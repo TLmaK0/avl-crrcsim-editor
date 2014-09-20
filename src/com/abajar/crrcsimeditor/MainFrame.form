@@ -130,7 +130,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="330" y="160" width="470" height="360" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="330" y="190" width="470" height="330" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -163,7 +163,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="331" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="301" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -229,7 +229,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="250" y="80" width="550" height="80" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="250" y="80" width="550" height="110" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -251,7 +251,18 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="deleteButton" min="-2" max="-2" attributes="1"/>
                           </Group>
-                          <Component id="addChangeButton" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="addChangeButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addBatteryButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addShaftButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addEngineButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addDataButton" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="addDataIdleButton" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace pref="14" max="32767" attributes="0"/>
                   </Group>
@@ -269,7 +280,15 @@
                           <Component id="addBodyButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="addChangeButton" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="addChangeButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addBatteryButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addEngineButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addDataButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addShaftButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="addDataIdleButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -348,6 +367,56 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addChangeLogButtonActionPerformed"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JButton" name="addBatteryButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addBatteryButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addBatteryButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addBatteryButtonMouseClicked"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addShaftButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addShaftButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addShaftButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addShaftButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addEngineButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addEngineButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addEngineButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addEngineButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addDataButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addDataButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addDataButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addDataIdleButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addDataIdleButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addDataIdleButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addDataIdleButtonActionPerformed"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JInternalFrame" name="jInternalFrame2">
@@ -412,7 +481,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="250" y="160" width="80" height="360" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="250" y="190" width="80" height="330" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -437,7 +506,7 @@
                       <Component id="frontViewButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="rightViewButton" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="250" max="32767" attributes="0"/>
+                      <EmptySpace pref="220" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

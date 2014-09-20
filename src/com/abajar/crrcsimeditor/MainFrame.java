@@ -93,6 +93,11 @@ public class MainFrame extends javax.swing.JFrame {
         deleteButton = new javax.swing.JButton();
         addBodyButton = new javax.swing.JButton();
         addChangeButton = new javax.swing.JButton();
+        addBatteryButton = new javax.swing.JButton();
+        addShaftButton = new javax.swing.JButton();
+        addEngineButton = new javax.swing.JButton();
+        addDataButton = new javax.swing.JButton();
+        addDataIdleButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         avlTree = new javax.swing.JTree();
@@ -133,7 +138,7 @@ public class MainFrame extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 331, Short.MAX_VALUE)
+            .addGap(0, 301, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout view3DIFrameLayout = new javax.swing.GroupLayout(view3DIFrame.getContentPane());
@@ -147,7 +152,7 @@ public class MainFrame extends javax.swing.JFrame {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        view3DIFrame.setBounds(330, 160, 470, 360);
+        view3DIFrame.setBounds(330, 190, 470, 330);
         jDesktopPane1.add(view3DIFrame, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame3.setName("jInternalFrame3"); // NOI18N
@@ -252,6 +257,51 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addBatteryButton.setText(resourceMap.getString("addBatteryButton.text")); // NOI18N
+        addBatteryButton.setEnabled(false);
+        addBatteryButton.setName("addBatteryButton"); // NOI18N
+        addBatteryButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addBatteryButtonMouseClicked(evt);
+            }
+        });
+
+        addShaftButton.setText(resourceMap.getString("addShaftButton.text")); // NOI18N
+        addShaftButton.setEnabled(false);
+        addShaftButton.setName("addShaftButton"); // NOI18N
+        addShaftButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addShaftButtonActionPerformed(evt);
+            }
+        });
+
+        addEngineButton.setText(resourceMap.getString("addEngineButton.text")); // NOI18N
+        addEngineButton.setEnabled(false);
+        addEngineButton.setName("addEngineButton"); // NOI18N
+        addEngineButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addEngineButtonActionPerformed(evt);
+            }
+        });
+
+        addDataButton.setText(resourceMap.getString("addDataButton.text")); // NOI18N
+        addDataButton.setEnabled(false);
+        addDataButton.setName("addDataButton"); // NOI18N
+        addDataButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDataButtonActionPerformed(evt);
+            }
+        });
+
+        addDataIdleButton.setText(resourceMap.getString("addDataIdleButton.text")); // NOI18N
+        addDataIdleButton.setEnabled(false);
+        addDataIdleButton.setName("addDataIdleButton"); // NOI18N
+        addDataIdleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addDataIdleButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
@@ -270,7 +320,17 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(addBodyButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(deleteButton))
-                    .addComponent(addChangeButton))
+                    .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                        .addComponent(addChangeButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addBatteryButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addShaftButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addEngineButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addDataButton))
+                    .addComponent(addDataIdleButton))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
@@ -284,12 +344,19 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(deleteButton)
                     .addComponent(addBodyButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(addChangeButton))
+                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addChangeButton)
+                    .addComponent(addBatteryButton)
+                    .addComponent(addEngineButton)
+                    .addComponent(addDataButton)
+                    .addComponent(addShaftButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(addDataIdleButton))
         );
 
         addSurfaceButton.getAccessibleContext().setAccessibleName(resourceMap.getString("addSurfaceButton.AccessibleContext.accessibleName")); // NOI18N
 
-        jInternalFrame4.setBounds(250, 80, 550, 80);
+        jInternalFrame4.setBounds(250, 80, 550, 110);
         jDesktopPane1.add(jInternalFrame4, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame2.setName("jInternalFrame2"); // NOI18N
@@ -368,10 +435,10 @@ public class MainFrame extends javax.swing.JFrame {
                 .addComponent(frontViewButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(rightViewButton)
-                .addContainerGap(250, Short.MAX_VALUE))
+                .addContainerGap(220, Short.MAX_VALUE))
         );
 
-        jInternalFrame1.setBounds(250, 160, 80, 360);
+        jInternalFrame1.setBounds(250, 190, 80, 330);
         jDesktopPane1.add(jInternalFrame1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         jInternalFrame5.setName("jInternalFrame5"); // NOI18N
@@ -583,6 +650,12 @@ public class MainFrame extends javax.swing.JFrame {
         addBodyButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_BODY));
         deleteButton.setEnabled(options.contains(ENABLE_BUTTONS.DELETE));
         addChangeButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CHANGELOG));
+        addBatteryButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_BATTERY));
+        addShaftButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SHAFT));
+        addEngineButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_ENGINE));
+        addDataButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA));
+        addDataIdleButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA_IDLE));
+
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
@@ -620,13 +693,38 @@ public class MainFrame extends javax.swing.JFrame {
         createNode(SelectorMutableTreeNode.TYPES.CHANGE);
     }//GEN-LAST:event_addChangeLogButtonActionPerformed
 
+    private void addBatteryButtonMouseClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addBatteryButtonMouseClicked
+        createNode(SelectorMutableTreeNode.TYPES.BATTERY);
+    }//GEN-LAST:event_addBatteryButtonMouseClicked
+
+    private void addShaftButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addShaftButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.SHAFT);
+    }//GEN-LAST:event_addShaftButtonActionPerformed
+
+    private void addEngineButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addEngineButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.ENGINE);
+    }//GEN-LAST:event_addEngineButtonActionPerformed
+
+    private void addDataButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.DATA);
+    }//GEN-LAST:event_addDataButtonActionPerformed
+
+    private void addDataIdleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addDataIdleButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.DATA_IDLE);
+    }//GEN-LAST:event_addDataIdleButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addBatteryButton;
     private javax.swing.JButton addBodyButton;
     private javax.swing.JButton addChangeButton;
     private javax.swing.JButton addControlButton;
+    private javax.swing.JButton addDataButton;
+    private javax.swing.JButton addDataIdleButton;
+    private javax.swing.JButton addEngineButton;
     private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
+    private javax.swing.JButton addShaftButton;
     private javax.swing.JButton addSurfaceButton;
     private javax.swing.JTree avlTree;
     private javax.swing.JButton deleteButton;

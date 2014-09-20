@@ -19,7 +19,6 @@ import javax.xml.bind.annotation.XmlElement;
  *
  * @author Hugo
  */
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SOUND})
 public class Config  implements Serializable{
 
     @CRRCSimEditorField(text="short description",
