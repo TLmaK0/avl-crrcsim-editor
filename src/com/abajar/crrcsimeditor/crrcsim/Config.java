@@ -156,6 +156,22 @@ public class Config  implements Serializable{
         this.mass_inertia.setMass(totalMass / 1000);
     }
 
+    /**
+     * @return the power
+     */
+    @CRRCSimEditorNode
+    @XmlElement
+    public Power getPower() {
+        return power;
+    }
+
+    /**
+     * @param power the power to set
+     */
+    public void setPower(Power power) {
+        this.power = power;
+    }
+
     public static class MassInertia implements Serializable {
         private String version = "1";
         private String units = "1";
