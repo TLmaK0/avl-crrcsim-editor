@@ -5,40 +5,28 @@
 
 package com.abajar.crrcsimeditor.view.avl;
 
-import com.abajar.crrcsimeditor.crrcsim.Power.Engine;
-import com.abajar.crrcsimeditor.crrcsim.Power.Data;
-import com.abajar.crrcsimeditor.crrcsim.Power.Shaft;
+import com.abajar.crrcsimeditor.crrcsim.Shaft;
 import com.abajar.crrcsimeditor.crrcsim.Power;
-import com.abajar.crrcsimeditor.crrcsim.Power.Battery;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.TreeModel;
-import com.abajar.crrcsimeditor.crrcsim.Config;
-import java.lang.annotation.Annotation;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
-import com.abajar.crrcsimeditor.avl.geometry.Body;
-import com.abajar.crrcsimeditor.avl.geometry.Control;
-import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.geometry.Section;
 import com.abajar.crrcsimeditor.avl.geometry.Surface;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
 import javax.swing.tree.DefaultTreeModel;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.avl.mass.MassObject;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
+import com.abajar.crrcsimeditor.crrcsim.Battery;
+import com.abajar.crrcsimeditor.crrcsim.Engine;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.EnumSet;
 import javax.swing.tree.DefaultMutableTreeNode;
-import static java.util.EnumSet.of;
 
 /**
  *
