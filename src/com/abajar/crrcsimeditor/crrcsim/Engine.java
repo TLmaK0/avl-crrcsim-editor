@@ -11,7 +11,9 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  *
@@ -46,6 +48,7 @@ public class Engine implements Serializable{
     /**
      * @return the J_M
      */
+    @XmlAttribute(name="J_M")
     public float getJ_M() {
         return J_M;
     }
@@ -77,7 +80,8 @@ public class Engine implements Serializable{
      * @return the data
      */
     @CRRCSimEditorNode
-    @XmlElement
+    @XmlElement(name="data")
+    @XmlElementWrapper(name="data")
     public ArrayList<EngineData> getData() {
         return data;
     }
@@ -92,6 +96,7 @@ public class Engine implements Serializable{
     /**
      * @return the Calc
      */
+    @XmlAttribute
     public int getCalc() {
         return Calc;
     }
@@ -100,7 +105,8 @@ public class Engine implements Serializable{
      * @return the dataIdle
      */
     @CRRCSimEditorNode
-    @XmlElement
+    @XmlElement(name="data")
+    @XmlElementWrapper(name="data_idle")
     public ArrayList<EngineDataIdle> getDataIdle() {
         return dataIdle;
     }

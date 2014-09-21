@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -67,7 +68,7 @@ public class Battery implements Serializable {
     /**
      * @return the throttle_min
      */
-    @XmlAttribute
+    @XmlAttribute(name="throttle_min")
     public int getThrottle_min() {
         return throttle_min;
     }
@@ -83,7 +84,7 @@ public class Battery implements Serializable {
      * @return the shafts
      */
     @CRRCSimEditorNode
-    @XmlElement
+    @XmlElement(name="shaft")
     public ArrayList<Shaft> getShafts() {
         return shafts;
     }
@@ -98,6 +99,7 @@ public class Battery implements Serializable {
     /**
      * @return the C
      */
+    @XmlAttribute
     public float getC() {
         return C;
     }
@@ -112,6 +114,7 @@ public class Battery implements Serializable {
     /**
      * @return the R_I
      */
+    @XmlAttribute(name="R_I")
     public int getR_I() {
         return R_I;
     }
@@ -126,6 +129,7 @@ public class Battery implements Serializable {
     /**
      * @return the U_off
      */
+    @XmlAttribute(name="U_off")
     public float getU_off() {
         return U_off;
     }
@@ -140,6 +144,7 @@ public class Battery implements Serializable {
     /**
      * @return the U_0
      */
+    @XmlAttribute(name="U_0")
     public float getU_0() {
         return U_0;
     }
@@ -154,6 +159,7 @@ public class Battery implements Serializable {
     /**
      * @return the U_0rel
      */
+    @XmlElement
     public String getU_0rel() {
         return U_0rel;
     }

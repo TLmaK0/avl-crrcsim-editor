@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -34,6 +35,7 @@ public class Gearing implements Serializable{
     /**
      * @return the J
      */
+    @XmlAttribute
     public float getJ() {
         return J;
     }
@@ -48,6 +50,7 @@ public class Gearing implements Serializable{
     /**
      * @return the i
      */
+    @XmlAttribute
     public float getI() {
         return i;
     }

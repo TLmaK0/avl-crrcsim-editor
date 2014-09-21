@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -38,7 +39,7 @@ public class Propeller implements Serializable {
         help="The Propeller can be configured to be a folding prop, which folds as soon as it rotates slower than omega_fold."
         + " From the xml config, n_fold is read and converted using (omega_fold = n_fold * 2 * pi)"
     )
-    private float n_fold;
+    private int n_fold;
 
     public Propeller() {
     }
@@ -46,6 +47,7 @@ public class Propeller implements Serializable {
     /**
      * @return the D
      */
+    @XmlAttribute
     public float getD() {
         return D;
     }
@@ -60,6 +62,7 @@ public class Propeller implements Serializable {
     /**
      * @return the H
      */
+    @XmlAttribute
     public float getH() {
         return H;
     }
@@ -74,6 +77,7 @@ public class Propeller implements Serializable {
     /**
      * @return the J
      */
+    @XmlAttribute
     public float getJ() {
         return J;
     }
@@ -88,14 +92,15 @@ public class Propeller implements Serializable {
     /**
      * @return the n_fold
      */
-    public float getN_fold() {
+    @XmlAttribute(name="n_fold")
+    public int getN_fold() {
         return n_fold;
     }
 
     /**
      * @param n_fold the n_fold to set
      */
-    public void setN_fold(float n_fold) {
+    public void setN_fold(int n_fold) {
         this.n_fold = n_fold;
     }
 }

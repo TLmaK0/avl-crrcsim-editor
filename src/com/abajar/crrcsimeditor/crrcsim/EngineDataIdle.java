@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -35,6 +36,7 @@ public class EngineDataIdle implements Serializable {
         /**
          * @return the U_K
          */
+        @XmlAttribute(name="U_K")
         public float getU_K() {
             return U_K;
         }
@@ -49,6 +51,7 @@ public class EngineDataIdle implements Serializable {
         /**
          * @return the I_M
          */
+        @XmlAttribute(name="I_M")
         public float getI_M() {
             return I_M;
         }

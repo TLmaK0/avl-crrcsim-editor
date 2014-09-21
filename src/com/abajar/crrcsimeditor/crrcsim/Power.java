@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
@@ -31,7 +32,7 @@ public class Power implements Serializable {
      * @return the bateries
      */
     @CRRCSimEditorNode
-    @XmlElement
+    @XmlElement(name="battery")
     public ArrayList<Battery> getBateries() {
         return bateries;
     }

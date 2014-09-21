@@ -77,7 +77,7 @@ public class Shaft implements Serializable {
      * @return the engines
      */
     @CRRCSimEditorNode
-    @XmlElement
+    @XmlElement(name="engine")
     public ArrayList<Engine> getEngines() {
         return engines;
     }
