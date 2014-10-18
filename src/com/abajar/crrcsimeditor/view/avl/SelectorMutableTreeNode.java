@@ -88,6 +88,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
                 return generateTreeNode(((Engine)parentTreeNode).createDataIdle());
             case SIMPLE_TRUST:
                 return generateTreeNode(((Shaft)parentTreeNode).createSimpleTrust());
+            case WHEEL:
+                return generateTreeNode(((CRRCSim)parentTreeNode).createWhell());
             default:
                 throw new UnsupportedOperationException("Node of type " + type + " not suported");
         }
@@ -113,7 +115,7 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         CONFIG,
         BATTERY
     ,   SHAFT, ENGINE, DATA, DATA_IDLE
-    ,   PROPELLER, SIMPLE_TRUST}
+    ,   PROPELLER, SIMPLE_TRUST, WHEEL}
 
     public enum ENABLE_BUTTONS {
         ADD_SURFACE,
@@ -130,6 +132,7 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_DATA,
         ADD_DATA_IDLE,
         ADD_SYMPLE_TRUST,
+        ADD_WHEEL,
         DELETE
     }
 

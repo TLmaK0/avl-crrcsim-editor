@@ -99,6 +99,7 @@ public class MainFrame extends javax.swing.JFrame {
         addDataButton = new javax.swing.JButton();
         addDataIdleButton = new javax.swing.JButton();
         addSimpleTrustButton = new javax.swing.JButton();
+        addWhellButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         avlTree = new javax.swing.JTree();
@@ -312,6 +313,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addWhellButton.setText(resourceMap.getString("addWhellButton.text")); // NOI18N
+        addWhellButton.setEnabled(false);
+        addWhellButton.setName("addWhellButton"); // NOI18N
+        addWhellButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addWhellButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
@@ -343,7 +353,9 @@ public class MainFrame extends javax.swing.JFrame {
                     .addGroup(jInternalFrame4Layout.createSequentialGroup()
                         .addComponent(addDataIdleButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(addSimpleTrustButton)))
+                        .addComponent(addSimpleTrustButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addWhellButton)))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
@@ -366,7 +378,8 @@ public class MainFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addDataIdleButton)
-                    .addComponent(addSimpleTrustButton)))
+                    .addComponent(addSimpleTrustButton)
+                    .addComponent(addWhellButton)))
         );
 
         addSurfaceButton.getAccessibleContext().setAccessibleName(resourceMap.getString("addSurfaceButton.AccessibleContext.accessibleName")); // NOI18N
@@ -658,6 +671,7 @@ public class MainFrame extends javax.swing.JFrame {
         SelectorMutableTreeNode treeNode = (SelectorMutableTreeNode)evt.getPath().getLastPathComponent();
 
         List<ENABLE_BUTTONS> options = treeNode.getOptions();
+        
         addSurfaceButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SURFACE));
         addSectionButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SECTION));
         addControlButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_CONTROL));
@@ -671,7 +685,8 @@ public class MainFrame extends javax.swing.JFrame {
         addDataButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA));
         addDataIdleButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA_IDLE));
         addSimpleTrustButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SYMPLE_TRUST));
-
+        addWhellButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_WHEEL));
+        
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
 
@@ -733,6 +748,10 @@ public class MainFrame extends javax.swing.JFrame {
         createNode(SelectorMutableTreeNode.TYPES.SIMPLE_TRUST);
     }//GEN-LAST:event_addSimpleTrustButtonActionPerformed
 
+    private void addWhellButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addWhellButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.WHEEL);
+    }//GEN-LAST:event_addWhellButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBatteryButton;
@@ -747,6 +766,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton addShaftButton;
     private javax.swing.JButton addSimpleTrustButton;
     private javax.swing.JButton addSurfaceButton;
+    private javax.swing.JButton addWhellButton;
     private javax.swing.JTree avlTree;
     private javax.swing.JButton deleteButton;
     private javax.swing.JMenuItem editSetAvlExecutableMenuItem;

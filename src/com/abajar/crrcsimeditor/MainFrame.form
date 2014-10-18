@@ -266,6 +266,8 @@
                               <Component id="addDataIdleButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="addSimpleTrustButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="addWhellButton" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace pref="14" max="32767" attributes="0"/>
@@ -295,6 +297,7 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="addDataIdleButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="addSimpleTrustButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="addWhellButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
@@ -432,6 +435,16 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addSimpleTrustButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="addWhellButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" resourceKey="addWhellButton.text"/>
+                <Property name="enabled" type="boolean" value="false"/>
+                <Property name="name" type="java.lang.String" value="addWhellButton" noResource="true"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addWhellButtonActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

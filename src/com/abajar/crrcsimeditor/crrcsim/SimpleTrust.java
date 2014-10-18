@@ -7,13 +7,14 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
  *
  * @author Hugo
  */
-public class SimpleTrust {
+public class SimpleTrust implements Serializable{
 
     @Override
     public String toString() {

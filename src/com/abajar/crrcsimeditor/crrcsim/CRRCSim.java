@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement(name="CRRCSim_airplane")
 @XmlType(propOrder={"description","changelog","aero","config"})
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG})
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
 
     /**
@@ -54,6 +54,28 @@ public class CRRCSim implements Serializable{
         Battery battery = new Battery();
         this.config.getPower().getBateries().add(null);
         return battery;
+    }
+
+    /**
+     * @return the wells
+     */
+    @CRRCSimEditorNode
+    @XmlElement(name="wheels")
+    public ArrayList<Wheel> getWheels() {
+        return wheels;
+    }
+
+    /**
+     * @param wells the wells to set
+     */
+    public void setWheels(ArrayList<Wheel> wheels) {
+        this.wheels = wheels;
+    }
+
+    public Object createWhell() {
+        Wheel wheel = new Wheel();
+        this.wheels.add(wheel);
+        return wheel;
     }
 
     /**
@@ -118,6 +140,7 @@ public class CRRCSim implements Serializable{
     private Aero aero;
     private final AVL avl;
     private Config config = new Config();
+    private ArrayList<Wheel> wheels = new ArrayList<Wheel>();
 
     protected CRRCSim(AVL avl){
         this.avl = avl;
