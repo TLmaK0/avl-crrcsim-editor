@@ -35,7 +35,7 @@ public class Wheel implements Serializable {
     /**
      * @return the percent_brake
      */
-    @XmlAttribute
+    @XmlAttribute(name="percent_brake")
     public float getPercent_brake() {
         return percent_brake;
     }
@@ -50,7 +50,7 @@ public class Wheel implements Serializable {
     /**
      * @return the caster_angle_rad
      */
-    @XmlAttribute
+    @XmlAttribute(name="caster_angle_rad")
     public float getCaster_angle_rad() {
         return caster_angle_rad;
     }

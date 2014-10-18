@@ -8,6 +8,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -42,6 +43,7 @@ public class SimpleTrust implements Serializable{
     /**
      * @return the k_F
      */
+    @XmlAttribute(name="k_F")
     public float getK_F() {
         return k_F;
     }
@@ -56,6 +58,7 @@ public class SimpleTrust implements Serializable{
     /**
      * @return the k_M
      */
+    @XmlAttribute(name="k_M")
     public float getK_M() {
         return k_M;
     }

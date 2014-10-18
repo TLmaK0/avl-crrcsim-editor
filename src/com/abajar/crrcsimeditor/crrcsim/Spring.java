@@ -74,7 +74,7 @@ public class Spring implements Serializable {
     /**
      * @return the max_force
      */
-    @XmlAttribute
+    @XmlAttribute(name="max_force")
     public float getMax_force() {
         return max_force;
     }

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -25,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","changelog","aero","config"})
+@XmlType(propOrder={"description","changelog","aero","config","wheels"})
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
 
@@ -60,6 +61,7 @@ public class CRRCSim implements Serializable{
      * @return the wells
      */
     @CRRCSimEditorNode
+    @XmlElementWrapper
     @XmlElement(name="wheels")
     public ArrayList<Wheel> getWheels() {
         return wheels;
