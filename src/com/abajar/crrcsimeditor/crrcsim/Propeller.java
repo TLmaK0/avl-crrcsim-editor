@@ -21,12 +21,12 @@ public class Propeller implements Serializable {
     }
 
     @CRRCSimEditorField(text="D",
-        help="meters"
+        help="Diameter in meters"
     )
     private float D;
 
     @CRRCSimEditorField(text="H",
-        help="meters"
+        help="Pitch in meters"
     )
     private float H;
 

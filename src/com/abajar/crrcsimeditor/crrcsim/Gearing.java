@@ -23,7 +23,7 @@ public class Gearing implements Serializable{
     @CRRCSimEditorField(text="J",
         help="Inertia"
     )
-    private float J;
+    private float J=0;
 
     @CRRCSimEditorField(text="i",
         help="Given omega is the speed of the shaft, i*omega is the speed of the device which is connected to the shaft using this gearing. "

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlElement;
  *
  * @author Hugo
  */
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_ENGINE})
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_ENGINE, ENABLE_BUTTONS.ADD_SYMPLE_TRUST})
 public class Shaft implements Serializable {
 
     @Override
@@ -37,7 +37,8 @@ public class Shaft implements Serializable {
     private int brake;
 
     private ArrayList<Engine> engines = new ArrayList<Engine>();
-    private Propeller propeller = new Propeller();
+    private ArrayList<Propeller> propellers = new ArrayList<Propeller>();
+    private ArrayList<SimpleTrust> simpleTrusts = new ArrayList<SimpleTrust>();
 
 
     public Shaft() {
@@ -77,7 +78,7 @@ public class Shaft implements Serializable {
      * @return the engines
      */
     @CRRCSimEditorNode
-    @XmlElement(name="engine")
+    @XmlElement(name="engine_dcm")
     public ArrayList<Engine> getEngines() {
         return engines;
     }
@@ -89,25 +90,47 @@ public class Shaft implements Serializable {
         this.engines = engines;
     }
 
-    /**
-     * @return the propeller
-     */
-    @CRRCSimEditorNode
-    @XmlElement
-    public Propeller getPropeller() {
-        return propeller;
-    }
-
-    /**
-     * @param propeller the propeller to set
-     */
-    public void setPropeller(Propeller propeller) {
-        this.propeller = propeller;
-    }
-
     public Engine createEngine() {
         Engine engine = new Engine();
         this.getEngines().add(engine);
         return engine;
+    }
+
+    /**
+     * @return the propellers
+     */
+    @CRRCSimEditorNode
+    @XmlElement(name="propeller")
+    public ArrayList<Propeller> getPropellers() {
+        return propellers;
+    }
+
+    /**
+     * @param propellers the propellers to set
+     */
+    public void setPropellers(ArrayList<Propeller> propellers) {
+        this.propellers = propellers;
+    }
+
+    /**
+     * @return the simpleTrusts
+     */
+    @CRRCSimEditorNode
+    @XmlElement(name="simpletrust")
+    public ArrayList<SimpleTrust> getSimpleTrusts() {
+        return simpleTrusts;
+    }
+
+    /**
+     * @param simpleTrusts the simpleTrusts to set
+     */
+    public void setSimpleTrusts(ArrayList<SimpleTrust> simpleTrusts) {
+        this.simpleTrusts = simpleTrusts;
+    }
+
+    public SimpleTrust createSimpleTrust() {
+        SimpleTrust trust = new SimpleTrust();
+        this.getSimpleTrusts().add(trust);
+        return trust;
     }
 }

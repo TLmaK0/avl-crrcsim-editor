@@ -98,6 +98,7 @@ public class MainFrame extends javax.swing.JFrame {
         addEngineButton = new javax.swing.JButton();
         addDataButton = new javax.swing.JButton();
         addDataIdleButton = new javax.swing.JButton();
+        addSimpleTrustButton = new javax.swing.JButton();
         jInternalFrame2 = new javax.swing.JInternalFrame();
         jScrollPane1 = new javax.swing.JScrollPane();
         avlTree = new javax.swing.JTree();
@@ -302,6 +303,15 @@ public class MainFrame extends javax.swing.JFrame {
             }
         });
 
+        addSimpleTrustButton.setText(resourceMap.getString("addSimpleTrustButton.text")); // NOI18N
+        addSimpleTrustButton.setEnabled(false);
+        addSimpleTrustButton.setName("addSimpleTrustButton"); // NOI18N
+        addSimpleTrustButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addSimpleTrustButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jInternalFrame4Layout = new javax.swing.GroupLayout(jInternalFrame4.getContentPane());
         jInternalFrame4.getContentPane().setLayout(jInternalFrame4Layout);
         jInternalFrame4Layout.setHorizontalGroup(
@@ -330,7 +340,10 @@ public class MainFrame extends javax.swing.JFrame {
                         .addComponent(addEngineButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(addDataButton))
-                    .addComponent(addDataIdleButton))
+                    .addGroup(jInternalFrame4Layout.createSequentialGroup()
+                        .addComponent(addDataIdleButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(addSimpleTrustButton)))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
         jInternalFrame4Layout.setVerticalGroup(
@@ -351,7 +364,9 @@ public class MainFrame extends javax.swing.JFrame {
                     .addComponent(addDataButton)
                     .addComponent(addShaftButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(addDataIdleButton))
+                .addGroup(jInternalFrame4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(addDataIdleButton)
+                    .addComponent(addSimpleTrustButton)))
         );
 
         addSurfaceButton.getAccessibleContext().setAccessibleName(resourceMap.getString("addSurfaceButton.AccessibleContext.accessibleName")); // NOI18N
@@ -655,6 +670,7 @@ public class MainFrame extends javax.swing.JFrame {
         addEngineButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_ENGINE));
         addDataButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA));
         addDataIdleButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_DATA_IDLE));
+        addSimpleTrustButton.setEnabled(options.contains(ENABLE_BUTTONS.ADD_SYMPLE_TRUST));
 
         showModelProperties(treeNode.getUserObject());
 }//GEN-LAST:event_avlTreeValueChanged
@@ -713,6 +729,10 @@ public class MainFrame extends javax.swing.JFrame {
         createNode(SelectorMutableTreeNode.TYPES.DATA_IDLE);
     }//GEN-LAST:event_addDataIdleButtonActionPerformed
 
+    private void addSimpleTrustButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addSimpleTrustButtonActionPerformed
+        createNode(SelectorMutableTreeNode.TYPES.SIMPLE_TRUST);
+    }//GEN-LAST:event_addSimpleTrustButtonActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addBatteryButton;
@@ -725,6 +745,7 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JButton addMassButton;
     private javax.swing.JButton addSectionButton;
     private javax.swing.JButton addShaftButton;
+    private javax.swing.JButton addSimpleTrustButton;
     private javax.swing.JButton addSurfaceButton;
     private javax.swing.JTree avlTree;
     private javax.swing.JButton deleteButton;
@@ -795,10 +816,6 @@ public class MainFrame extends javax.swing.JFrame {
        TableColumn tc =  new TableColumn();
        tc.setHeaderValue(name);
        tableModel.addColumn(tc);
-    }
-
-    private MutableTreeNode createChangeNode(Change newChange) {
-        return new SelectorMutableTreeNode(newChange);
     }
 
     private void deleteTreeNodeAndObject(){
