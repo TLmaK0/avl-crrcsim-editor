@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<CRRCSim_airplane version="2">
+    <description/>
+    <aero units="1" version="1">
+        <ref area="378.0" chord="7.0964" span="53.858" speed="30.0"/>
+        <misc Alpha_0="-0.09257419" CG_arm="0.25" eta_loc="0.3" span_eff="0.95"/>
+        <m cm0="0.0" cmA="-0.265375" cmDe="-0.354854" cmQ="-8.990761"/>
+        <lift CL_0="0.02704" CL_CD0="0.0" CL_a="4.901307" CL_de="-0.0" CL_drop="0.1" CL_max="1.1" CL_min="-0.6" CL_q="6.424376"/>
+        <drag CD_AIsq="0.01" CD_CLsq="0.01" CD_ELsq="0.0" CD_prof="0.02" CD_stall="0.5" Uexp_CD="0.5"/>
+        <Y CY_b="-0.245626" CY_da="0.0" CY_dr="-0.0" CY_p="-0.379361" CY_r="0.119"/>
+        <l Cl_b="-0.179041" Cl_da="0.0" Cl_dr="-0.0" Cl_p="-0.535795" Cl_r="0.04514"/>
+        <n Cn_b="0.034888" Cn_da="0.0" Cn_dr="-0.0" Cn_p="-0.003775" Cn_r="-0.04301"/>
+    </aero>
+    <config>
+        <descr_short>new config</descr_short>
+        <mass_inertia>
+            <i_xx>7.341785E-5</i_xx>
+            <i_xz>5.4699553E-6</i_xz>
+            <i_yy>6.897875E-5</i_yy>
+            <i_zz>1.3521883E-4</i_zz>
+            <mass>0.013070383</mass>
+            <units>1</units>
+            <version>1</version>
+        </mass_inertia>
+        <power/>
+        <sound>
+            <sample dist_max="0" filename="sound.wav" maxvolume="0.0" pitchfactor="0.0" type="0" v_max="0" v_min="0"/>
+        </sound>
+    </config>
+    <wheels/>
+</CRRCSim_airplane>

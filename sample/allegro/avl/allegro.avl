@@ -18,9 +18,9 @@ main wing
 7        1.0       19       -2.0      
 YDUPLICATE
 0.0       
-TRANSLATE
-#dX       dY       dZ
-1.7       0.0       0.0       
+ANGLE
+#dAinc
+1.7       
 
 SECTION
 #Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
@@ -30,9 +30,9 @@ s4083_mod_c.dat
 
 SECTION
 #Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
-0.216535  26.9291   5.72441   5.51181   -1.0      
+0.216535  17.7165   3.76772   7.00787   0.0       
 AFILE
-s4083_mod_e.dat
+s4083_mod_d.dat
 
 SECTION
 #Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
@@ -49,7 +49,7 @@ YDUPLICATE
 0.0       
 TRANSLATE
 #dX       dY       dZ
-0.0       24.3701   0.0       
+24.3701   0.0       0.0       
 
 SECTION
 #Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
