@@ -118,7 +118,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
             + "http://en.wikipedia.org/wiki/Drag_coefficient\r\n"
             + "0.020 seems to be a common default value"
     )
-    private float CDp;
+    private float CDp = 0.02f;
     
     private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
     private final ArrayList<Body> body = new ArrayList<Body>();

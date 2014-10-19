@@ -112,6 +112,7 @@ public class CRRCSimTableModel extends DefaultTableModel implements TableModelLi
                 Class<?> classType = field.getType();
                 if (classType == int.class) classType = Integer.class;
                 else if (classType == float.class) classType = Float.class;
+                else if (classType == boolean.class) classType = Boolean.class;
                 result.add(classType);
             }
         }
