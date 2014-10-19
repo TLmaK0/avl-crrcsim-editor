@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(propOrder={"description","changelog","aero","config","wheels"})
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
-
+    static final long serialVersionUID = 5069158912723554271L;
     /**
      * @return the config
      */
@@ -139,7 +139,7 @@ public class CRRCSim implements Serializable{
     private String version = "2";
     private final Description description = new Description();
     private final Changelog changelog = new Changelog();
-    private Aero aero;
+    private transient Aero aero;
     private final AVL avl;
     private Config config = new Config();
     private ArrayList<Wheel> wheels = new ArrayList<Wheel>();

@@ -202,13 +202,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
 
     @Override
     public void writeAVLMassData(OutputStream out) {
-        PrintStream ps = new PrintStream(out);
-        ps.print("Lunit = 0.01 m\n" +
-                    "Munit = 0.001 kg\n" +
-                    "Tunit = 1.0 s\n" +
-                    "g   = 9.81\n" +
-                    "rho = 1.225\n");
-        ps.print("#mass     x       y        z        Ixx      Iyy      Izz\n");
+        
         super.writeAVLMassData(out);
     }
 

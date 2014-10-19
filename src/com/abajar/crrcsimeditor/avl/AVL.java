@@ -5,7 +5,10 @@
 
 package com.abajar.crrcsimeditor.avl;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.io.Serializable;
 
 /**
@@ -13,8 +16,33 @@ import java.io.Serializable;
  * @author hfreire
  */
 public class AVL implements Serializable{
+    static final long serialVersionUID = 791092777497735586L;
+    static final float DEFAULT_REYNOLDS_NUMBER = 1.225f;
+    static final String DEFAULT_LENGTH_UNIT = "cm";
+    static final String DEFAULT_MASS_UNIT = "g";
+    static final String DEFAULT_TIME_UNIT = "s";
+
     private AVLGeometry geometry = new AVLGeometry();
 
+    @CRRCSimEditorField(text="Length unit (default cm)",
+        help="Choose cm, m, in"
+    )
+    private String lengthUnit = DEFAULT_LENGTH_UNIT;
+
+    @CRRCSimEditorField(text="Mass unit (default g)",
+        help="Choose g, kg, oz"
+    )
+    private String massUnit = DEFAULT_MASS_UNIT;
+
+    @CRRCSimEditorField(text="Time unit (default s)",
+        help="Choose s, m, h"
+    )
+    private String timeUnit = DEFAULT_TIME_UNIT;
+
+    @CRRCSimEditorField(text="Reynolds number",
+        help="http://en.wikipedia.org/wiki/Reynolds_number"
+    )
+    private float reynoldsNumber = DEFAULT_REYNOLDS_NUMBER;
     /**
      * @return the geometry
      */
@@ -45,6 +73,87 @@ public class AVL implements Serializable{
     @Override
     public String toString() {
         return "AVL";
+    }
+
+    /**
+     * @return the lengthUnit
+     */
+    public String getLengthUnit() {
+        return lengthUnit == null ? DEFAULT_LENGTH_UNIT : this.lengthUnit;
+    }
+
+    /**
+     * @param lengthUnit the lengthUnit to set
+     */
+    public void setLengthUnit(String lengthUnit) {
+        this.lengthUnit = lengthUnit;
+    }
+
+    /**
+     * @return the massUnit
+     */
+    public String getMassUnit() {
+        return massUnit == null ? DEFAULT_MASS_UNIT : this.massUnit;
+    }
+
+    /**
+     * @param massUnit the massUnit to set
+     */
+    public void setMassUnit(String massUnit) {
+        this.massUnit = massUnit;
+    }
+
+    /**
+     * @return the timeUnit
+     */
+    public String getTimeUnit() {
+        return timeUnit == null ? DEFAULT_TIME_UNIT : this.timeUnit;
+    }
+
+    /**
+     * @param timeUnit the timeUnit to set
+     */
+    public void setTimeUnit(String timeUnit) {
+        this.timeUnit = timeUnit;
+    }
+
+    void writeAVLMassData(FileOutputStream fos) {
+        PrintStream ps = new PrintStream(fos);
+
+        String lunit = "0.01 m";
+        if(this.getLengthUnit().equals("m")) lunit = "1 m";
+        else if(this.getLengthUnit().equals("in")) lunit = "0.0254 m";
+
+        String munit = "0.001 kg";
+        if(this.getMassUnit().equals("kg")) munit = "1 kg";
+        else if(this.getMassUnit().equals("oz")) munit = "0.02835 kg";
+
+        String tunit = "1.0 s";
+        if(this.getTimeUnit().equals("h")) tunit = "3600 s";
+        else if(this.getTimeUnit().equals("m")) tunit = "60 s";
+        
+        ps.print("Lunit = " + lunit + "\n" +
+                    "Munit = " + munit + "\n" +
+                    "Tunit = " + tunit + "\n" +
+                    "g   = 9.81\n" +
+                    "rho = " + this.getReynoldsNumber() + "\n");
+        ps.print("#mass     x       y        z        Ixx      Iyy      Izz\n");
+
+        this.getGeometry().writeAVLMassData(ps);
+    }
+
+    /**
+     * @return the reynoldsNumber
+     */
+    public float getReynoldsNumber() {
+        return reynoldsNumber == 0 ? DEFAULT_REYNOLDS_NUMBER : reynoldsNumber; //Old compatibility
+    }
+
+    /**
+     * @param reynoldsNumber the reynoldsNumber to set
+     */
+    public void setReynoldsNumber(float reynoldsNumber) {
+        this.reynoldsNumber = reynoldsNumber;
     }
 
 }

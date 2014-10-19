@@ -4,21 +4,8 @@
 
 package com.abajar.crrcsimeditor;
 
-import com.abajar.crrcsimeditor.avl.AVL;
-import com.abajar.crrcsimeditor.avl.AVLGeometry;
 import com.abajar.crrcsimeditor.avl.AVLS;
-import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
-import com.abajar.crrcsimeditor.avl.geometry.Body;
-import com.abajar.crrcsimeditor.avl.geometry.Control;
-import com.abajar.crrcsimeditor.avl.geometry.Section;
-import com.abajar.crrcsimeditor.avl.geometry.Surface;
-import com.abajar.crrcsimeditor.avl.mass.Mass;
-import com.abajar.crrcsimeditor.avl.mass.MassObject;
-import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
-import com.abajar.crrcsimeditor.crrcsim.Aero;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
 import com.microcrowd.loader.java3d.max3ds.Loader3DS;
@@ -30,11 +17,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Properties;
-import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -250,7 +235,6 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.marshal(this.crrcsim, fos);
             fos.close();
         } catch (Exception ex) {
-ex.printStackTrace();
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }

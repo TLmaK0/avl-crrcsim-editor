@@ -23,6 +23,8 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 @XmlRootElement
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Mass implements Serializable{
+    static final long serialVersionUID = 4976225526842074852L;
+
     protected static final Locale locale = new Locale("en");
 
 
@@ -53,18 +55,30 @@ public class Mass implements Serializable{
 
     @CRRCSimEditorField(text="x length",
         help="object length over the x axis"
+        + " or an inertia if you 'xyz are inertias' to 1.\n"
+        + " Crrcsim editor will calculate inertia"
     )
     private float xLength;
 
     @CRRCSimEditorField(text="y length",
-        help="object length over the y axis"
+        help="object length over the y axis.\n"
+        + " or an inertia if you 'xyz are inertias' to 1.\n"
+        + " Crrcsim editor will calculate inertia"
     )
     private float yLength;
 
     @CRRCSimEditorField(text="z length",
-        help="object length over the z axis"
+        help="object length over the z axis\n"
+        + " or an inertia if you 'xyz are inertias' to 1.\n"
+        + " Crrcsim editor will calculate inertia"
     )
     private float zLength;
+
+    @CRRCSimEditorField(text="xyz are inertias",
+        help="Put here a 1 if you use inertias instead of length in x,y,z length\n"
+    )
+    private boolean inertia = false;
+
 
     /**
      * @return the name
@@ -139,21 +153,21 @@ public class Mass implements Serializable{
      * @return the Ixx
      */
     public float getIxx() {
-        return getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getzLength(), 2)) / 12;
+        return inertia ? getxLength() : getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getzLength(), 2)) / 12;
     }
 
     /**
      * @return the Iyy
      */
     public float getIyy() {
-        return getMass() * (float) (Math.pow(getxLength(), 2) + Math.pow(getzLength(), 2)) / 12;
+        return inertia ? getyLength() : getMass() * (float) (Math.pow(getxLength(), 2) + Math.pow(getzLength(), 2)) / 12;
     }
 
     /**
      * @return the Izz
      */
     public float getIzz() {
-        return getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getxLength(), 2)) / 12;
+        return inertia ? getzLength() : getMass() * (float) (Math.pow(getyLength(), 2) + Math.pow(getxLength(), 2)) / 12;
     }
 
     /**
@@ -219,4 +233,19 @@ public class Mass implements Serializable{
     public void setzLength(float zLength) {
         this.zLength = zLength;
     }
+
+    /**
+     * @return the inertia
+     */
+    public boolean isInertia() {
+        return inertia;
+    }
+
+    /**
+     * @param inertia the inertia to set
+     */
+    public void setInertia(boolean inertia) {
+        this.inertia = inertia;
+    }
+
 }

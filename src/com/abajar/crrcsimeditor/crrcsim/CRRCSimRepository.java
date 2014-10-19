@@ -64,6 +64,7 @@ public class CRRCSimRepository {
                     break;
             }
         } catch (Exception ex) {
+ex.printStackTrace();
             logger.log(Level.SEVERE, null, ex);
         }
         return crrcsim;

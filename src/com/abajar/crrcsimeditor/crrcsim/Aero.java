@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -16,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlRootElement
 @XmlType(propOrder={"ref","misc","pitchMoment","lift","drag","sideForce","rollMomment","yawMomment"})
-public class Aero {
+public class Aero implements Serializable{
 //<aero version="1" units="0">
 //    <ref chord="..." span="..." area="..." speed="..." />
 //    <misc Alpha_0="..." eta_loc="..." CG_arm="..." span_eff="..." />

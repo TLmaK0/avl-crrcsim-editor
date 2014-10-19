@@ -27,7 +27,7 @@ public class AVLS {
         String fileMassPath = file.toString().replace(".avl", ".mass");
         File fileMass = new File(fileMassPath);
         fos = new FileOutputStream(fileMass);
-        avl.getGeometry().writeAVLMassData(fos);
+        avl.writeAVLMassData(fos);
         fos.close();
 
         Path dest = file.getParent();
