@@ -1,0 +1,78 @@
+#Created with CRRCsimEditor http://sourceforge.net/projects/crrcsimeditor/ 
+Geometry
+#Mach
+0.000              
+#iYsym   iZsym    Zsym
+0        0        0         
+#Sref     Cref      Bref
+378       7.09641   53.8583   
+#Xref     Yref      Zref
+2.6811    0.0       0.764806  
+#CDp
+0.02000            
+
+#=======================================
+SURFACE
+main wing
+#Nchord  Cspace    [Nspan    Sspace]
+7        1.0       19       -2.0      
+YDUPLICATE
+0.0       
+TRANSLATE
+#dX       dY       dZ
+1.7       0.0       0.0       
+
+SECTION
+#Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
+0.0       0.0       0.0       7.87402   0.0       
+AFILE
+s4083_mod_c.dat
+
+SECTION
+#Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
+0.216535  26.9291   5.72441   5.51181   -1.0      
+AFILE
+s4083_mod_e.dat
+
+SECTION
+#Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
+0.590551  26.9291   5.72441   5.51181   -1.0      
+AFILE
+s4083_mod_e.dat
+
+#=======================================
+SURFACE
+stab
+#Nchord  Cspace    [Nspan    Sspace]
+7        1.8       8        -2.0      
+YDUPLICATE
+0.0       
+TRANSLATE
+#dX       dY       dZ
+0.0       24.3701   0.0       
+
+SECTION
+#Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
+0.0       0.0       0.0       4.52756   0.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+elevator   18.0      0.652     0.0       0.0       0.0       1.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+eletrim    18.0      0.652     0.0       0.0       0.0       1.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+rudder     20.0      0.652     0.0       0.0       0.0       -1.0      
+
+SECTION
+#Xle      Yle       Zle       Chord     Ainc      Nspan     Sspace
+1.1811    6.44882   4.51575   2.75591   0.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+elevator   18.0      0.643     0.0       0.0       0.0       1.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+eletrim    18.0      0.643     0.0       0.0       0.0       1.0       
+CONTROL
+#name,     gain,     Xhinge,   XYZhvec,  SgnDup
+rudder     20.0      0.643     0.0       0.0       0.0       -1.0      
