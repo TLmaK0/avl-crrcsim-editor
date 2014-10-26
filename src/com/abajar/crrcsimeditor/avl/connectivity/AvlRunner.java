@@ -97,16 +97,18 @@ public class AvlRunner {
         if (elevatorPosition != -1) sendCommand("d" + (elevatorPosition + 1) + " pm 0\n");
         
         //setting velocity
-        sendCommand("c1\n");
-        sendCommand("v\n");
-        sendCommand(VELOCITY + "\n\n");        //setting velocity
-        sendCommand("s\n\n");
+        //sendCommand("c1\n");
+        //sendCommand("v\n");
+        //sendCommand(VELOCITY + "\n\n");        //setting velocity
+        //sendCommand("s\n\n");
 
+        sendCommand("a c 0.5");
         //execute run case
         sendCommand("x\n");
 
         sendCommand("st\n");
         sendCommand(resultFile + "\n");
+        sendCommand("c1\n\n");
         sendCommand("\nq\n");
         flush();
         

@@ -184,7 +184,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         ps.printf(locale, "%1$s\n", this.getName());
         ps.printf(locale, "#Mach\n%1$-19.4g\n", this.getMach());                                                         //0.0                 | Mach
         ps.printf(locale, "#iYsym   iZsym    Zsym\n" + formatInteger(2) + formatFloat(1,3) + "\n", this.getiYsym(), (int)this.getiZsym(), (int)this.getZsym());          //1     0     0.0     | iYsym  iZsym  Zsym
-        ps.printf(locale, "#Sref     Cref      Bref\n" + formatFloat(3) + "\n", (int)this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
+        ps.printf(locale, "#Sref     Cref      Bref\n" + formatFloat(3) + "\n", this.getSref(), this.getCref(), this.getBref());          //4.0   0.4   0.1     | Sref   Cref   Bref
         ps.printf(locale, "#Xref     Yref      Zref\n" + formatFloat(3) + "\n", this.getXref(), this.getYref(), this.getZref());          //0.1   0.0   0.0     | Xref   Yref   Zref
         
         if(this.CDp != 0){
