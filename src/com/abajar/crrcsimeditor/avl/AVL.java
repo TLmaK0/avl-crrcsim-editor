@@ -43,6 +43,12 @@ public class AVL implements Serializable{
         help="http://en.wikipedia.org/wiki/Reynolds_number"
     )
     private float reynoldsNumber = DEFAULT_REYNOLDS_NUMBER;
+
+    @CRRCSimEditorField(text="Alpha",
+        help="Simulation Alpha (angle of attack)"
+    )
+    private float alpha = 0;
+
     /**
      * @return the geometry
      */
@@ -154,6 +160,20 @@ public class AVL implements Serializable{
      */
     public void setReynoldsNumber(float reynoldsNumber) {
         this.reynoldsNumber = reynoldsNumber;
+    }
+
+    /**
+     * @return the alpha
+     */
+    public float getAlpha() {
+        return alpha;
+    }
+
+    /**
+     * @param alpha the alpha to set
+     */
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
     }
 
 }

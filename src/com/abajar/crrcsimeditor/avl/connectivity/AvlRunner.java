@@ -40,6 +40,7 @@ public class AvlRunner {
     final String avlPath;
     final Path avlFileName;
     final Path executionPath;
+    final AVL avl;
     final float VELOCITY = 30; // 30m/s
     private AvlCalculation result;
 
@@ -47,6 +48,7 @@ public class AvlRunner {
     private final String avlFileBase;
 
     public AvlRunner(String avlPath, AVL avl, Path originPath) throws IOException, InterruptedException, Exception{
+        this.avl = avl;
         this.avlPath = avlPath;
         this.executionPath = Files.createTempDirectory("chrrcsim_");
         this.avlFileBase = this.executionPath.toString() + "/crrcsim_tmp";
@@ -102,7 +104,7 @@ public class AvlRunner {
         //sendCommand(VELOCITY + "\n\n");        //setting velocity
         //sendCommand("s\n\n");
 
-        sendCommand("a c 0.5");
+        sendCommand("a c " + this.avl.getAlpha());
         //execute run case
         sendCommand("x\n");
 
