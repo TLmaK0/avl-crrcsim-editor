@@ -8,9 +8,9 @@ import com.abajar.crrcsimeditor.avl.AVLS;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
-import com.microcrowd.loader.java3d.max3ds.Loader3DS;
-import com.sun.j3d.loaders.Scene;
-import com.sun.j3d.utils.universe.SimpleUniverse;
+//import com.microcrowd.loader.java3d.max3ds.Loader3DS;
+//import com.sun.j3d.loaders.Scene;
+//import com.sun.j3d.utils.universe.SimpleUniverse;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,7 +42,7 @@ import org.jdesktop.application.SingleFrameApplication;
 public class CRRCsimEditor extends SingleFrameApplication {
     static final Logger logger = Logger.getLogger(CRRCsimEditor.class.getName());
 
-    SimpleUniverse univ;
+//    SimpleUniverse univ;
     CRRCSim crrcsim;
     MainFrame frame;
 
@@ -83,10 +83,10 @@ public class CRRCsimEditor extends SingleFrameApplication {
      * At startup create and show the main frame of the application.
      */
     @Override protected void startup() {
-        try {
+//        try {
             frame = new MainFrame(this);
             
-            Canvas3D canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
+/*            Canvas3D canvas = new Canvas3D(SimpleUniverse.getPreferredConfiguration());
             frame.jPanel1.setLayout(new BorderLayout());
             frame.jPanel1.setOpaque(false);
             frame.jPanel1.add("Center", canvas);
@@ -105,15 +105,19 @@ public class CRRCsimEditor extends SingleFrameApplication {
             BranchGroup scene = model3d.getSceneGroup();
             scene.compile();
             univ.addBranchGraph(scene);
+ *
+ */
             frame.setVisible(true);
 
 
             updateEnabledEditExportAsCRRCsimMenuItem();
-        } catch (FileNotFoundException ex) {
+ /*       } catch (FileNotFoundException ex) {
             logger.log(Level.FINE, null, ex);
         }
+  *
+  */
     }
-
+/*
     public void showFrontView(){
         TransformGroup VpTG = univ.getViewingPlatform().getViewPlatformTransform();
         Transform3D Trfcamera = new Transform3D();
@@ -140,6 +144,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
         Trfcamera.setTranslation(new Vector3f(0f, 0f, 100f));
         VpTG.setTransform(Trfcamera);
     }
+*/
 
     /**
      * A convenient static getter for the application instance.

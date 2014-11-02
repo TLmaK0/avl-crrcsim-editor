@@ -10,3 +10,7 @@ Install first avl 3.35 from here http://web.mit.edu/drela/Public/web/avl/
 And select avl path in Edit->Set AVL executable
 
 Create your airplane, and then export as AVL file or CRRCsim Xml.
+
+This software is in a early beta fase, so be careful with the result.
+
+Please, help me to improve it.

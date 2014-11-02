@@ -656,15 +656,15 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenu1ComponentShown
 
     private void rightViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_rightViewButtonMouseClicked
-        controller.showRightView();
+//        controller.showRightView();
 }//GEN-LAST:event_rightViewButtonMouseClicked
 
     private void frontViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frontViewButtonMouseClicked
-        controller.showFrontView();
+//        controller.showFrontView();
 }//GEN-LAST:event_frontViewButtonMouseClicked
 
     private void topViewButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_topViewButtonMouseClicked
-        controller.showTopView();
+//        controller.showTopView();
 }//GEN-LAST:event_topViewButtonMouseClicked
 
     private void avlTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_avlTreeValueChanged
