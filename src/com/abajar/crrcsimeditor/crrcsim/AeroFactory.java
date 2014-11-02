@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.UnitConversor;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner;
 import com.abajar.crrcsimeditor.avl.runcase.AvlCalculation;
@@ -32,9 +33,10 @@ public class AeroFactory {
         Configuration config = avlCalculation.getConfiguration();
 
         Reference ref = aero.getRef();
-        ref.setChord(config.getCref());
-        ref.setSpan(config.getBref());
-        ref.setArea(config.getSref());
+        UnitConversor uc = new UnitConversor();
+        ref.setChord(uc.convertToMeters(config.getCref(), avl.getLengthUnit()));
+        ref.setSpan(uc.convertToMeters(config.getBref(), avl.getLengthUnit()));
+        ref.setArea(uc.convertToSquareMeters(config.getSref(), avl.getLengthUnit()));
         ref.setSpeed(config.getVelocity());
 
         Miscellaneous misc = aero.getMisc();

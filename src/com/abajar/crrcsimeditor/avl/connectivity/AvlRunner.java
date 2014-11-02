@@ -69,7 +69,7 @@ public class AvlRunner {
 
         stdin.close();
         stdout.close();
-        this.removeDirectory(this.executionPath);
+        //this.removeDirectory(this.executionPath);
     }
 
     private void removeDirectory(Path directory) throws IOException{

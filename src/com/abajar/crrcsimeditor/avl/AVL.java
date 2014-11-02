@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl;
 
+import com.abajar.crrcsimeditor.UnitConversor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.FileOutputStream;
@@ -21,7 +22,7 @@ public class AVL implements Serializable{
     static final String DEFAULT_LENGTH_UNIT = "cm";
     static final String DEFAULT_MASS_UNIT = "g";
     static final String DEFAULT_TIME_UNIT = "s";
-
+    
     private AVLGeometry geometry = new AVLGeometry();
 
     @CRRCSimEditorField(text="Length unit (default cm)",
@@ -128,7 +129,7 @@ public class AVL implements Serializable{
 
         String lunit = "0.01 m";
         if(this.getLengthUnit().equals("m")) lunit = "1 m";
-        else if(this.getLengthUnit().equals("in")) lunit = "0.0254 m";
+        else if(this.getLengthUnit().equals("in")) lunit = UnitConversor.INCHES_TO_METERS + " m";
 
         String munit = "0.001 kg";
         if(this.getMassUnit().equals("kg")) munit = "1 kg";
