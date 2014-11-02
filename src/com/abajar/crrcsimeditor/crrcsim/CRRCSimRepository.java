@@ -52,15 +52,18 @@ public class CRRCSimRepository {
                     AVL avl = new AVL();
                     avl.setGeometry((AVLGeometry)u.unmarshal(data));
                     crrcsim = new CRRCSimFactory().create(avl);
+                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
                 case 13:
                     context = JAXBContext.newInstance(CRRCSim.class);
                     u = context.createUnmarshaller();
                     crrcsim = (CRRCSim)u.unmarshal(data);
+                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
                 default:
                     ObjectInput input = new ObjectInputStream (data);
                     crrcsim = (CRRCSim)input.readObject();
+                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
             }
         } catch (Exception ex) {
@@ -102,6 +105,16 @@ ex.printStackTrace();
         if (s.toString().contains("<crrcSim")) version = 13;
         else if (s.toString().contains("<avlGeometry>")) version = 10;
         return version;
+    }
+
+    private void fixCrrcsimDefaultsNewVersions(CRRCSim crrcsim) {
+        AVL avl = crrcsim.getAvl();
+
+        if (avl.getVelocity() == 0) avl.setVelocity(AVL.DEFAULT_VELOCITY);
+        if (avl.getLengthUnit() == null) avl.setLengthUnit(AVL.DEFAULT_LENGTH_UNIT);
+        if (avl.getMassUnit() == null) avl.setMassUnit(AVL.DEFAULT_MASS_UNIT);
+        if (avl.getTimeUnit() == null) avl.setTimeUnit(AVL.DEFAULT_TIME_UNIT);
+        if (avl.getReynoldsNumber() == 0) avl.setReynoldsNumber(AVL.DEFAULT_REYNOLDS_NUMBER);
     }
 
     

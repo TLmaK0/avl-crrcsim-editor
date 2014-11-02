@@ -18,11 +18,11 @@ import java.io.Serializable;
  */
 public class AVL implements Serializable{
     static final long serialVersionUID = 791092777497735586L;
-    static final float DEFAULT_REYNOLDS_NUMBER = 1.225f;
-    static final String DEFAULT_LENGTH_UNIT = "cm";
-    static final String DEFAULT_MASS_UNIT = "g";
-    static final String DEFAULT_TIME_UNIT = "s";
-    static final float VELOCITY = 30; // 30m/s
+    public static final float DEFAULT_REYNOLDS_NUMBER = 1.225f;
+    public static final String DEFAULT_LENGTH_UNIT = "cm";
+    public static final String DEFAULT_MASS_UNIT = "g";
+    public static final String DEFAULT_TIME_UNIT = "s";
+    public static final float DEFAULT_VELOCITY = 30; // 30m/s
 
     private AVLGeometry geometry = new AVLGeometry();
 
@@ -54,7 +54,7 @@ public class AVL implements Serializable{
     @CRRCSimEditorField(text="Velocity",
         help="Simulation velocity in Mass unit/Time unit"
     )
-    private float velocity = VELOCITY;
+    private float velocity = DEFAULT_VELOCITY;
 
     /**
      * @return the geometry
@@ -92,7 +92,7 @@ public class AVL implements Serializable{
      * @return the lengthUnit
      */
     public String getLengthUnit() {
-        return lengthUnit == null ? DEFAULT_LENGTH_UNIT : this.lengthUnit;
+        return lengthUnit;
     }
 
     /**
@@ -106,7 +106,7 @@ public class AVL implements Serializable{
      * @return the massUnit
      */
     public String getMassUnit() {
-        return massUnit == null ? DEFAULT_MASS_UNIT : this.massUnit;
+        return massUnit;
     }
 
     /**
@@ -120,7 +120,7 @@ public class AVL implements Serializable{
      * @return the timeUnit
      */
     public String getTimeUnit() {
-        return timeUnit == null ? DEFAULT_TIME_UNIT : this.timeUnit;
+        return timeUnit;
     }
 
     /**
@@ -159,7 +159,7 @@ public class AVL implements Serializable{
      * @return the reynoldsNumber
      */
     public float getReynoldsNumber() {
-        return reynoldsNumber == 0 ? DEFAULT_REYNOLDS_NUMBER : reynoldsNumber; //Old compatibility
+        return reynoldsNumber;
     }
 
     /**
