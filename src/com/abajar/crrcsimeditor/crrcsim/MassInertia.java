@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  *
@@ -80,6 +81,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the Mass
      */
+     @XmlAttribute(name="Mass")
     public float getMass() {
         return Mass;
     }
@@ -94,6 +96,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the I_xx
      */
+    @XmlAttribute(name="I_xx")
     public float getI_xx() {
         return I_xx;
     }
@@ -108,6 +111,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the I_yy
      */
+    @XmlAttribute(name="I_yy")
     public float getI_yy() {
         return I_yy;
     }
@@ -122,6 +126,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the I_zz
      */
+    @XmlAttribute(name="I_zz")
     public float getI_zz() {
         return I_zz;
     }
@@ -136,6 +141,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the I_xz
      */
+    @XmlAttribute(name="I_xz")
     public float getI_xz() {
         return I_xz;
     }

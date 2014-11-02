@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.UnitConversor;
 import com.abajar.crrcsimeditor.avl.mass.Mass;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
@@ -20,6 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
  * @author Hugo
  */
 public class Config  implements Serializable{
+    static final long serialVersionUID = 2660699319046872464L;
 
     @CRRCSimEditorField(text="short description",
         help="Short description of the config"
@@ -114,8 +116,8 @@ public class Config  implements Serializable{
         this.aero = aero;
     }
 
-    void setMass_inertiaFromMasses(ArrayList<Mass> masses) {
-        this.calculateInertiasMasses(masses);
+    void setMass_inertiaFromMasses(ArrayList<Mass> masses, String lengthUnit, String massUnit) {
+        this.calculateInertiasMasses(masses, lengthUnit, massUnit);
     }
 
     private double calculateMomentInertiaFromAxis(float coord1, float coord2, float originalMomentInertia, float mass){
@@ -133,7 +135,7 @@ public class Config  implements Serializable{
         return originalProductInertia + mass * coord1 * coord2;
     }
 
-    private void calculateInertiasMasses(ArrayList<Mass> masses) {
+    private void calculateInertiasMasses(ArrayList<Mass> masses, String lengthUnit, String massUnit) {
         float I_xx = 0;
         float I_yy = 0;
         float I_zz = 0;
@@ -148,11 +150,12 @@ public class Config  implements Serializable{
         }
 
         //setting and convert to kg * m2
-        this.mass_inertia.setI_xx(I_xx / 10000000);
-        this.mass_inertia.setI_yy(I_yy / 10000000);
-        this.mass_inertia.setI_zz(I_zz / 10000000);
-        this.mass_inertia.setI_xz(I_xz / 10000000);
-        this.mass_inertia.setMass(totalMass / 1000);
+        UnitConversor uc = new UnitConversor();
+        this.mass_inertia.setI_xx(uc.convertToKilogramsSquareMeters(I_xx, massUnit, lengthUnit));
+        this.mass_inertia.setI_yy(uc.convertToKilogramsSquareMeters(I_yy, massUnit, lengthUnit));
+        this.mass_inertia.setI_zz(uc.convertToKilogramsSquareMeters(I_zz, massUnit, lengthUnit));
+        this.mass_inertia.setI_xz(uc.convertToKilogramsSquareMeters(I_xz, massUnit, lengthUnit));
+        this.mass_inertia.setMass(uc.convertToKilograms(totalMass, massUnit));
     }
 
     /**

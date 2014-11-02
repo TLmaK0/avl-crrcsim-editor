@@ -139,7 +139,7 @@ public class AVL implements Serializable{
 
         String munit = "0.001 kg";
         if(this.getMassUnit().equals("kg")) munit = "1 kg";
-        else if(this.getMassUnit().equals("oz")) munit = "0.02835 kg";
+        else if(this.getMassUnit().equals("oz")) munit = UnitConversor.OUNCES_TO_KILOGRAMS + " kg";
 
         String tunit = "1.0 s";
         if(this.getTimeUnit().equals("h")) tunit = "3600 s";

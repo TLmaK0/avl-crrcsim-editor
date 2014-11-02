@@ -45,18 +45,18 @@ public class UnitConversorTest {
         UnitConversor instance = new UnitConversor();
         float expResult = 0.1F;
         float result = instance.convertToMeters(quantity, lengthUnit);
-        assertEquals(expResult, result, 0.000001);
+        assertEquals(expResult, result, 0.00001);
     }
 
     @Test
     public void testConvertInToMeters() {
         System.out.println("convertToMeters");
         float quantity = 10.0F;
-        String lengthUnit = "in";
+        String lengthUnit = "oz";
         UnitConversor instance = new UnitConversor();
-        float expResult = 0.254F;
-        float result = instance.convertToMeters(quantity, lengthUnit);
-        assertEquals(expResult, result, 0.000001);
+        float expResult = 0.283495F;
+        float result = instance.convertToKilograms(quantity, lengthUnit);
+        assertEquals(expResult, result, 0.00001);
     }
 
     /**
@@ -70,21 +70,40 @@ public class UnitConversorTest {
         UnitConversor instance = new UnitConversor();
         float expResult = 0.001F;
         float result = instance.convertToSquareMeters(quantity, lengthUnit);
-        assertEquals(expResult, result, 0.000001);
+        assertEquals(expResult, result, 0.00001);
     }
 
-        /**
-     * Test of convertToSquareMeters method, of class UnitConversor.
+    /**
+     * Test of convertToKilogramsSquareMeters method, of class UnitConversor.
      */
     @Test
-    public void testConvertSqInToSquareMeters() {
-        System.out.println("convertToSquareMeters");
+    public void testConvertToKilogramsSquareMeters(){
+        System.out.println("convertToKilogramsSquareMeters");
         float quantity = 10.0F;
         String lengthUnit = "in";
+        String massUnit = "oz";
+
         UnitConversor instance = new UnitConversor();
-        float expResult = 0.0064516F;
-        float result = instance.convertToSquareMeters(quantity, lengthUnit);
-        assertEquals(expResult, result, 0.000001);
+        float expResult = 0.000182899F;
+        float result = instance.convertToKilogramsSquareMeters(quantity, massUnit, lengthUnit);
+        assertEquals(expResult, result, 0.00001);
     }
+
+    /**
+     * Test of convertToKilogramsMeters method, of class UnitConversor.
+     */
+    @Test
+    public void testConvertToKilogramsMeters(){
+        System.out.println("convertToKilogramsSquareMeters");
+        float quantity = 10.0F;
+        String lengthUnit = "in";
+        String massUnit = "oz";
+
+        UnitConversor instance = new UnitConversor();
+        float expResult = 0.00720077887f;
+        float result = instance.convertToKilogramsMeters(quantity, massUnit, lengthUnit);
+        assertEquals(expResult, result, 0.00001);
+    }
+
 
 }

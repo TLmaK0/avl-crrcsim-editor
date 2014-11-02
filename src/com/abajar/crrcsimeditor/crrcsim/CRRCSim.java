@@ -154,7 +154,7 @@ public class CRRCSim implements Serializable{
 
     public void calculate(String avlPath, Path originPath) throws IOException, InterruptedException, Exception{
         this.aero = new AeroFactory().createFromAvl(avlPath, this.avl, originPath);
-        this.config.setMass_inertiaFromMasses(avl.getGeometry().getMasses());
+        this.config.setMass_inertiaFromMasses(avl.getGeometry().getMasses(), avl.getLengthUnit(), avl.getMassUnit());
     }
 
     @Override
