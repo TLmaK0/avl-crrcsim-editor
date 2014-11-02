@@ -63,7 +63,7 @@ public class AeroFactory {
 
         lift.setCL_a(std.getCLa());
         lift.setCL_q(std.getCLq());
-        if (elevatorPosition != -1) lift.setCL_de(std.getCld()[elevatorPosition]);
+        if (elevatorPosition != -1) lift.setCL_de(std.getCLd()[elevatorPosition]);
         lift.setCL_drop(0.1f);     //CL drop during stall break //TODO: CL_drop add to editor
         lift.setCL_CD0(0);      //CL at minimum profile //TODO: CL_CD0 add to editor
         lift.setCL_0(config.getCLtot());
