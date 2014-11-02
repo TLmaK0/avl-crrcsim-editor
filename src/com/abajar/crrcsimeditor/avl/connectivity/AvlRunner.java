@@ -41,7 +41,6 @@ public class AvlRunner {
     final Path avlFileName;
     final Path executionPath;
     final AVL avl;
-    final float VELOCITY = 30; // 30m/s
     private AvlCalculation result;
 
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
@@ -99,10 +98,10 @@ public class AvlRunner {
         if (elevatorPosition != -1) sendCommand("d" + (elevatorPosition + 1) + " pm 0\n");
         
         //setting velocity
-        //sendCommand("c1\n");
-        //sendCommand("v\n");
-        //sendCommand(VELOCITY + "\n\n");        //setting velocity
-        //sendCommand("s\n\n");
+        sendCommand("c1\n");
+        sendCommand("v\n");
+        sendCommand(avl.getVelocity() + "\n\n");        //setting velocity
+        sendCommand("s\n\n");
 
         sendCommand("a c " + this.avl.getAlpha() + "\n");
         //execute run case
@@ -122,7 +121,7 @@ public class AvlRunner {
         AvlCalculation runCase = new AvlCalculation(elevatorPosition, rudderPosition, aileronPosition);
         Configuration config = runCase.getConfiguration();
 
-        config.setVelocity(VELOCITY);
+        config.setVelocity(avl.getVelocity());
 
         config.setSref(readFloat("Sref =", scanner));
         config.setCref(readFloat("Cref =", scanner));

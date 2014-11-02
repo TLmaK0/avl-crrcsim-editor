@@ -22,7 +22,8 @@ public class AVL implements Serializable{
     static final String DEFAULT_LENGTH_UNIT = "cm";
     static final String DEFAULT_MASS_UNIT = "g";
     static final String DEFAULT_TIME_UNIT = "s";
-    
+    static final float VELOCITY = 30; // 30m/s
+
     private AVLGeometry geometry = new AVLGeometry();
 
     @CRRCSimEditorField(text="Length unit (default cm)",
@@ -49,6 +50,11 @@ public class AVL implements Serializable{
         help="Simulation Alpha (angle of attack)"
     )
     private float alpha = 0;
+
+    @CRRCSimEditorField(text="Velocity",
+        help="Simulation velocity in Mass unit/Time unit"
+    )
+    private float velocity = VELOCITY;
 
     /**
      * @return the geometry
@@ -175,6 +181,20 @@ public class AVL implements Serializable{
      */
     public void setAlpha(float alpha) {
         this.alpha = alpha;
+    }
+
+    /**
+     * @return the velocity
+     */
+    public float getVelocity() {
+        return velocity;
+    }
+
+    /**
+     * @param velocity the velocity to set
+     */
+    public void setVelocity(float velocity) {
+        this.velocity = velocity;
     }
 
 }
