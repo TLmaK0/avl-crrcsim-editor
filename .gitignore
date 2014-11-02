@@ -5,3 +5,6 @@ dist/*
 CRRCsimEditor/*
 run/*
 *.orig
+sample/**/*.avl
+sample/**/*.mass
+sample/**/*.xml

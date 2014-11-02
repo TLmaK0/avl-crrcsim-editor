@@ -104,7 +104,7 @@ public class AvlRunner {
         //sendCommand(VELOCITY + "\n\n");        //setting velocity
         //sendCommand("s\n\n");
 
-        sendCommand("a c " + this.avl.getAlpha());
+        sendCommand("a c " + this.avl.getAlpha() + "\n");
         //execute run case
         sendCommand("x\n");
 
