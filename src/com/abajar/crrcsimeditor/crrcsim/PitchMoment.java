@@ -21,7 +21,7 @@ public class PitchMoment {
     /**
      * @return the Cm_0
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cm_0")
     public float getCm_0() {
         return Cm_0;
     }
@@ -36,7 +36,7 @@ public class PitchMoment {
     /**
      * @return the Cm_a
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cm_a")
     public float getCm_a() {
         return Cm_a;
     }
@@ -51,7 +51,7 @@ public class PitchMoment {
     /**
      * @return the Cm_q
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cm_q")
     public float getCm_q() {
         return Cm_q;
     }
@@ -66,7 +66,7 @@ public class PitchMoment {
     /**
      * @return the Cm_de
      */
-    @XmlAttribute
+    @XmlAttribute(name="Cm_de")
     public float getCm_de() {
         return Cm_de;
     }

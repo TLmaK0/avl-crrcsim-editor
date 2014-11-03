@@ -53,6 +53,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the version
      */
+    @XmlAttribute(name="version")
     public String getVersion() {
         return version;
     }
@@ -67,6 +68,7 @@ public class MassInertia implements Serializable {
     /**
      * @return the units
      */
+    @XmlAttribute(name="units")
     public String getUnits() {
         return units;
     }

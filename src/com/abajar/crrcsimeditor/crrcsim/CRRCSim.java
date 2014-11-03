@@ -19,14 +19,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.eclipse.persistence.oxm.annotations.XmlPath;
 
 /**
  *
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","changelog","aero","config","wheels"})
+@XmlType(propOrder={"description","aero","changelog","config","wheels"})
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
@@ -57,12 +59,14 @@ public class CRRCSim implements Serializable{
         return battery;
     }
 
+    private String wheelsVersion = "1";
+    private String wheelsUnits = "1";
     /**
      * @return the wells
      */
     @CRRCSimEditorNode
-    @XmlElementWrapper
-    @XmlElement(name="wheels")
+    @XmlElementWrapper(name = "wheels")
+    @XmlElement(name="wheel")
     public ArrayList<Wheel> getWheels() {
         return wheels;
     }
@@ -79,6 +83,23 @@ public class CRRCSim implements Serializable{
         this.wheels.add(wheel);
         return wheel;
     }
+
+    /**
+     * @return the wheelsVersion
+     */
+    @XmlPath("wheels/@version")
+    public String getWheelsVersion() {
+        return wheelsVersion;
+    }
+
+    /**
+     * @param wheelsVersion the wheelsVersion to set
+     */
+    public void setWheelsVersion(String wheelsVersion) {
+        this.wheelsVersion = wheelsVersion;
+    }
+
+
 
     /**
     <CRRCSim_airplane version="2">
@@ -128,17 +149,14 @@ public class CRRCSim implements Serializable{
     </sound>
   </config>
        */
-    @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE, ENABLE_BUTTONS.ADD_CHANGELOG})
-    public static class Changelog extends ArrayList<Change>{
-
-        public Changelog() {
-        }
-
-    }
-
+    
     private String version = "2";
     private final Description description = new Description();
-    private final Changelog changelog = new Changelog();
+
+    //This property will be deprecated only here to allow load old files
+    //private transient final Changelog changelog = new Changelog();
+    
+    private final Changelog changelog1 = new Changelog();
     private transient Aero aero;
     private final AVL avl;
     private Config config = new Config();
@@ -176,6 +194,21 @@ public class CRRCSim implements Serializable{
     @CRRCSimEditorNode
     public AVL getAvl() {
         return avl;
+    }
+
+    /**
+     * @return the wheelsUnit
+     */
+    @XmlPath("wheels/@units")
+    public String getWheelsUnits() {
+        return wheelsUnits;
+    }
+
+    /**
+     * @param wheelsUnit the wheelsUnit to set
+     */
+    public void setWheelsUnits(String wheelsUnits) {
+        this.wheelsUnits = wheelsUnits;
     }
 
     public static class Description implements Serializable{
@@ -224,7 +257,7 @@ public class CRRCSim implements Serializable{
      */
     @XmlElement(name="changelog")
     public Changelog getChangelog() {
-        return changelog;
+        return changelog1;
     }
 
     /**

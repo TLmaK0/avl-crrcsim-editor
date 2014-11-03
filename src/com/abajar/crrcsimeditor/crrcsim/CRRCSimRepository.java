@@ -115,6 +115,14 @@ ex.printStackTrace();
         if (avl.getMassUnit() == null) avl.setMassUnit(AVL.DEFAULT_MASS_UNIT);
         if (avl.getTimeUnit() == null) avl.setTimeUnit(AVL.DEFAULT_TIME_UNIT);
         if (avl.getReynoldsNumber() == 0) avl.setReynoldsNumber(AVL.DEFAULT_REYNOLDS_NUMBER);
+
+        if (crrcsim.getWheelsVersion() == null) crrcsim.setWheelsVersion("1");
+        if (crrcsim.getWheelsUnits() == null) crrcsim.setWheelsUnits("1");
+        if (crrcsim.getConfig().getPower() != null && crrcsim.getConfig().getPower().getBateries().size() > 0){
+            for(Battery battery: crrcsim.getConfig().getPower().getBateries()){
+                if (battery.getU_0rel() == null) battery.setU_0rel(Battery.U_0_REL);
+            }
+        }
     }
 
     

@@ -240,6 +240,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             m.marshal(this.crrcsim, fos);
             fos.close();
         } catch (Exception ex) {
+ex.printStackTrace();
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         }
     }

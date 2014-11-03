@@ -21,7 +21,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_SHAFT})
 public class Battery implements Serializable {
-
+    public static final String U_0_REL ="1;1.05;0.95;0.90;0.85;0.70;0.60;";
+    
     @Override
     public String toString() {
         return "Battery";
@@ -59,7 +60,7 @@ public class Battery implements Serializable {
         help="Semicolon separated values representing the proportinal voltage returned by the batery over the time. Ex. 1;1.05;0.95;0.90;0.85;0.70;0.60;\n"+
         "In this example, voltage at full charge is 1.05 * U_0"
     )
-    private String U_0rel;
+    private String U_0rel = U_0_REL;
 
     private ArrayList<Shaft> shafts = new ArrayList<Shaft>();
     public Battery() {
@@ -99,7 +100,7 @@ public class Battery implements Serializable {
     /**
      * @return the C
      */
-    @XmlAttribute
+    @XmlAttribute(name = "C")
     public float getC() {
         return C;
     }
@@ -159,7 +160,7 @@ public class Battery implements Serializable {
     /**
      * @return the U_0rel
      */
-    @XmlElement
+    @XmlElement(name = "U_0rel")
     public String getU_0rel() {
         return U_0rel;
     }
