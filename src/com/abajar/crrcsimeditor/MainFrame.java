@@ -29,7 +29,6 @@ import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
 import com.abajar.crrcsimeditor.view.table.avl.CRRCSimTableModel;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Change;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSim.Changelog;
 import com.abajar.crrcsimeditor.view.table.avl.AeroplaneTableModel;
 import java.io.File;
 import java.util.EnumSet;
