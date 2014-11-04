@@ -24,6 +24,7 @@ public class Battery implements Serializable {
     static final long serialVersionUID = -2002346996816014100L;
 
     public static final String U_0_REL ="1;1.05;0.95;0.90;0.85;0.70;0.60;";
+    static float DEFAULT_C=1;
     
     @Override
     public String toString() {

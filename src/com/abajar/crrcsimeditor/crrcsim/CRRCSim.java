@@ -28,7 +28,7 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","aero","changelog","config","wheels"})
+@XmlType(propOrder={"description","aero","changelog","config","graphics","wheels"})
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
@@ -161,6 +161,7 @@ public class CRRCSim implements Serializable{
     private final AVL avl;
     private Config config = new Config();
     private ArrayList<Wheel> wheels = new ArrayList<Wheel>();
+    private Graphics graphics = new Graphics();
 
     protected CRRCSim(AVL avl){
         this.avl = avl;
@@ -209,6 +210,22 @@ public class CRRCSim implements Serializable{
      */
     public void setWheelsUnits(String wheelsUnits) {
         this.wheelsUnits = wheelsUnits;
+    }
+
+    /**
+     * @return the graphics
+     */
+    @XmlElement
+    @CRRCSimEditorNode
+    public Graphics getGraphics() {
+        return graphics;
+    }
+
+    /**
+     * @param graphics the graphics to set
+     */
+    public void setGraphics(Graphics graphics) {
+        this.graphics = graphics;
     }
 
     public static class Description implements Serializable{
