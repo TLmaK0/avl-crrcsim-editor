@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlElement;
  */
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_ENGINE, ENABLE_BUTTONS.ADD_SYMPLE_TRUST})
 public class Shaft implements Serializable {
-
+    static final long serialVersionUID = -4669977187731929600L;
     @Override
     public String toString() {
         return "Shaft";
@@ -63,7 +63,7 @@ public class Shaft implements Serializable {
      * @return the brake
      */
     @XmlAttribute
-    public float getBrake() {
+    public int getBrake() {
         return brake;
     }
 
