@@ -39,7 +39,7 @@ public class Surface extends MassObject implements AVLSerializable {
         help="number of chordwise horseshoe vortices placed on the surface\r\n"
             + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex"
     )
-    private int Nchord;
+    private int Nchord = 8;
 
     @CRRCSimEditorField(text="Cspace",
         help="chordwise vortex spacing parameter\r\n"
@@ -53,13 +53,13 @@ public class Surface extends MassObject implements AVLSerializable {
             + "The most efficient distribution (best accuracy for a given number of \r\n"
             + "vortices) is usually the cosine (1.0) chordwise and spanwise"
     )
-    private float Cspace;
+    private float Cspace = 1f;
 
     @CRRCSimEditorField(text="Nspan",
         help="number of spanwise horseshoe vortices placed on the surface\r\n"
             + "8 is a good number, more vortices more acurate but more calculation time. http://en.wikipedia.org/wiki/Horseshoe_vortex"
     )
-    private int Nspan;
+    private int Nspan = 8;
 
     @CRRCSimEditorField(text="Sspace",
         help="spanwise vortex spacing parameter\r\n"
@@ -73,7 +73,7 @@ public class Surface extends MassObject implements AVLSerializable {
             + "The most efficient distribution (best accuracy for a given number of \r\n"
             + "vortices) is usually the cosine (1.0) chordwise and spanwise"
     )
-    private float Sspace;
+    private float Sspace=1.0f;
 
     //TODO: COMPONENT
     //TODO: SCALE
@@ -108,7 +108,10 @@ public class Surface extends MassObject implements AVLSerializable {
     )
     private float dAinc;
     
-    private final ArrayList<Section> sections = new ArrayList<Section>();
+    private final ArrayList<Section> sections = new ArrayList<Section>(){{
+      add(new Section());
+      add(new Section());
+    }};
 
     @Override
     public String toString() {

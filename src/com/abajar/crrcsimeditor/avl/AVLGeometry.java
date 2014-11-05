@@ -120,7 +120,9 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     )
     private float CDp = 0.02f;
     
-    private final ArrayList<Surface> surfaces = new ArrayList<Surface>();
+    private final ArrayList<Surface> surfaces = new ArrayList<Surface>(){{
+        add(new Surface());
+    }};
     private final ArrayList<Body> body = new ArrayList<Body>();
 
     static final long serialVersionUID = 7590357473387179207L;

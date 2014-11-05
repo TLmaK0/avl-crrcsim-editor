@@ -30,7 +30,7 @@ public class Section  extends MassObject implements AVLSerializable{
     @CRRCSimEditorField(text="Xle",
         help="airfoil's leading edge X location"
     )
-    private float Xle;
+    private float Xle = 15;
 
     @CRRCSimEditorField(text="Yle",
         help="airfoil's leading edge Y location"
@@ -45,7 +45,7 @@ public class Section  extends MassObject implements AVLSerializable{
     @CRRCSimEditorField(text="Chord",
         help="the airfoil's chord  (trailing edge is at Xle+Chord,Yle,Zle)"
     )
-    private float Chord;
+    private float Chord = 10;
 
     @CRRCSimEditorField(text="Ainc",
         help="incidence angle, taken as a rotation (+ by RH rule) about\r\n"
@@ -71,7 +71,7 @@ public class Section  extends MassObject implements AVLSerializable{
     @CRRCSimEditorField(text="NACA",
         help="sets the camber line to the NACA 4-digit shape specified"
     )
-    private String NACA="";
+    private String NACA="4412";
 
     @CRRCSimEditorField(text="X1",
         help="If present, the optional X1 X2 parameters indicate that only the\r\n"

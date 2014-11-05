@@ -6,6 +6,7 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
 
@@ -13,7 +14,7 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
  *
  * @author Hugo
  */
-public class Graphics {
+public class Graphics implements Serializable {
     private String version="1";
 
     @CRRCSimEditorField(text="model",
