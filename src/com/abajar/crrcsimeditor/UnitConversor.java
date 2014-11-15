@@ -16,6 +16,8 @@ public class UnitConversor {
     public static final float CENTIMETERS_TO_METERS = 0.01f;
     public static final float OUNCES_TO_KILOGRAMS = 0.0283495231f;
     public static final float GRAMS_TO_KILOGRAMS = 0.001f;
+    public static final float HOURS_TO_SECONDS = 3600f;
+    public static final float MINUTES_TO_SECONDS = 36f;
 
     public float convertToMeters(float quantity, String lengthUnit){
         return quantity * this.getFactorLength(lengthUnit, false);
@@ -53,5 +55,17 @@ public class UnitConversor {
 
     public float convertToKilogramsMeters(float quantity, String massUnit, String lengthUnit) {
         return quantity * this.getFactorMass(massUnit) * this.getFactorLength(lengthUnit, false);
+    }
+
+    public float convertToSeconds(float quantity, String timeUnit){
+        float factor;
+        if (timeUnit.equals("h")) factor = HOURS_TO_SECONDS;
+        else if (timeUnit.equals("m")) factor = MINUTES_TO_SECONDS;
+        else if (timeUnit.equals("s")) factor = 1f;
+        else throw new UnsupportedOperationException("unreconized unity " + timeUnit + ". Only allowed s, m or h");
+        return factor;
+    }
+    public float convertToMetersPerSecond(float velocity, String lengthUnit, String timeUnit) {
+        return convertToSeconds(convertToMeters(velocity, lengthUnit), timeUnit);
     }
 }

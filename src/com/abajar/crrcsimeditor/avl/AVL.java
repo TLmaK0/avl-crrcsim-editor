@@ -46,13 +46,13 @@ public class AVL implements Serializable{
     )
     private float reynoldsNumber = DEFAULT_REYNOLDS_NUMBER;
 
-    @CRRCSimEditorField(text="Alpha",
-        help="Simulation Alpha (angle of attack)"
+    @CRRCSimEditorField(text="Lift coefficient",
+        help="Lift coefficient used to calculate stability derivatives for the simulation"
     )
     private float alpha = 0;
 
     @CRRCSimEditorField(text="Velocity",
-        help="Simulation velocity in Mass unit/Time unit"
+        help="Simulation velocity in m/s"
     )
     private float velocity = DEFAULT_VELOCITY;
 
@@ -172,14 +172,14 @@ public class AVL implements Serializable{
     /**
      * @return the alpha
      */
-    public float getAlpha() {
+    public float getLiftCoefficient() {
         return alpha;
     }
 
     /**
      * @param alpha the alpha to set
      */
-    public void setAlpha(float alpha) {
+    public void setLiftCoefficient(float alpha) {
         this.alpha = alpha;
     }
 

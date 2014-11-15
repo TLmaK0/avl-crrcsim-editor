@@ -4,6 +4,7 @@
 
 package com.abajar.crrcsimeditor;
 
+import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLS;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
 import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
@@ -11,6 +12,8 @@ import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
 //import com.microcrowd.loader.java3d.max3ds.Loader3DS;
 //import com.sun.j3d.loaders.Scene;
 //import com.sun.j3d.utils.universe.SimpleUniverse;
+import com.abajar.crrcsimeditor.crrcsim.MetersConversor;
+import com.abajar.crrcsimeditor.crrcsim.MultiUnit;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileInputStream;
@@ -232,10 +235,12 @@ public class CRRCsimEditor extends SingleFrameApplication {
     private void exportAsCRRCsim(File file, Path originPath) throws IOException, InterruptedException{
         try {
             this.crrcsim.calculate(this.configuration.getProperty("avl.path"), file.toPath().getParent());
-            
+            AVL avl = this.crrcsim.getAvl();
+
             FileOutputStream fos = new FileOutputStream(file);
             JAXBContext context = JAXBContext.newInstance(CRRCSim.class);
             Marshaller m = context.createMarshaller();
+            m.setAdapter(new MetersConversor(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())));
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             m.marshal(this.crrcsim, fos);
             fos.close();

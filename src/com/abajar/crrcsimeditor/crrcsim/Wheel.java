@@ -9,6 +9,7 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *

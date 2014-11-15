@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.avl.connectivity;
 
+import com.abajar.crrcsimeditor.UnitConversor;
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLS;
 import com.abajar.crrcsimeditor.avl.runcase.Configuration;
@@ -90,7 +91,8 @@ public class AvlRunner {
 
     private void run(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
         String resultFile = this.avlFileName.toString().replace(".avl", ".st");
-        
+        UnitConversor uc = new UnitConversor();
+
         sendCommand("oper\n");
         //sendCommand("g\n\n");
 
@@ -100,10 +102,11 @@ public class AvlRunner {
         //setting velocity
         sendCommand("c1\n");
         sendCommand("v\n");
+
         sendCommand(avl.getVelocity() + "\n\n");        //setting velocity
         sendCommand("s\n\n");
 
-        sendCommand("a c " + this.avl.getAlpha() + "\n");
+        sendCommand("a c " + this.avl.getLiftCoefficient() + "\n");
         //execute run case
         sendCommand("x\n");
 

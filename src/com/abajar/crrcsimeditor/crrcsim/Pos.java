@@ -8,6 +8,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 /**
  *
@@ -23,16 +24,19 @@ public class Pos implements Serializable{
     @CRRCSimEditorField(text="X",
         help="X position\r\n"
     )
+    @XmlJavaTypeAdapter(MetersConversor.class)
     private float x;
 
     @CRRCSimEditorField(text="Y",
         help="Y position\r\n"
     )
+    @XmlJavaTypeAdapter(MetersConversor.class)
     private float y;
 
     @CRRCSimEditorField(text="Z",
         help="Z position\r\n"
     )
+    @XmlJavaTypeAdapter(MetersConversor.class)
     private float z;
 
     /**
