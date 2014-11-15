@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,7 +29,14 @@ public class Wheel implements Serializable {
      *   <spring constant="65" damping="0.25" />
      * </wheel>
      */
-    private float percent_brake = 0.5f;
+    @CRRCSimEditorField(text="Percent brake",
+        help="Percentage of max braking applied initially"
+    )
+    private float percent_brake = 1f;
+
+    @CRRCSimEditorField(text="Caster angle",
+        help="Rads. The caster angle is specified with respect to the plane body's z-axis, a value of zero means that the wheel is oriented straight ahead (which should be the case for most gears)."
+    )
     private float caster_angle_rad = 0;
     private Pos pos = new Pos();
     private Spring spring = new Spring();

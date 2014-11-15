@@ -23,7 +23,7 @@ public class Spring implements Serializable {
     @CRRCSimEditorField(text="constant",
         help="Spring constant, has to be positive.\r\n"
     )
-    private float constant;
+    private float constant=1;
 
     @CRRCSimEditorField(text="damping",
         help="damping, has to be positive.\r\n"
