@@ -24,25 +24,23 @@ public class Pos implements Serializable{
     @CRRCSimEditorField(text="X",
         help="X position\r\n"
     )
-    @XmlJavaTypeAdapter(MetersConversor.class)
     private float x;
 
     @CRRCSimEditorField(text="Y",
         help="Y position\r\n"
     )
-    @XmlJavaTypeAdapter(MetersConversor.class)
     private float y;
 
     @CRRCSimEditorField(text="Z",
         help="Z position\r\n"
     )
-    @XmlJavaTypeAdapter(MetersConversor.class)
     private float z;
 
     /**
      * @return the x
      */
     @XmlAttribute
+    @XmlJavaTypeAdapter(MetersConversor.class)
     public float getX() {
         return x;
     }
@@ -58,6 +56,7 @@ public class Pos implements Serializable{
      * @return the y
      */
     @XmlAttribute
+    @XmlJavaTypeAdapter(MetersConversor.class)
     public float getY() {
         return y;
     }
@@ -73,6 +72,7 @@ public class Pos implements Serializable{
      * @return the z
      */
     @XmlAttribute
+    @XmlJavaTypeAdapter(MetersConversor.class)
     public float getZ() {
         return z;
     }
