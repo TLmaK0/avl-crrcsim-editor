@@ -7,6 +7,7 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
+import com.abajar.crrcsimeditor.desing.DesignRules;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -125,6 +126,7 @@ ex.printStackTrace();
                 if (battery.getC() == 0) battery.setC(Battery.DEFAULT_C);
             }
         }
+        if (crrcsim.getDesignRules() == null) crrcsim.setDesignRules(new DesignRules(crrcsim.getAvl()));
     }
 
     

@@ -20,7 +20,7 @@ public class Wheel implements Serializable {
 
     @Override
     public String toString() {
-        return "Wheel";
+        return "Colision point";
     }
 
     /**

@@ -6,10 +6,12 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
+import com.abajar.crrcsimeditor.desing.DesignRules;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import java.beans.Transient;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -32,6 +34,8 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
+
+    private transient DesignRules designRules;
     /**
      * @return the config
      */
@@ -57,6 +61,12 @@ public class CRRCSim implements Serializable{
         Battery battery = new Battery();
         this.config.getPower().getBateries().add(null);
         return battery;
+    }
+
+    @CRRCSimEditorNode
+    @XmlTransient
+    public DesignRules getDesignRules(){
+        return this.designRules;
     }
 
     private String wheelsVersion = "1";
@@ -165,6 +175,7 @@ public class CRRCSim implements Serializable{
 
     protected CRRCSim(AVL avl){
         this.avl = avl;
+        this.designRules = new DesignRules(this.avl);
     }
 
     protected CRRCSim(){
@@ -226,6 +237,10 @@ public class CRRCSim implements Serializable{
      */
     public void setGraphics(Graphics graphics) {
         this.graphics = graphics;
+    }
+
+    void setDesignRules(DesignRules designRules) {
+        this.designRules = designRules;
     }
 
     public static class Description implements Serializable{

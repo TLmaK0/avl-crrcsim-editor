@@ -6,7 +6,10 @@
 package com.abajar.crrcsimeditor.view.table.avl;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorReadOnly;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -90,6 +93,21 @@ public class CRRCSimTableModel extends DefaultTableModel implements TableModelLi
             }
         }
 
+        for(Method method : this.model.getClass().getMethods()){
+            if(method.isAnnotationPresent(CRRCSimEditorReadOnly.class)){
+                try {
+                    method.setAccessible(false);
+                    result.add(method.invoke(model));
+                } catch (IllegalAccessException ex) {
+                    Logger.getLogger(CRRCSimTableModel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IllegalArgumentException ex) {
+                    Logger.getLogger(CRRCSimTableModel.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (InvocationTargetException ex) {
+                    Logger.getLogger(CRRCSimTableModel.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+
         return new Object[][]{result.toArray()};
     }
 
@@ -101,7 +119,22 @@ public class CRRCSimTableModel extends DefaultTableModel implements TableModelLi
                 result.add(crrcsimFieldAnnotation.text());
             }
         }
+
+        for(Method method : this.model.getClass().getMethods()){
+            if(method.isAnnotationPresent(CRRCSimEditorReadOnly.class)){
+                CRRCSimEditorReadOnly crrcsimReadOnlyAnnotation = method.getAnnotation(CRRCSimEditorReadOnly.class);
+                result.add(crrcsimReadOnlyAnnotation.text());
+            }
+        }
+
         return result.toArray();
+    }
+
+    private Class<?> getClassType(Class<?> classType){
+        if (classType == int.class) classType = Integer.class;
+        else if (classType == float.class) classType = Float.class;
+        else if (classType == boolean.class) classType = Boolean.class;
+        return classType;
     }
 
     @Override
@@ -109,13 +142,16 @@ public class CRRCSimTableModel extends DefaultTableModel implements TableModelLi
         ArrayList<Class<?>> result = new ArrayList<Class<?>>();
         for(Field field : this.model.getClass().getDeclaredFields()){
             if (field.isAnnotationPresent(CRRCSimEditorField.class)){
-                Class<?> classType = field.getType();
-                if (classType == int.class) classType = Integer.class;
-                else if (classType == float.class) classType = Float.class;
-                else if (classType == boolean.class) classType = Boolean.class;
-                result.add(classType);
+                result.add(getClassType(field.getType()));
             }
         }
+
+        for(Method method : this.model.getClass().getMethods()){
+            if(method.isAnnotationPresent(CRRCSimEditorReadOnly.class)){
+                result.add(getClassType(method.getReturnType()));
+            }
+        }
+
         return result.get(i);
     }
 
@@ -125,6 +161,12 @@ public class CRRCSimTableModel extends DefaultTableModel implements TableModelLi
             if (field.isAnnotationPresent(CRRCSimEditorField.class)){
                 CRRCSimEditorField crrcsimFieldAnnotation = field.getAnnotation(CRRCSimEditorField.class);
                 result.add(crrcsimFieldAnnotation.help());
+            }
+        }
+        for(Method method : this.model.getClass().getMethods()){
+            if(method.isAnnotationPresent(CRRCSimEditorReadOnly.class)){
+                CRRCSimEditorReadOnly crrcsimReadOnlyAnnotation = method.getAnnotation(CRRCSimEditorReadOnly.class);
+                result.add(crrcsimReadOnlyAnnotation.help());
             }
         }
         return result.toArray(new String[result.size()]);
