@@ -126,7 +126,11 @@ ex.printStackTrace();
                 if (battery.getC() == 0) battery.setC(Battery.DEFAULT_C);
             }
         }
+        for(Wheel collision: crrcsim.getWheels()){
+            if (collision.getName() == null) collision.setName("Collision point");
+        }
         if (crrcsim.getDesignRules() == null) crrcsim.setDesignRules(new DesignRules(crrcsim.getAvl()));
+
     }
 
     

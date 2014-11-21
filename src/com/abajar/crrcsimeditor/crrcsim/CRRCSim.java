@@ -81,6 +81,8 @@ public class CRRCSim implements Serializable{
         return wheels;
     }
 
+    public int internalVersion = 20;
+
     /**
      * @param wells the wells to set
      */

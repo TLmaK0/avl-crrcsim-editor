@@ -17,10 +17,11 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  * @author Hugo
  */
 public class Wheel implements Serializable {
-
+    static final long serialVersionUID = 2233264509711545342L;
+    
     @Override
     public String toString() {
-        return "Colision point";
+        return name;
     }
 
     /**
@@ -29,6 +30,11 @@ public class Wheel implements Serializable {
      *   <spring constant="65" damping="0.25" />
      * </wheel>
      */
+    @CRRCSimEditorField(text="Name",
+        help="Name of the collision point"
+    )
+    private String name = "Collision point";
+
     @CRRCSimEditorField(text="Percent brake",
         help="Percentage of max braking applied initially"
     )
@@ -40,7 +46,7 @@ public class Wheel implements Serializable {
     private float caster_angle_rad = 0;
     private Pos pos = new Pos();
     private Spring spring = new Spring();
-
+    
     /**
      * @return the percent_brake
      */
@@ -101,6 +107,20 @@ public class Wheel implements Serializable {
      */
     public void setSpring(Spring spring) {
         this.spring = spring;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }
