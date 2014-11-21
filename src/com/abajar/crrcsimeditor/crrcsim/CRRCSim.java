@@ -81,6 +81,7 @@ public class CRRCSim implements Serializable{
         return wheels;
     }
 
+    @XmlTransient
     public int internalVersion = 20;
 
     /**
