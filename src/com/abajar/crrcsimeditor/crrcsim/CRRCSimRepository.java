@@ -131,6 +131,10 @@ ex.printStackTrace();
         }
         if (crrcsim.getDesignRules() == null) crrcsim.setDesignRules(new DesignRules(crrcsim.getAvl()));
 
+        if(crrcsim.internalVersion < 21) for(Wheel collision: crrcsim.getWheels()){
+            collision.getPos().setX(-collision.getPos().getX());
+            collision.getPos().setZ(-collision.getPos().getZ());
+        }
     }
 
     

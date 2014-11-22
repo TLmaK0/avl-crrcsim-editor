@@ -82,7 +82,7 @@ public class CRRCSim implements Serializable{
     }
 
     @XmlTransient
-    public int internalVersion = 20;
+    public int internalVersion = 21;
 
     /**
      * @param wells the wells to set

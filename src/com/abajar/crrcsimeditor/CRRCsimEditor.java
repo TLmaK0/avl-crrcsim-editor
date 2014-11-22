@@ -13,6 +13,7 @@ import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
 //import com.sun.j3d.loaders.Scene;
 //import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.abajar.crrcsimeditor.crrcsim.MetersConversor;
+import com.abajar.crrcsimeditor.crrcsim.MetersConversorInverter;
 import com.abajar.crrcsimeditor.crrcsim.MultiUnit;
 import java.awt.BorderLayout;
 import java.io.File;
@@ -241,6 +242,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             JAXBContext context = JAXBContext.newInstance(CRRCSim.class);
             Marshaller m = context.createMarshaller();
             m.setAdapter(new MetersConversor(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())));
+            m.setAdapter(new MetersConversorInverter(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())));
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             m.marshal(this.crrcsim, fos);
             fos.close();
