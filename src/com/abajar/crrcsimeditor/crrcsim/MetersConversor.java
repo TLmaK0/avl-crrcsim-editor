@@ -6,23 +6,25 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.UnitConversor;
+import java.io.NotSerializableException;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  *
  * @author Hugo
  */
-public class MetersConversor extends UnitConversorTypeAdapter{
-    private UnitConversor unitConversor = new UnitConversor();
+public class MetersConversor extends XmlAdapter<Float,Float> {
+    protected UnitConversor unitConversor = new UnitConversor();
+    protected final MultiUnit multiUnit;
 
     public MetersConversor(){
-        super();
-    }
-    
-    public MetersConversor(MultiUnit multiUnit){
-        super(multiUnit);
+        multiUnit = null;
     }
 
-    @Override
+    public MetersConversor(MultiUnit multiUnit){
+        this.multiUnit = multiUnit;
+    }
+
     public Float convert(Float quantity) {
         return unitConversor.convertToMeters(quantity, multiUnit.getLengthUnit());
     }
@@ -30,6 +32,11 @@ public class MetersConversor extends UnitConversorTypeAdapter{
     @Override
     public Float unmarshal(Float v) throws Exception {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public Float marshal(Float v) throws Exception {
+        return convert(v);
     }
 
 }

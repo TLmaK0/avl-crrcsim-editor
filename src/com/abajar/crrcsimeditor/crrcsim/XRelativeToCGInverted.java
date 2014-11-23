@@ -9,13 +9,13 @@ package com.abajar.crrcsimeditor.crrcsim;
  *
  * @author Hugo
  */
-public class MetersConversorInverter extends MetersConversor{
-    public MetersConversorInverter(){
+public class XRelativeToCGInverted extends XRelativeToCG{
+    public XRelativeToCGInverted(){
         super();
     }
 
-    public MetersConversorInverter(MultiUnit multiUnit) {
-        super(multiUnit);
+    public XRelativeToCGInverted(String unit, Float origin) {
+        super(unit, origin);
     }
 
     @Override

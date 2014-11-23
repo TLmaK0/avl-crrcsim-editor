@@ -5,6 +5,7 @@
 
 package com.abajar.crrcsimeditor.crrcsim;
 
+import com.abajar.crrcsimeditor.UnitConversor;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 
@@ -13,17 +14,25 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @author Hugo
  */
 abstract class UnitConversorTypeAdapter extends XmlAdapter<Float,Float> {
-    protected final MultiUnit multiUnit;
+    private final UnitConversor unitConversor = new UnitConversor();
+
+
+    private final String unit;
+    private final Float origin;
 
     public UnitConversorTypeAdapter(){  //No parameter constructor for JAXB requirement
-        this.multiUnit = new MultiUnit(null, null, null);
+        unit = null;
+        origin = null;
     }
 
-    public UnitConversorTypeAdapter(MultiUnit multiUnit) {
-        this.multiUnit = multiUnit;
+    public UnitConversorTypeAdapter(String unit, Float origin){
+        this.unit = unit;
+        this.origin = origin;
     }
 
-    abstract public Float convert(Float quantity);
+    public Float convert(Float quantity) {
+        return unitConversor.convertToMeters(quantity - origin, unit);
+    }
 
     @Override
     public Float marshal(Float v) throws Exception {

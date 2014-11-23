@@ -6,7 +6,6 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
-import com.abajar.crrcsimeditor.desing.DesignRules;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
@@ -30,12 +29,12 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
  * @author Hugo
  */
 @XmlRootElement(name="CRRCSim_airplane")
-@XmlType(propOrder={"description","aero","changelog","config","graphics","wheels"})
+@XmlType(propOrder={"description","aero","changelog","config","graphics","centerOfMass","wheels"})
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
 public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
 
-    private transient DesignRules designRules;
+    private transient CenterOfMass centerOfMass;
     /**
      * @return the config
      */
@@ -64,9 +63,9 @@ public class CRRCSim implements Serializable{
     }
 
     @CRRCSimEditorNode
-    @XmlTransient
-    public DesignRules getDesignRules(){
-        return this.designRules;
+    @XmlElement(name="CG")
+    public CenterOfMass getCenterOfMass(){
+        return this.centerOfMass;
     }
 
     private String wheelsVersion = "1";
@@ -178,7 +177,7 @@ public class CRRCSim implements Serializable{
 
     protected CRRCSim(AVL avl){
         this.avl = avl;
-        this.designRules = new DesignRules(this.avl);
+        this.centerOfMass = new CenterOfMass(this);
     }
 
     protected CRRCSim(){
@@ -242,8 +241,8 @@ public class CRRCSim implements Serializable{
         this.graphics = graphics;
     }
 
-    void setDesignRules(DesignRules designRules) {
-        this.designRules = designRules;
+    void setCenterOfMass(CenterOfMass centerOfMass) {
+        this.centerOfMass = centerOfMass;
     }
 
     public static class Description implements Serializable{

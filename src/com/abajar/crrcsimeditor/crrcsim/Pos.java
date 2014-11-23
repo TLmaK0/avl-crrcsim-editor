@@ -40,7 +40,7 @@ public class Pos implements Serializable{
      * @return the x
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(MetersConversorInverter.class)
+    @XmlJavaTypeAdapter(XRelativeToCGInverted.class)
     public float getX() {
         return x;
     }
@@ -56,7 +56,7 @@ public class Pos implements Serializable{
      * @return the y
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(MetersConversor.class)
+    @XmlJavaTypeAdapter(YRelativeToCG.class)
     public float getY() {
         return y;
     }
@@ -72,7 +72,7 @@ public class Pos implements Serializable{
      * @return the z
      */
     @XmlAttribute
-    @XmlJavaTypeAdapter(MetersConversorInverter.class)
+    @XmlJavaTypeAdapter(ZRelativeToCGInverted.class)
     public float getZ() {
         return z;
     }

@@ -7,7 +7,6 @@ package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.avl.AVL;
 import com.abajar.crrcsimeditor.avl.AVLGeometry;
-import com.abajar.crrcsimeditor.desing.DesignRules;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -129,12 +128,14 @@ ex.printStackTrace();
         for(Wheel collision: crrcsim.getWheels()){
             if (collision.getName() == null) collision.setName("Collision point");
         }
-        if (crrcsim.getDesignRules() == null) crrcsim.setDesignRules(new DesignRules(crrcsim.getAvl()));
-
+        if (crrcsim.getCenterOfMass() == null) crrcsim.setCenterOfMass(new CenterOfMass(crrcsim));
         if(crrcsim.internalVersion < 21) for(Wheel collision: crrcsim.getWheels()){
             collision.getPos().setX(-collision.getPos().getX());
             collision.getPos().setZ(-collision.getPos().getZ());
         }
+
+        crrcsim.internalVersion = 21;
+
     }
 
     
