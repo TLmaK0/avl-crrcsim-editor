@@ -44,7 +44,7 @@ public class AeroFactory {
 
         misc.setEta_loc(0.3f); //eta_loc for stall model http://en.wikipedia.org/wiki/Pseudorapidity
         misc.setCG_arm(0.25f); //The typical value CG_arm = 0.25 means that the point of application of the averaged dCL is 0.25*chord ahead of the CG.
-        misc.setSpan_eff(0.95f); //span efficiency: Effective span, 0.95 for most planes, 0.85 flying wing.
+        misc.setSpan_eff(config.getE()); //span efficiency: Effective span, 0.95 for most planes, 0.85 flying wing.
 
         //TODO: eta_loc, CG_arm, span_eff add to editor
 

@@ -19,6 +19,7 @@ public class Configuration {
     private float CLtot;
     private float CDvis;
     private float Clb;
+    private Float e;
 
 //Cmtot
 //Cma
@@ -149,5 +150,16 @@ public class Configuration {
      */
     public void setClb(float Clb) {
         this.Clb = Clb;
+    }
+
+    public void setE(Float e) {
+        this.e = e;
+    }
+
+    /**
+     * @return the e
+     */
+    public Float getE() {
+        return e;
     }
 }

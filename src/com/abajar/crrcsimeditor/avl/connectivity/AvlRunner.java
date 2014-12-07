@@ -135,6 +135,7 @@ public class AvlRunner {
         config.setCmtot(readFloat("Cmtot =", scanner));
         config.setCLtot(readFloat("CLtot =", scanner));
         config.setCDvis(readFloat("CDvis =", scanner));
+        config.setE(readFloat("e =", scanner));
 
         StabilityDerivatives std = runCase.getStabilityDerivatives();
         std.setCLa(readFloat("CLa = ", scanner));
