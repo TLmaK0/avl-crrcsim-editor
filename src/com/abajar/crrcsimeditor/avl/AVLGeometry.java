@@ -163,6 +163,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
      * @return the body
      */
     @XmlElement(name="body")
+    @CRRCSimEditorNode
     public ArrayList<Body> getBodies() {
         return body;
     }
