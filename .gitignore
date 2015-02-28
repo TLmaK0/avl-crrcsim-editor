@@ -8,3 +8,4 @@ run/*
 sample/**/*.avl
 sample/**/*.mass
 sample/**/*.xml
+*.swp
