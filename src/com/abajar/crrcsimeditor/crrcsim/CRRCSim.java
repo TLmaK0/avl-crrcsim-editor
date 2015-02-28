@@ -35,6 +35,8 @@ public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
 
     private transient CenterOfMass centerOfMass;
+    private transient Path originPath;
+
     /**
      * @return the config
      */
@@ -245,6 +247,15 @@ public class CRRCSim implements Serializable{
         this.centerOfMass = centerOfMass;
     }
 
+    void setOriginPath(Path toPath) {
+        this.originPath = toPath;
+    }
+
+    @XmlTransient
+    public Path getOriginPath(){
+        return this.originPath;
+    }
+    
     public static class Description implements Serializable{
         private String en;
 

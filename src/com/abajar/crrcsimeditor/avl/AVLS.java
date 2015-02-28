@@ -38,6 +38,7 @@ public class AVLS {
 
         for(Surface surface : avl.getGeometry().getSurfaces()){
             for(Section section : surface.getSections()){
+
                 if (!section.getAFILE().isEmpty() && !Files.exists(dest.resolve(section.getAFILE()))) Files.copy(origin.resolve(section.getAFILE()), dest.resolve(section.getAFILE()));
             }
         }

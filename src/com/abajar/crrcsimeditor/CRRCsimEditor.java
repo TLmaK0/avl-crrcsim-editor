@@ -225,7 +225,7 @@ public class CRRCsimEditor extends SingleFrameApplication {
             String path = this.configuration.getProperty("crrcsim.save", "~/");
             File file = this.frame.showSaveDialog(path, "CRRCsim file (*.xml)", "xml");
             this.configuration.setProperty("crrcsim.save",file.getAbsolutePath());
-            this.exportAsCRRCsim(file, Paths.get(path));
+            this.exportAsCRRCsim(file);
         } catch (InterruptedException ex) {
             logger.log(Level.SEVERE, ex.getMessage(), ex);
         } catch (IOException ex) {
@@ -233,9 +233,9 @@ public class CRRCsimEditor extends SingleFrameApplication {
         }
     }
 
-    private void exportAsCRRCsim(File file, Path originPath) throws IOException, InterruptedException{
+    private void exportAsCRRCsim(File file) throws IOException, InterruptedException{
         try {
-            this.crrcsim.calculate(this.configuration.getProperty("avl.path"), file.toPath().getParent());
+            this.crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath());
             AVL avl = this.crrcsim.getAvl();
 
             FileOutputStream fos = new FileOutputStream(file);

@@ -52,20 +52,19 @@ public class CRRCSimRepository {
                     AVL avl = new AVL();
                     avl.setGeometry((AVLGeometry)u.unmarshal(data));
                     crrcsim = new CRRCSimFactory().create(avl);
-                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
                 case 13:
                     context = JAXBContext.newInstance(CRRCSim.class);
                     u = context.createUnmarshaller();
                     crrcsim = (CRRCSim)u.unmarshal(data);
-                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
                 default:
                     ObjectInput input = new ObjectInputStream (data);
                     crrcsim = (CRRCSim)input.readObject();
-                    fixCrrcsimDefaultsNewVersions(crrcsim);
                     break;
             }
+            fixCrrcsimDefaultsNewVersions(crrcsim);
+            crrcsim.setOriginPath(file.getParentFile().toPath());
         } catch (Exception ex) {
 ex.printStackTrace();
             logger.log(Level.SEVERE, null, ex);
@@ -135,7 +134,6 @@ ex.printStackTrace();
         }
 
         crrcsim.internalVersion = 21;
-
     }
 
     
