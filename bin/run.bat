@@ -1,1 +1,0 @@
-java -Djava.library.path=.\lib -jar CRRCsimEditor.jar
