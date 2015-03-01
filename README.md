@@ -30,10 +30,9 @@ Of course you will need the avl-crrcsim-editor sources too:
 
     git clone https://github.com/TLmaK0/avl-crrcsim-editor.git
 
-The first time you run sbt it will downlaod and install a whole bunch of dependencies, which can take a long time on a slow connection. The following command will list the available tasks after bootstrapping the environment:
+The first time you run sbt it will download and install a whole bunch of dependencies, which can take a long time on a slow connection. The following command will list the available tasks after bootstrapping the environment:
 
     cd avl-crrcsim-editor
     sbt tasks
-
 
 
