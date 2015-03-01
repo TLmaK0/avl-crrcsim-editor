@@ -10,3 +10,6 @@ sample/**/*.mass
 sample/**/*.xml
 *.swp
 target
+.classpath
+.project
+.settings
