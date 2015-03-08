@@ -9,3 +9,7 @@ mainClass in (Compile,run) := Some("Main")
 enablePlugins(JavaAppPackaging)
 
 maintainer := "Hugo Freire <hfreire@abajar.com>"
+
+fork in run := true
+
+libraryDependencies += "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2"
