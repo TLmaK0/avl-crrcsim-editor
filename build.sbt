@@ -20,3 +20,5 @@ scalacOptions in ThisBuild ++= Seq("-feature")
 scalacOptions ++= Seq("-language:postfixOps", "-language:reflectiveCalls")
 
 fork in run := true
+
+libraryDependencies += "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2"
