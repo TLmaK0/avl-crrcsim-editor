@@ -50,7 +50,7 @@ public class CenterOfMass {
         help="X position of center of masses"
     )
     @XmlAttribute(name="x")
-    @XmlJavaTypeAdapter(value=MetersConversorInverted.class, type=float.class)
+    @XmlJavaTypeAdapter(MetersConversorInverted.class)
     public float getX(){
         float total = 0;
         float totalMass = this.getMassesSum();
@@ -62,7 +62,7 @@ public class CenterOfMass {
         help="Y position of center of masses"
     )
     @XmlAttribute(name="y")
-    @XmlJavaTypeAdapter(value=MetersConversor.class, type=float.class)
+    @XmlJavaTypeAdapter(MetersConversor.class)
     public float getY(){
         float total = 0;
         float totalMass = this.getMassesSum();
@@ -74,7 +74,7 @@ public class CenterOfMass {
         help="Z position of center of masses"
     )
     @XmlAttribute(name="z")
-    @XmlJavaTypeAdapter(value=MetersConversorInverted.class, type=float.class)
+    @XmlJavaTypeAdapter(MetersConversorInverted.class)
     public float getZ(){
         float total = 0;
         float totalMass = this.getMassesSum();
