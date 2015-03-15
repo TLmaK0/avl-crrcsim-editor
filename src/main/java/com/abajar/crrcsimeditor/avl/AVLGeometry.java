@@ -154,7 +154,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
      */
     @XmlElementWrapper
     @XmlElement(name="surface")
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="surfaces")
     public ArrayList<Surface> getSurfaces() {
         return surfaces;
     }
@@ -163,7 +163,7 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
      * @return the body
      */
     @XmlElement(name="body")
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="bodies")
     public ArrayList<Body> getBodies() {
         return body;
     }

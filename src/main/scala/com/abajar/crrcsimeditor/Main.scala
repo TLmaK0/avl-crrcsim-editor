@@ -1,9 +1,10 @@
 package com.abajar.crrcsimeditor
 
-import swt.MainWindow
+import java.util.logging.LogManager;
 
 object Main extends App {
   override def main(args: Array[String]): Unit = {
-    MainWindow show
+    LogManager.getLogManager().readConfiguration()
+    CRRCSimEditor.start
   }
 }

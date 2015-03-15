@@ -75,7 +75,7 @@ public class CRRCSim implements Serializable{
     /**
      * @return the wells
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name = "Collision points")
     @XmlElementWrapper(name = "wheels")
     @XmlElement(name="wheel")
     public ArrayList<Wheel> getWheels() {

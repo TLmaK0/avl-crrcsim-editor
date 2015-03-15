@@ -31,7 +31,7 @@ public class Power implements Serializable {
     /**
      * @return the bateries
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="batteries")
     @XmlElement(name="battery")
     public ArrayList<Battery> getBateries() {
         return bateries;
