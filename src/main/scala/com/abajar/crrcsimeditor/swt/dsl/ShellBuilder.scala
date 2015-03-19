@@ -15,6 +15,7 @@ object ShellBuilder{
     def addTree(style: Int) = new Tree(shell, style)
     def addTable(style: Int) = new Table(shell, style)
     def addStyledText(style: Int) = new StyledText(shell, style)
+    def addToolBar(style: Int) = new ToolBar(shell, style)
   }
 
   def apply(display: Display, buildScreen: (Shell) => Unit ): Unit = {

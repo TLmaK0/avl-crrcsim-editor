@@ -31,8 +31,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import swt.MainWindow
+import org.eclipse.swt.widgets.{Event, TreeItem}
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
+import java.lang.reflect.Method
 
 object CRRCSimEditor{
+    import MainWindow._
     val logger = Logger.getLogger(CRRCSimEditor.getClass.getName)
 
     val CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor"
@@ -44,6 +48,7 @@ object CRRCSimEditor{
     if (!dir.exists) dir.mkdir
 
     var crrcsim = new CRRCSimFactory().create()
+    var window: MainWindow = _
 
     try {
       configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH))
@@ -63,13 +68,20 @@ object CRRCSimEditor{
       }
     })
 
+    private def handleClickButton(button: MainWindow.Buttons.Buttons) = {
+      println(button)
+    }
+
     def start = {
-      MainWindow.loadCRRCSim(new CRRCSimFactory().create)
-      MainWindow.show
+      window = new MainWindow(
+        handleClickButton,
+        handleTreeEvent 
+      )
+      window.show
       updateEnabledEditExportAsCRRCsimMenuItem
     }
 
-    def exportAsAVL(avlFile: Path) = {
+    def exportAsAVL(avlFile: Path): Unit = {
       AVLS.avlToFile(this.crrcsim.getAvl(), avlFile, avlFile.getParent());
     }
 
@@ -106,32 +118,32 @@ object CRRCSimEditor{
       }
     }
 
-    def exportAsAVL = {
+    def exportAsAVL: Unit = {
       try {
         val path = this.configuration.getProperty("crrcsim.save", "~/")
         val file = this.showSaveDialog(path, "AVL file (*.avl)","avl")
         this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
 
-        //TODO: this.exportAsAVL(Paths.get(file.getPath()))
+        exportAsAVL(Paths.get(file.getPath()))
       } catch {
         case ex: Exception =>
           logger.log(Level.FINE, null, ex)
       }
     }
 
-    def exportAsCRRCsim = {
+    def exportAsCRRCsim: Unit = {
       try {
         val path = this.configuration.getProperty("crrcsim.save", "~/")
         val file = this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml")
         this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-        //TODO: this.exportAsCRRCsim(file)
+        exportAsCRRCsim(file)
       } catch { 
         case ex: Exception =>
           logger.log(Level.SEVERE, ex.getMessage(), ex)
       }
     }
 
-    private def exportAsCRRCsim(file: File) = {
+    private def exportAsCRRCsim(file: File): Unit = {
       try {
         this.crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath())
         val avl = this.crrcsim.getAvl()
@@ -181,5 +193,42 @@ object CRRCSimEditor{
     private def showSaveDialog(path: String, description: String, extensions: String): File = {
       //TODO: save dialog
       throw new Exception("TODO")
+    }
+
+    
+    private def handleTreeEvent(event: Event) = {
+      val item = event.item.asInstanceOf[TreeItem]
+
+      val parentItem = item.getParentItem
+
+      val node = if (parentItem == null) 
+        (crrcsim.toString, crrcsim)
+      else
+        getChilds(parentItem.getData)(event.index)
+
+      val childs = getChilds(node._2)
+
+      item.setData(node._2)
+      item.setText(node._1)
+      item.setItemCount(childs.length)
+    }
+
+    private def getChilds(node: Any): List[(String, Any)] = node match {
+      case childs: List[(String, Any)] =>
+        childs
+      case node =>
+        node.getClass.getMethods.foldLeft(List[(String, Any)]())(
+          (nodes, method)=>
+            if (method.isAnnotationPresent(classOf[CRRCSimEditorNode]))
+              nodes :+ getNameNodePair(method, node)
+            else 
+              nodes
+        )
+    }
+
+    private def getNameNodePair(method: Method, parentNode: Any) = {
+      val name = method.getAnnotation(classOf[CRRCSimEditorNode]).name
+      val node = method.invoke(parentNode)
+      (if (name == "Node") node.toString else name , node)
     }
 }
