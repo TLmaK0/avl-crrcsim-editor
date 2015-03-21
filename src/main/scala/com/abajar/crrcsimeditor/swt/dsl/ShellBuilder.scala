@@ -2,6 +2,7 @@ package com.abajar.crrcsimeditor.swt.dsl
 
 import org.eclipse.swt.widgets._
 import org.eclipse.swt.custom._
+import org.eclipse.swt.events._;
 
 object ShellBuilder{
   implicit class ShellWrapper(shell: Shell){
@@ -12,7 +13,14 @@ object ShellBuilder{
       display.dispose
     }
 
-    def addTree(style: Int) = new Tree(shell, style)
+    def addTree(style: Int, handler: SelectionEvent => Unit): Tree = {
+      val tree = new Tree(shell, style)
+      tree.addSelectionListener(new SelectionAdapter(){
+        override def widgetSelected(se: SelectionEvent) = handler(se) 
+      })
+      return tree
+    }
+
     def addTable(style: Int) = new Table(shell, style)
     def addStyledText(style: Int) = new StyledText(shell, style)
     def addToolBar(style: Int) = new ToolBar(shell, style)

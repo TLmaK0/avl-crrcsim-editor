@@ -32,11 +32,12 @@ import javax.xml.bind.Marshaller;
 
 import swt.MainWindow
 import org.eclipse.swt.widgets.{Event, TreeItem}
+import org.eclipse.swt.events._;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import java.lang.reflect.Method
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 
 object CRRCSimEditor{
-    import MainWindow._
     val logger = Logger.getLogger(CRRCSimEditor.getClass.getName)
 
     val CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor"
@@ -48,7 +49,11 @@ object CRRCSimEditor{
     if (!dir.exists) dir.mkdir
 
     var crrcsim = new CRRCSimFactory().create()
-    var window: MainWindow = _
+    var window = new MainWindow(
+        handleClickButton,
+        treeSourceHandler,
+        handleTreeEvent
+      )
 
     try {
       configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH))
@@ -68,15 +73,11 @@ object CRRCSimEditor{
       }
     })
 
-    private def handleClickButton(button: MainWindow.Buttons.Buttons) = {
+    private def handleClickButton(button: ENABLE_BUTTONS) = {
       println(button)
     }
 
     def start = {
-      window = new MainWindow(
-        handleClickButton,
-        handleTreeEvent 
-      )
       window.show
       updateEnabledEditExportAsCRRCsimMenuItem
     }
@@ -196,7 +197,7 @@ object CRRCSimEditor{
     }
 
     
-    private def handleTreeEvent(event: Event) = {
+    private def treeSourceHandler(event: Event) = {
       val item = event.item.asInstanceOf[TreeItem]
 
       val parentItem = item.getParentItem
@@ -213,7 +214,15 @@ object CRRCSimEditor{
       item.setItemCount(childs.length)
     }
 
-    private def getChilds(node: Any): List[(String, Any)] = node match {
+    private def handleTreeEvent(data: Any): Unit = {
+      val objClass = data.getClass
+      if (objClass.isAnnotationPresent(classOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor])) {
+        val crrcsimAnnotations = objClass.getAnnotation(classOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor]).asInstanceOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor]
+        window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
+      }else window.disableAllButtons
+    }
+
+    private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
       case childs: List[(String, Any)] =>
         childs
       case node =>

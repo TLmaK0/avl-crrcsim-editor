@@ -22,8 +22,10 @@ object Widget{
   }
 
   implicit class SetAddListenerWrapper[T <: {def addListener(eventType: Int, listener:Listener)}](val subject:T) {
-    def subscribe(eventType: Int, listener: Listener): T = {
-      subject.addListener(eventType, listener)
+    def setSourceHandler(listenerMethod: Event => Unit): T = {
+      subject.addListener(SWT.SetData, new Listener {
+        def handleEvent(event: Event) = listenerMethod(event)
+      })
       return subject
     }
   }

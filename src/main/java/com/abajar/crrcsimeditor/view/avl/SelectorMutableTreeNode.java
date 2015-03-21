@@ -133,7 +133,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_DATA_IDLE,
         ADD_SYMPLE_TRUST,
         ADD_WHEEL,
-        DELETE
+        DELETE,
+        ADD_COLLISION_POINT,
     }
 
     public SelectorMutableTreeNode(Object obj){
