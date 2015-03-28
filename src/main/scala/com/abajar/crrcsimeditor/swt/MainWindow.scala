@@ -47,24 +47,48 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     val layout = new GridLayout
     layout.numColumns = 3
     shell setLayout layout
-    val mainWindow = this
+
+    shell.addMenu(menu => {
+        menu.addSubmenu("File")
+          .addItem("Save as...")
+          .addItem("Open...")
+          .addItem("Export As Avl")
+          .addItem("Export As CRRCSim")
+
+        menu.addSubmenu("Edit")
+          .addItem("Set AVL executable")
+     })
 
     shell.addToolBar(SWT.BORDER)
       .layoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
-      .addButtonRegister("Add Surface", ENABLE_BUTTONS.ADD_SURFACE, notifyButtonClick)
-      .addButtonRegister("Add Section", ENABLE_BUTTONS.ADD_SECTION, notifyButtonClick)
-      .addButtonRegister("Add Control", ENABLE_BUTTONS.ADD_CONTROL, notifyButtonClick)
-      .addButtonRegister("Add Mass", ENABLE_BUTTONS.ADD_MASS, notifyButtonClick)
-      .addButtonRegister("Add Body", ENABLE_BUTTONS.ADD_BODY, notifyButtonClick)
-      .addButtonRegister("Delete", ENABLE_BUTTONS.DELETE, notifyButtonClick)
-      .addButtonRegister("Add Change Log", ENABLE_BUTTONS.ADD_CHANGELOG, notifyButtonClick)
-      .addButtonRegister("Add Battery", ENABLE_BUTTONS.ADD_BATTERY, notifyButtonClick)
-      .addButtonRegister("Add Shaft", ENABLE_BUTTONS.ADD_SHAFT, notifyButtonClick)
-      .addButtonRegister("Add Engine", ENABLE_BUTTONS.ADD_ENGINE, notifyButtonClick)
-      .addButtonRegister("Add Engine Data", ENABLE_BUTTONS.ADD_DATA, notifyButtonClick)
-      .addButtonRegister("Add Engine Idle Data", ENABLE_BUTTONS.ADD_DATA_IDLE, notifyButtonClick)
-      .addButtonRegister("Add Simple Trust", ENABLE_BUTTONS.ADD_SYMPLE_TRUST, notifyButtonClick)
-      .addButtonRegister("Add Collision Point", ENABLE_BUTTONS.ADD_COLLISION_POINT, notifyButtonClick)
+      .addButtonRegister("Add Surface", 
+        ENABLE_BUTTONS.ADD_SURFACE, notifyButtonClick)
+      .addButtonRegister("Add Section", 
+        ENABLE_BUTTONS.ADD_SECTION, notifyButtonClick)
+      .addButtonRegister("Add Control", 
+        ENABLE_BUTTONS.ADD_CONTROL, notifyButtonClick)
+      .addButtonRegister("Add Mass", 
+        ENABLE_BUTTONS.ADD_MASS, notifyButtonClick)
+      .addButtonRegister("Add Body", 
+        ENABLE_BUTTONS.ADD_BODY, notifyButtonClick)
+      .addButtonRegister("Delete", 
+        ENABLE_BUTTONS.DELETE, notifyButtonClick)
+      .addButtonRegister("Add Change Log", 
+        ENABLE_BUTTONS.ADD_CHANGELOG, notifyButtonClick)
+      .addButtonRegister("Add Battery", 
+        ENABLE_BUTTONS.ADD_BATTERY, notifyButtonClick)
+      .addButtonRegister("Add Shaft", 
+        ENABLE_BUTTONS.ADD_SHAFT, notifyButtonClick)
+      .addButtonRegister("Add Engine", 
+        ENABLE_BUTTONS.ADD_ENGINE, notifyButtonClick)
+      .addButtonRegister("Add Engine Data", 
+        ENABLE_BUTTONS.ADD_DATA, notifyButtonClick)
+      .addButtonRegister("Add Engine Idle Data", 
+        ENABLE_BUTTONS.ADD_DATA_IDLE, notifyButtonClick)
+      .addButtonRegister("Add Simple Trust", 
+        ENABLE_BUTTONS.ADD_SYMPLE_TRUST, notifyButtonClick)
+      .addButtonRegister("Add Collision Point", 
+        ENABLE_BUTTONS.ADD_COLLISION_POINT, notifyButtonClick)
 
     shell.addTree(SWT.VIRTUAL | SWT.BORDER, notifyTreeClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))

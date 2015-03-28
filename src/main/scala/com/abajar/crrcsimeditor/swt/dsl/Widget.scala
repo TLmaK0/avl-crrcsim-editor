@@ -48,4 +48,23 @@ object Widget{
       return item
     }
   }
+
+  implicit class AddMenuWrapper(menu: Menu){
+    def addSubmenu(text: String): Menu = {
+      val menuItem = new MenuItem(menu, SWT.CASCADE) 
+      menuItem.setText(text)
+      val submenu = new Menu(menu.getShell, SWT.DROP_DOWN)
+      menuItem.setMenu(submenu)
+      return submenu
+    }
+
+  }
+
+  implicit class AddMenuItemWrapper(menu: Menu){
+    def addItem(text: String) = {
+      val item = new MenuItem(menu, SWT.PUSH)
+      item.setText(text)
+      menu
+    }
+  }
 }
