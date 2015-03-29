@@ -36,8 +36,10 @@ import org.eclipse.swt.events._;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import java.lang.reflect.Method
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
+import com.abajar.crrcsimeditor.swt.MenuOption._
 
 object CRRCSimEditor{
+
     val logger = Logger.getLogger(CRRCSimEditor.getClass.getName)
 
     val CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor"
@@ -52,7 +54,8 @@ object CRRCSimEditor{
     var window = new MainWindow(
         handleClickButton,
         treeSourceHandler,
-        handleTreeEvent
+        handleTreeEvent,
+        handleClickMenu
       )
 
     try {
@@ -75,6 +78,10 @@ object CRRCSimEditor{
 
     private def handleClickButton(button: ENABLE_BUTTONS) = {
       println(button)
+    }
+
+    private def handleClickMenu(menuOption: MenuOption) = {
+      println(menuOption)
     }
 
     def start = {

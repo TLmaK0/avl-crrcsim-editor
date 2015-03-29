@@ -31,15 +31,9 @@ object Widget{
   }
 
   implicit class AddButtonCoolBar(toolBar: ToolBar){
-    def addButton(text: String, data: Any, callback: (SelectionEvent) => Unit): ToolBar = {
-      addButton(text, data, callback)
-      return toolBar
-    }
-
-    def addButtonAndReturn(text: String, data: Any, callback: (SelectionEvent) => Unit): ToolItem = {
+    def addButtonAndReturn(text: String, callback: (SelectionEvent) => Unit): ToolItem = {
       val item = new ToolItem(toolBar, SWT.PUSH)
       item.setText(text)
-      item.setData(data)
       item.addSelectionListener(new SelectionAdapter{
         override def widgetSelected(se: SelectionEvent){
           callback(se)
@@ -61,9 +55,14 @@ object Widget{
   }
 
   implicit class AddMenuItemWrapper(menu: Menu){
-    def addItem(text: String) = {
+    def addItem(text: String, callback: (SelectionEvent) => Unit) = {
       val item = new MenuItem(menu, SWT.PUSH)
       item.setText(text)
+      item.addSelectionListener(new SelectionAdapter{
+        override def widgetSelected(se: SelectionEvent){
+          callback(se)
+        }
+      })
       menu
     }
   }
