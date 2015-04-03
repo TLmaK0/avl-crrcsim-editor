@@ -51,12 +51,6 @@ object CRRCSimEditor{
     if (!dir.exists) dir.mkdir
 
     var crrcsim = new CRRCSimFactory().create()
-    var window = new MainWindow(
-        handleClickButton,
-        treeSourceHandler,
-        handleTreeEvent,
-        handleClickMenu
-      )
 
     try {
       configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH))
@@ -76,17 +70,27 @@ object CRRCSimEditor{
       }
     })
 
+    val window = new MainWindow(
+        handleClickButton,
+        treeSourceHandler,
+        handleTreeEvent,
+        handleClickMenu
+      )
+    
+    window.show
+
+    updateEnabledEditExportAsCRRCsimMenuItem
+
     private def handleClickButton(button: ENABLE_BUTTONS) = {
       println(button)
     }
 
-    private def handleClickMenu(menuOption: MenuOption) = {
-      println(menuOption)
-    }
-
-    def start = {
-      window.show
-      updateEnabledEditExportAsCRRCsimMenuItem
+    private def handleClickMenu(menuOption: MenuOption): Unit = menuOption match {
+      case SaveAs => saveFile
+      case Open => openFile
+      case ExportAsAvl => exportAsAVL
+      case ExportAsCRRCSim => exportAsCRRCsim
+      case SetAvlExecutable => setAvlExecutable
     }
 
     def exportAsAVL(avlFile: Path): Unit = {
@@ -98,106 +102,90 @@ object CRRCSimEditor{
     }
 
     def open(file: File) = {
-      this.crrcsim = new CRRCSimRepository().restoreFromFile(file);
+      crrcsim = new CRRCSimRepository().restoreFromFile(file);
     }
 
 
     def openFile = {
-      try {
-        val path = this.configuration.getProperty("crrcsim.save", "~/")
-        val file = this.showOpenDialog(path, "CRRCsim editor file (*.crr)", "crr")
-        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-        this.open(file)
-      } catch {
-        case ex: Exception =>
-          logger.log(Level.FINE, null, ex)
+      val path = 
+      window.showOpenDialog(
+        configuration.getProperty("crrcsim.save", "~/"),
+        "CRRCsim editor file (*.crr)", 
+        "crr"
+      ) match {
+        case Some(file) =>
+          configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+          open(file)
+        case None =>
       }
     }
 
     def saveFile = {
-      try {
-        val path = this.configuration.getProperty("crrcsim.save", "~/")
-        val file = showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr")
-        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-        this.saveAs(file)
-      } catch {
-        case ex: Exception =>
-          logger.log(Level.SEVERE, "Error saving file", ex)
-      }
+      val path = this.configuration.getProperty("crrcsim.save", "~/")
+      val file = showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr")
+      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+      this.saveAs(file)
     }
 
     def exportAsAVL: Unit = {
-      try {
-        val path = this.configuration.getProperty("crrcsim.save", "~/")
-        val file = this.showSaveDialog(path, "AVL file (*.avl)","avl")
-        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+      val path = this.configuration.getProperty("crrcsim.save", "~/")
+      val file = this.showSaveDialog(path, "AVL file (*.avl)","avl")
+      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
 
-        exportAsAVL(Paths.get(file.getPath()))
-      } catch {
-        case ex: Exception =>
-          logger.log(Level.FINE, null, ex)
-      }
+      exportAsAVL(Paths.get(file.getPath()))
     }
 
     def exportAsCRRCsim: Unit = {
-      try {
-        val path = this.configuration.getProperty("crrcsim.save", "~/")
-        val file = this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml")
-        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-        exportAsCRRCsim(file)
-      } catch { 
-        case ex: Exception =>
-          logger.log(Level.SEVERE, ex.getMessage(), ex)
-      }
+      val path = this.configuration.getProperty("crrcsim.save", "~/")
+      val file = this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml")
+      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+      exportAsCRRCsim(file)
     }
 
     private def exportAsCRRCsim(file: File): Unit = {
-      try {
-        this.crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath())
-        val avl = this.crrcsim.getAvl()
+      this.crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath())
+      val avl = this.crrcsim.getAvl()
 
-        val fos = new FileOutputStream(file)
-        val context = JAXBContext.newInstance(classOf[CRRCSim].getName)
-        val m = context.createMarshaller()
-        m.setAdapter(new XRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
-        m.setAdapter(new YRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
-        m.setAdapter(new ZRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
-        m.setAdapter(new XRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
-        m.setAdapter(new YRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
-        m.setAdapter(new ZRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
-        m.setAdapter(new MetersConversor(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
-        m.setAdapter(new MetersConversorInverted(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-        m.marshal(this.crrcsim, fos)
-        fos.close()
-      } catch { 
-        case ex: Exception =>
-          logger.log(Level.SEVERE, ex.getMessage(), ex);
-      }
+      val fos = new FileOutputStream(file)
+      val context = JAXBContext.newInstance(classOf[CRRCSim].getName)
+      val m = context.createMarshaller()
+      m.setAdapter(new XRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
+      m.setAdapter(new YRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
+      m.setAdapter(new ZRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
+      m.setAdapter(new XRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
+      m.setAdapter(new YRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
+      m.setAdapter(new ZRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
+      m.setAdapter(new MetersConversor(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
+      m.setAdapter(new MetersConversorInverted(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
+      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
+      m.marshal(this.crrcsim, fos)
+      fos.close()
     }
 
     def setAvlExecutable = {
-      val path = this.configuration.getProperty("avl.path", "~/")
-      val file = this.showOpenDialog(path, "AVL executable", "exe")
-      this.configuration.setProperty("avl.path", file.getAbsolutePath())
-      updateEnabledEditExportAsCRRCsimMenuItem
-      try {
-          this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null)
-      } catch { 
-        case ex: Exception =>
-          logger.log(Level.FINE, null, ex)
+      val path = 
+      window.showOpenDialog(
+        this.configuration.getProperty("avl.path", "~/"), 
+        "AVL executable", 
+        "exe") match {
+          case Some(file) =>
+            this.configuration.setProperty("avl.path", file.getAbsolutePath())
+            updateEnabledEditExportAsCRRCsimMenuItem
+            try {
+                this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null)
+            } catch { 
+              case ex: Exception =>
+                logger.log(Level.FINE, null, ex)
+            }
+          case None =>
       }
     }
 
     private def updateEnabledEditExportAsCRRCsimMenuItem = {
       //TODO: Enable menu option export to CRRCSim
-    }
-
-    private def showOpenDialog(path: String, description: String, extensions: String): File = {
-      //TODO: open dialog
       throw new Exception("TODO")
     }
-    
+
     private def showSaveDialog(path: String, description: String, extensions: String): File = {
       //TODO: save dialog
       throw new Exception("TODO")

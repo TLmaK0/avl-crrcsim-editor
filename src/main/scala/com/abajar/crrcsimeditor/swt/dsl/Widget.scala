@@ -5,6 +5,7 @@ import org.eclipse.swt.layout._
 import org.eclipse.swt.widgets._
 import org.eclipse.swt._
 import org.eclipse.swt.events._;
+import java.io.File;
 
 object Widget{
   implicit class SetTextWrapper[T <: {def setText(text:String)}](val subject:T) {
@@ -64,6 +65,18 @@ object Widget{
         }
       })
       menu
+    }
+  }
+
+  implicit class FileDialogWrapper(fileDialog: FileDialog){
+    def show: Option[File] = fileDialog.open match {
+      case null => None
+      case path: String => Some(new File(path))
+    }
+
+    def setExtensions(extensions: Array[String]): FileDialog = {
+      fileDialog.setFilterExtensions(extensions)
+      return fileDialog
     }
   }
 }

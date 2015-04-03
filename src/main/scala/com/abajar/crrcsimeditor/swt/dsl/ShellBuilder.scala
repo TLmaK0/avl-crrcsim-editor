@@ -4,9 +4,13 @@ import org.eclipse.swt.widgets._
 import org.eclipse.swt.custom._
 import org.eclipse.swt.events._;
 import org.eclipse.swt._
+import java.nio.file.Path;
 
 object ShellBuilder{
+  import Widget._
+
   implicit class ShellWrapper(shell: Shell){
+
     def start = {
       val display = shell.getDisplay
       shell.open
@@ -25,6 +29,9 @@ object ShellBuilder{
     def addTable(style: Int) = new Table(shell, style)
     def addStyledText(style: Int) = new StyledText(shell, style)
     def addToolBar(style: Int) = new ToolBar(shell, style)
+    
+    val openFileDialog = new FileDialog(shell, SWT.OPEN)
+
     def addMenu(menuDecorator: Menu => Unit): Menu = {
       val menu = new Menu(shell, SWT.BAR)
       menuDecorator(menu)
@@ -33,10 +40,10 @@ object ShellBuilder{
     }
   }
 
-  def apply(display: Display, buildScreen: (Shell) => Unit ): Unit = {
+  def apply(display: Display, buildScreen: (Shell) => Unit ): Shell = {
     val shell = new Shell(display)
     buildScreen(shell)
-    shell start
+    return shell
   }
 }
 

@@ -12,6 +12,7 @@ import com.abajar.crrcsimeditor.crrcsim.CRRCSim
 import java.util.ArrayList
 import org.eclipse.swt.widgets.Widget
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
+import java.io.File;
 
 object MenuOption extends Enumeration {
   type MenuOption = Value
@@ -53,7 +54,15 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     } yield buttonsMap(button).setEnabled(true)
   }
 
-  def show = dsl.ShellBuilder( display, { shell => {
+  def showOpenDialog(path: String, description: String, 
+      extension: String): Option[File] 
+      = showOpenDialog(path, description, Array(extension))
+
+  def showOpenDialog(path: String, description: String, 
+      extensions: Array[String]): Option[File] 
+      = shell.openFileDialog.setExtensions(extensions).show
+    
+  private val shell = dsl.ShellBuilder( display, { shell => {
     val layout = new GridLayout
     layout.numColumns = 3
     shell setLayout layout
@@ -103,4 +112,6 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
 
     shell pack
   }})
+
+  def show = shell.start
 }
