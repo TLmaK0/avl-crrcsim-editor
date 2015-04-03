@@ -6,7 +6,7 @@ import org.eclipse.swt.events._;
 import org.eclipse.swt._
 import java.nio.file.Path;
 
-object ShellBuilder{
+object Shell{
   import Widget._
 
   implicit class ShellWrapper(shell: Shell){

@@ -37,6 +37,9 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import java.lang.reflect.Method
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
+import java.util.ArrayList
+import scala.collection.JavaConverters._
+import com.abajar.crrcsimeditor.view.annotations
 
 object CRRCSimEditor{
 
@@ -94,15 +97,16 @@ object CRRCSimEditor{
     }
 
     def exportAsAVL(avlFile: Path): Unit = {
-      AVLS.avlToFile(this.crrcsim.getAvl(), avlFile, avlFile.getParent());
+      AVLS.avlToFile(this.crrcsim.getAvl(), avlFile, avlFile.getParent())
     }
 
     def saveAs(file: File) = {
-      new CRRCSimRepository().storeToFile(file, crrcsim);
+      new CRRCSimRepository().storeToFile(file, crrcsim)
     }
 
     def open(file: File) = {
-      crrcsim = new CRRCSimRepository().restoreFromFile(file);
+      crrcsim = new CRRCSimRepository().restoreFromFile(file)
+      window.refreshTree
     }
 
 
@@ -211,15 +215,15 @@ object CRRCSimEditor{
 
     private def handleTreeEvent(data: Any): Unit = {
       val objClass = data.getClass
-      if (objClass.isAnnotationPresent(classOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor])) {
-        val crrcsimAnnotations = objClass.getAnnotation(classOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor]).asInstanceOf[com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor]
+      if (objClass.isAnnotationPresent(classOf[annotations.CRRCSimEditor])) {
+        val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
       }else window.disableAllButtons
     }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
-      case childs: List[(String, Any)] =>
-        childs
+      case childs: ArrayList[Any] =>
+        childs.asScala.toList.map(child => (child.toString, child))
       case node =>
         node.getClass.getMethods.foldLeft(List[(String, Any)]())(
           (nodes, method)=>

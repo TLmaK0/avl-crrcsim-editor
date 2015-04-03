@@ -78,5 +78,10 @@ object Widget{
       fileDialog.setFilterExtensions(extensions)
       return fileDialog
     }
+
+    def setNameExtensions(names: Array[String]): FileDialog = {
+      fileDialog.setFilterNames(names)
+      return fileDialog
+    }
   }
 }

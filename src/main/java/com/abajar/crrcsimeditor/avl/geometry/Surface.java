@@ -212,7 +212,7 @@ public class Surface extends MassObject implements AVLSerializable {
      */
     @XmlElementWrapper
     @XmlElement(name = "section")
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name = "sections")
     public ArrayList<Section> getSections() {
         return sections;
     }

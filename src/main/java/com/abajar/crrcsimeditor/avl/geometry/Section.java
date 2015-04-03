@@ -171,7 +171,7 @@ public class Section  extends MassObject implements AVLSerializable{
      */
     @XmlElementWrapper
     @XmlElement(name = "control")
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name = "controls")
     public ArrayList<Control> getControls() {
         return controls;
     }

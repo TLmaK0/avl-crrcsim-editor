@@ -7,7 +7,8 @@ import org.eclipse.swt.events._;
 import org.eclipse.swt.widgets._
 
 import dsl.Widget._
-import dsl.ShellBuilder._
+import dsl.Shell
+import dsl.Shell._
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim
 import java.util.ArrayList
 import org.eclipse.swt.widgets.Widget
@@ -34,6 +35,8 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
 
   val display = new Display
 
+  var tree: Tree = _
+
   def notifyButtonClick(buttonType: ENABLE_BUTTONS) = (se: SelectionEvent) => buttonClickHandler(buttonType)
 
   def notifyTreeClick(se: SelectionEvent)= treeClickHandler(se.item.getData)
@@ -56,13 +59,20 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
 
   def showOpenDialog(path: String, description: String, 
       extension: String): Option[File] 
-      = showOpenDialog(path, description, Array(extension))
+      = showOpenDialog(path, Array(description), Array(extension))
 
-  def showOpenDialog(path: String, description: String, 
+  def showOpenDialog(path: String, descriptions: Array[String], 
       extensions: Array[String]): Option[File] 
-      = shell.openFileDialog.setExtensions(extensions).show
+      = shell.openFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
+
+  def refreshTree = tree.clearAll(true)
+
+  private def addWildcard(extensions: Array[String]) = extensions.map(
+    extension =>
+      if (extension.contains("*")) extension else "*." + extension
+  )
     
-  private val shell = dsl.ShellBuilder( display, { shell => {
+  private val shell = Shell( display, { shell => {
     val layout = new GridLayout
     layout.numColumns = 3
     shell setLayout layout
@@ -95,10 +105,11 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
       .addButtonRegister("Add Simple Trust", notifyButtonClick, ENABLE_BUTTONS.ADD_SYMPLE_TRUST)
       .addButtonRegister("Add Collision Point", notifyButtonClick, ENABLE_BUTTONS.ADD_COLLISION_POINT)
 
-    shell.addTree(SWT.VIRTUAL | SWT.BORDER, notifyTreeClick)
+    tree = shell.addTree(SWT.VIRTUAL | SWT.BORDER, notifyTreeClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .setSourceHandler(treeUpdateHandler)
-      .setItemCount(1)
+
+    tree.setItemCount(1)
 
     shell.addTable(SWT.VIRTUAL | SWT.BORDER)
       .setSourceHandler((event: Event) => {
