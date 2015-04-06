@@ -87,7 +87,7 @@ public class Battery implements Serializable {
     /**
      * @return the shafts
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="Shafts")
     @XmlElement(name="shaft")
     public ArrayList<Shaft> getShafts() {
         return shafts;

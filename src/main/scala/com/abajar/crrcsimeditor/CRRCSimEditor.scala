@@ -84,8 +84,14 @@ object CRRCSimEditor{
 
     updateEnabledEditExportAsCRRCsimMenuItem
 
-    private def handleClickButton(button: ENABLE_BUTTONS) = {
-      println(button)
+    private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
+      window.treeNodeSelected match {
+        case Some(nodeSelected) => {
+          TreeHelper.createNode(button, nodeSelected) 
+          window.refreshTree
+        }
+        case None => throw new Exception("Button click without node selected")
+      }
     }
 
     private def handleClickMenu(menuOption: MenuOption): Unit = menuOption match {
@@ -147,22 +153,25 @@ object CRRCSimEditor{
     }
 
     private def exportAsCRRCsim(file: File): Unit = {
-      this.crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath())
+      crrcsim.calculate(this.configuration.getProperty("avl.path"), this.crrcsim.getOriginPath())
+
       val avl = this.crrcsim.getAvl()
+      val lengthUnit = avl.getLengthUnit()
+      val centerOfMass = crrcsim.getCenterOfMass()
+      val m = JAXBContext.newInstance(classOf[CRRCSim].getName).createMarshaller()
+
+      m.setAdapter(new XRelativeToCG(lengthUnit, centerOfMass.getX()))
+      m.setAdapter(new YRelativeToCG(lengthUnit, centerOfMass.getY()))
+      m.setAdapter(new ZRelativeToCG(lengthUnit, centerOfMass.getZ()))
+      m.setAdapter(new XRelativeToCGInverted(lengthUnit, centerOfMass.getX()))
+      m.setAdapter(new YRelativeToCGInverted(lengthUnit, centerOfMass.getY()))
+      m.setAdapter(new ZRelativeToCGInverted(lengthUnit, centerOfMass.getZ()))
+      m.setAdapter(new MetersConversor(new MultiUnit(lengthUnit, avl.getMassUnit(), avl.getTimeUnit())))
+      m.setAdapter(new MetersConversorInverted(new MultiUnit(lengthUnit, avl.getMassUnit(), avl.getTimeUnit())))
+      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
 
       val fos = new FileOutputStream(file)
-      val context = JAXBContext.newInstance(classOf[CRRCSim].getName)
-      val m = context.createMarshaller()
-      m.setAdapter(new XRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
-      m.setAdapter(new YRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
-      m.setAdapter(new ZRelativeToCG(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
-      m.setAdapter(new XRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getX()))
-      m.setAdapter(new YRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getY()))
-      m.setAdapter(new ZRelativeToCGInverted(avl.getLengthUnit(), this.crrcsim.getCenterOfMass().getZ()))
-      m.setAdapter(new MetersConversor(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
-      m.setAdapter(new MetersConversorInverted(new MultiUnit(avl.getLengthUnit(), avl.getMassUnit(), avl.getTimeUnit())))
-      m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true)
-      m.marshal(this.crrcsim, fos)
+      m.marshal(crrcsim, fos)
       fos.close()
     }
 

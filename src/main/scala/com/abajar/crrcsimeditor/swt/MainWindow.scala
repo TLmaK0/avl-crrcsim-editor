@@ -96,6 +96,9 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
       .addButtonRegister("Add Mass", notifyButtonClick, ENABLE_BUTTONS.ADD_MASS)
       .addButtonRegister("Add Body", notifyButtonClick, ENABLE_BUTTONS.ADD_BODY)
       .addButtonRegister("Delete", notifyButtonClick, ENABLE_BUTTONS.DELETE)
+
+    shell.addToolBar(SWT.BORDER)
+      .layoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
       .addButtonRegister("Add Change Log", notifyButtonClick, ENABLE_BUTTONS.ADD_CHANGELOG)
       .addButtonRegister("Add Battery", notifyButtonClick, ENABLE_BUTTONS.ADD_BATTERY)
       .addButtonRegister("Add Shaft", notifyButtonClick, ENABLE_BUTTONS.ADD_SHAFT)
@@ -123,6 +126,16 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
 
     shell pack
   }})
+
+  def treeNodeSelected = {
+    if (tree != null){
+      val items = tree.getSelection
+      if (items.length > 0) Some(items(0).getData)
+      else None
+    }else{
+      None
+    }
+  }
 
   def show = shell.start
 }

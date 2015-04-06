@@ -77,7 +77,7 @@ public class Shaft implements Serializable {
     /**
      * @return the engines
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="Engines")
     @XmlElement(name="engine_dcm")
     public ArrayList<Engine> getEngines() {
         return engines;
@@ -99,7 +99,7 @@ public class Shaft implements Serializable {
     /**
      * @return the propellers
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="Propellers")
     @XmlElement(name="propeller")
     public ArrayList<Propeller> getPropellers() {
         return propellers;
@@ -115,7 +115,7 @@ public class Shaft implements Serializable {
     /**
      * @return the simpleTrusts
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="Simple Trusts")
     @XmlElement(name="simpletrust")
     public ArrayList<SimpleTrust> getSimpleTrusts() {
         return simpleTrusts;

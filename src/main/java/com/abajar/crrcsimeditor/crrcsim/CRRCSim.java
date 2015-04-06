@@ -30,7 +30,7 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
  */
 @XmlRootElement(name="CRRCSim_airplane")
 @XmlType(propOrder={"description","aero","changelog","config","graphics","centerOfMass","wheels"})
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_WHEEL})
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CHANGELOG, ENABLE_BUTTONS.ADD_COLLISION_POINT})
 public class CRRCSim implements Serializable{
     static final long serialVersionUID = 5069158912723554271L;
 
@@ -92,7 +92,7 @@ public class CRRCSim implements Serializable{
         this.wheels = wheels;
     }
 
-    public Object createWhell() {
+    public Object createWheel() {
         Wheel wheel = new Wheel();
         this.wheels.add(wheel);
         return wheel;
