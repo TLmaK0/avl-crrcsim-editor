@@ -89,7 +89,7 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
             case SIMPLE_TRUST:
                 return generateTreeNode(((Shaft)parentTreeNode).createSimpleTrust());
             case WHEEL:
-                return generateTreeNode(((CRRCSim)parentTreeNode).createWhell());
+                return generateTreeNode(((CRRCSim)parentTreeNode).createWheel());
             default:
                 throw new UnsupportedOperationException("Node of type " + type + " not suported");
         }

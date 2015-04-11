@@ -15,6 +15,7 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
 
@@ -24,9 +25,11 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  */
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE})
 public class Section  extends MassObject implements AVLSerializable{
-
     //TODO: AIRFOIL
     //TODO: DESIGN
+
+    static final long serialVersionUID = 4109729947856743035L;
+
     @CRRCSimEditorField(text="Xle",
         help="airfoil's leading edge X location"
     )
@@ -300,5 +303,14 @@ public class Section  extends MassObject implements AVLSerializable{
         Control control = new Control();
         this.getControls().add(control);
         return control;
+    }
+
+    public ArrayList<Mass> getMassesRecursive() {
+        ArrayList<Mass> masses = getMasses();
+        for(Control control: getControls()){
+          masses.addAll(control.getMassesRecursive());
+        }
+
+        return masses;
     }
 }

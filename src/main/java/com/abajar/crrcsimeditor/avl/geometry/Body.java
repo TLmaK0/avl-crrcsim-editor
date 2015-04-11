@@ -14,6 +14,8 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
+import java.util.ArrayList;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 
 /**
  *
@@ -21,6 +23,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
  */
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Body extends MassObject implements AVLSerializable  {
+    static final long serialVersionUID = -8843371548047761515L;
 
     @CRRCSimEditorField(text="Body name",
         help="Body name"
@@ -208,5 +211,9 @@ public class Body extends MassObject implements AVLSerializable  {
      */
     public void setBFILE(String BFILE) {
         this.BFILE = BFILE;
+    }
+
+    public ArrayList<Mass> getMassesRecursive(){
+        return getMasses();
     }
 }

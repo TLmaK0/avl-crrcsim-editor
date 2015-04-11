@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatInteger;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
+
 /**
  *
  * @author hfreire
@@ -308,5 +310,12 @@ public class Surface extends MassObject implements AVLSerializable {
         this.dZ = dZ;
     }
 
+    public ArrayList<Mass> getMassesRecursive() {
+        ArrayList<Mass> masses = getMasses();
+        for(Section section: getSections()){
+          masses.addAll(section.getMassesRecursive());
+        }
 
+        return masses;
+    }
 }

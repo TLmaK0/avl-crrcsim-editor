@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 
 /**
  *
@@ -202,14 +203,6 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
             body.writeAVLData(out);
         }
     }
-
-    @Override
-    public void writeAVLMassData(OutputStream out) {
-        
-        super.writeAVLMassData(out);
-    }
-
-
 
     public static String formatInteger(int numberOfValues, int startValue){
         String format ="";
@@ -416,5 +409,18 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
         Body body = new Body();
         this.getBodies().add(body);
         return body;
+    }
+
+    public ArrayList<Mass> getMassesRecursive() {
+        ArrayList<Mass> masses = getMasses();
+        for(Surface surface: getSurfaces()){
+          masses.addAll(surface.getMassesRecursive());
+        }
+
+        for(Body body: getBodies()){
+          masses.addAll(body.getMassesRecursive());
+        }
+
+        return masses;
     }
 }

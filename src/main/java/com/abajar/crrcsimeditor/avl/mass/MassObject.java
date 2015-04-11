@@ -22,7 +22,8 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
  *
  * @author hfreire
  */
-public class MassObject implements Serializable{
+public abstract class MassObject implements Serializable{
+    static final long serialVersionUID = 7611917382679386660L;
     protected static final Locale locale = Mass.locale;
     private final ArrayList<Mass> masses = new ArrayList<Mass>();
 
@@ -37,7 +38,7 @@ public class MassObject implements Serializable{
     }
 
     public void writeAVLMassData(OutputStream out) {
-        for(Mass mass : this.getMasses()){
+        for(Mass mass : this.getMassesRecursive()){
             mass.writeAVLMassData(out);
         }
     }
@@ -48,4 +49,5 @@ public class MassObject implements Serializable{
         return mass;
     }
 
+    public abstract ArrayList<Mass> getMassesRecursive();
 }

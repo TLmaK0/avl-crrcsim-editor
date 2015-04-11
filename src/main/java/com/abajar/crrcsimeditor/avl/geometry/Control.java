@@ -14,6 +14,8 @@ import com.abajar.crrcsimeditor.avl.AVLSerializable;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
+import java.util.ArrayList;
+import com.abajar.crrcsimeditor.avl.mass.Mass;
 
 /**
  *
@@ -21,6 +23,8 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.formatFloat;
  */
 @CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Control extends MassObject implements AVLSerializable {
+    static final long serialVersionUID = -2732944334457467609L;
+
     public static final int AILERON = 0;
     public static final int ELEVATOR = 1;
     public static final int RUDDER = 2;
@@ -208,5 +212,7 @@ public class Control extends MassObject implements AVLSerializable {
         this.type = type;
     }
 
-
+    public ArrayList<Mass> getMassesRecursive() {
+        return getMasses();
+    }
 }
