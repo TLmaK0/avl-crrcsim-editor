@@ -133,6 +133,7 @@ ex.printStackTrace();
             collision.getPos().setZ(-collision.getPos().getZ());
         }
 
+        if(crrcsim.getChangelog() == null) crrcsim.fixChangelog(); 
         crrcsim.internalVersion = 21;
     }
 

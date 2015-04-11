@@ -16,6 +16,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode;
+
 /**
  *
  * @author hfreire
@@ -27,6 +29,7 @@ public class MassObject implements Serializable{
     /**
      * @return the masses
      */
+    @CRRCSimEditorNode(name="masses")
     @XmlElementWrapper
     @XmlElement(name="mass")
     public ArrayList<Mass> getMasses() {

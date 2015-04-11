@@ -167,10 +167,7 @@ public class CRRCSim implements Serializable{
     private String version = "2";
     private final Description description = new Description();
 
-    //This property will be deprecated only here to allow load old files
-    //private transient final Changelog changelog = new Changelog();
-    
-    private final Changelog changelog1 = new Changelog();
+    private Changelog changelog1 = new Changelog();
     private transient Aero aero;
     private final AVL avl;
     private Config config = new Config();
@@ -301,8 +298,15 @@ public class CRRCSim implements Serializable{
      * @return the changelog
      */
     @XmlElement(name="changelog")
+    @CRRCSimEditorNode(name="Changes")
     public Changelog getChangelog() {
         return changelog1;
+    }
+
+    //After migrate some old files doesn't have changelog setted
+    //calling this will fix the null pointer exception
+    protected void fixChangelog(){
+      changelog1 = new Changelog();
     }
 
     /**

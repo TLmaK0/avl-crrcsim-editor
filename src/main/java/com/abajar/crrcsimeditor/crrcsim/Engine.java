@@ -79,7 +79,7 @@ public class Engine implements Serializable{
     /**
      * @return the data
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="Data")
     @XmlElement(name="data")
     @XmlElementWrapper(name="data")
     public ArrayList<EngineData> getData() {
@@ -104,7 +104,7 @@ public class Engine implements Serializable{
     /**
      * @return the dataIdle
      */
-    @CRRCSimEditorNode
+    @CRRCSimEditorNode(name="DataIdle")
     @XmlElement(name="data")
     @XmlElementWrapper(name="data_idle")
     public ArrayList<EngineDataIdle> getDataIdle() {
