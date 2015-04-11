@@ -87,7 +87,7 @@ object CRRCSimEditor{
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
       window.treeNodeSelected match {
         case Some(nodeSelected) => {
-          TreeHelper.createNode(button, nodeSelected) 
+          TreeHelper.modifyTree(button, nodeSelected, window.treeNodeSelectedParent) 
           window.refreshTree
         }
         case None => throw new Exception("Button click without node selected")

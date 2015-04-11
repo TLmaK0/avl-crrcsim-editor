@@ -137,5 +137,15 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     }
   }
 
+  def treeNodeSelectedParent = {
+    if (tree != null){
+      val items = tree.getSelection
+      if (items.length > 0 && items(0).getParentItem != null) Some(items(0).getParentItem.getData)
+      else None
+    }else{
+      None
+    }
+  }
+
   def show = shell.start
 }

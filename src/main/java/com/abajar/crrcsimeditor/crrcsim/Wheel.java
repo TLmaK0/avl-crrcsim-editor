@@ -11,11 +11,14 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditor;
 
 /**
  *
  * @author Hugo
  */
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
 public class Wheel implements Serializable {
     static final long serialVersionUID = 2233264509711545342L;
     

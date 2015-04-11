@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Date;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -318,68 +317,5 @@ public class CRRCSim implements Serializable{
         return aero;
     }
 
-    public static class Change {
-
-        private Date date = new Date();
-
-
-        @CRRCSimEditorField(text="Author",
-            help="Author's changes"
-        )
-        private String author;
-
-        @CRRCSimEditorField(text="Description",
-            help="Description of the change"
-        )
-        private String en;
-
-        /**
-         * @return the date
-         */
-        public Date getDate() {
-            return date;
-        }
-
-        /**
-         * @param date the date to set
-         */
-        public void setDate(Date date) {
-            this.date = date;
-        }
-
-        /**
-         * @return the author
-         */
-        public String getAuthor() {
-            return author;
-        }
-
-        /**
-         * @param author the author to set
-         */
-        public void setAuthor(String author) {
-            this.author = author;
-        }
-
-        /**
-         * @return the en
-         */
-        public String getEn() {
-            return en;
-        }
-
-        /**
-         * @param en the en to set
-         */
-        public void setEn(String en) {
-            this.en = en;
-        }
-
-
-        @Override
-        public String toString(){
-            return this.date.toString();
-        }
-    }
     
 }

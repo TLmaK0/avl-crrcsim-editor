@@ -5,9 +5,10 @@ import com.abajar.crrcsimeditor.avl.AVLGeometry
 import com.abajar.crrcsimeditor.avl.geometry._
 import com.abajar.crrcsimeditor.avl.mass._
 import com.abajar.crrcsimeditor.crrcsim._
+import java.util.ArrayList
 
 object TreeHelper{
-  def createNode(button: ENABLE_BUTTONS, node: Any) = button match {
+  def modifyTree(button: ENABLE_BUTTONS, node: Any, parent: Option[Any]) = button match {
     case ADD_SURFACE => node.asInstanceOf[AVLGeometry].createSurface
     case ADD_BODY => node.asInstanceOf[AVLGeometry].createBody
     case ADD_SECTION => node.asInstanceOf[Surface].createSection
@@ -23,7 +24,10 @@ object TreeHelper{
     case ADD_DATA_IDLE => node.asInstanceOf[Engine].createDataIdle
     case ADD_SYMPLE_TRUST => node.asInstanceOf[Shaft].createSimpleTrust
     case ADD_COLLISION_POINT => node.asInstanceOf[CRRCSim].createWheel
-    case DELETE => throw new Exception("TODO")
+    case DELETE => parent match {
+      case Some(items: ArrayList[Any]) => items.remove(node)
+      case _ => throw new Exception(s"Unable to delete ${node} from ${parent}")
+    }
     case _ => throw new Exception(s"Button ${button} not defined")
   }
 }
