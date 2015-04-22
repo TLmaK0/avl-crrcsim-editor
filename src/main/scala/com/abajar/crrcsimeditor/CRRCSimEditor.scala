@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -81,8 +82,6 @@ object CRRCSimEditor{
       )
     
     window.show
-
-    updateEnabledEditExportAsCRRCsimMenuItem
 
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
       window.treeNodeSelected match {
@@ -149,7 +148,12 @@ object CRRCSimEditor{
       val path = this.configuration.getProperty("crrcsim.save", "~/")
       val file = this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml")
       this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-      exportAsCRRCsim(file)
+      if (existsAvlExecutable) exportAsCRRCsim(file)
+    }
+
+    private def existsAvlExecutable: Boolean = {
+      val path = this.configuration.getProperty("avl.path")
+      path != null && Files.exists(Paths.get(path))
     }
 
     private def exportAsCRRCsim(file: File): Unit = {
@@ -183,7 +187,6 @@ object CRRCSimEditor{
         "exe") match {
           case Some(file) =>
             this.configuration.setProperty("avl.path", file.getAbsolutePath())
-            updateEnabledEditExportAsCRRCsimMenuItem
             try {
                 this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null)
             } catch { 
@@ -194,14 +197,15 @@ object CRRCSimEditor{
       }
     }
 
-    private def updateEnabledEditExportAsCRRCsimMenuItem = {
-      //TODO: Enable menu option export to CRRCSim
-      throw new Exception("TODO")
-    }
-
     private def showSaveDialog(path: String, description: String, extensions: String): File = {
-      //TODO: save dialog
-      throw new Exception("TODO")
+      window.showSaveDialog(
+        configuration.getProperty("crrcsim.save", "~/"),
+        description, 
+        extensions
+      ) match {
+        case Some(file: File) => file
+        case None => null
+      }
     }
 
     

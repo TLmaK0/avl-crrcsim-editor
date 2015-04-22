@@ -32,6 +32,8 @@ object Shell{
     
     val openFileDialog = new FileDialog(shell, SWT.OPEN)
 
+    val saveFileDialog = new FileDialog(shell, SWT.SAVE)
+
     def addMenu(menuDecorator: Menu => Unit): Menu = {
       val menu = new Menu(shell, SWT.BAR)
       menuDecorator(menu)

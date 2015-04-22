@@ -65,6 +65,14 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
       extensions: Array[String]): Option[File] 
       = shell.openFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
 
+  def showSaveDialog(path: String, description: String, 
+      extension: String): Option[File] 
+      = showSaveDialog(path, Array(description), Array(extension))
+
+  def showSaveDialog(path: String, descriptions: Array[String], 
+      extensions: Array[String]): Option[File] 
+      = shell.saveFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
+
   def refreshTree = tree.clearAll(true)
 
   private def addWildcard(extensions: Array[String]) = extensions.map(
