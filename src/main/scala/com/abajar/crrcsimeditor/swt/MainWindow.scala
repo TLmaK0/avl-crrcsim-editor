@@ -22,7 +22,7 @@ object MenuOption extends Enumeration {
 
 import MenuOption._
 
-class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler: (Event) => Unit, treeClickHandler: (Any) => Unit, menuClickHandler: (MenuOption) => Unit) {
+class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler: (Event) => Unit, treeClickHandler: (Any) => Unit, menuClickHandler: (MenuOption) => Unit, tableUpdateHandler: (Event) => Unit) {
 
   implicit class AddButtonCoolBarAndRegister(toolBar: ToolBar){
     def addButtonRegister(text: String, callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit, button: ENABLE_BUTTONS): ToolBar = {
@@ -36,6 +36,7 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
   val display = new Display
 
   var tree: Tree = _
+  var properties: Table = _
 
   def notifyButtonClick(buttonType: ENABLE_BUTTONS) = (se: SelectionEvent) => buttonClickHandler(buttonType)
 
@@ -122,11 +123,8 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
 
     tree.setItemCount(1)
 
-    shell.addTable(SWT.VIRTUAL | SWT.BORDER)
-      .setSourceHandler((event: Event) => {
-        val item = event.item.asInstanceOf[TableItem]
-        item setText "Item"
-      })
+    properties = shell.addTable(SWT.VIRTUAL | SWT.BORDER)
+      .setSourceHandler(tableUpdateHandler)
 
     shell.addStyledText(SWT.READ_ONLY)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL))

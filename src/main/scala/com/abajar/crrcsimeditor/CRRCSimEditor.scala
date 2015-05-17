@@ -32,9 +32,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import swt.MainWindow
-import org.eclipse.swt.widgets.{Event, TreeItem}
+import org.eclipse.swt.widgets.{Event, TreeItem, TableItem}
 import org.eclipse.swt.events._;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField
 import java.lang.reflect.Method
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
@@ -78,7 +79,8 @@ object CRRCSimEditor{
         handleClickButton,
         treeSourceHandler,
         handleTreeEvent,
-        handleClickMenu
+        handleClickMenu,
+        tableSourceHandler
       )
     
     window.show
@@ -208,7 +210,26 @@ object CRRCSimEditor{
       }
     }
 
-    
+    private def extractProperties(data: Any) = {
+      val objClass = data.getClass
+      for{
+        field <- objClass.getDeclaredFields
+        if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorField]))
+      } yield field
+    }
+
+    private def loadPropertiesRowNumberByObject(data: Any) = {
+      window.properties.setItemCount(extractProperties(data).length)
+    }
+
+    private def tableSourceHandler(event: Event): Unit = {
+      val item = event.item.asInstanceOf[TableItem]
+      
+      val label = extractProperties(window.treeNodeSelected.get)(window.properties.indexOf(item)).getAnnotation(classOf[CRRCSimEditorField]).text()
+
+      item.setText(label)
+    }
+
     private def treeSourceHandler(event: Event) = {
       val item = event.item.asInstanceOf[TreeItem]
 
@@ -232,6 +253,7 @@ object CRRCSimEditor{
         val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
       }else window.disableAllButtons
+      loadPropertiesRowNumberByObject(data)
     }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
