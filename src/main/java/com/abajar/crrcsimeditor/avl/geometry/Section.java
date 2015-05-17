@@ -23,7 +23,7 @@ import static com.abajar.crrcsimeditor.avl.AVLGeometry.*;
  *
  * @author hfreire
  */
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE})
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.ADD_CONTROL, ENABLE_BUTTONS.DELETE, ENABLE_BUTTONS.ADD_MASS})
 public class Section  extends MassObject implements AVLSerializable{
     //TODO: AIRFOIL
     //TODO: DESIGN

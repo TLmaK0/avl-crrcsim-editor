@@ -21,7 +21,7 @@ import com.abajar.crrcsimeditor.avl.mass.Mass;
  *
  * @author hfreire
  */
-@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE})
+@CRRCSimEditor(buttons={ENABLE_BUTTONS.DELETE, ENABLE_BUTTONS.ADD_MASS})
 public class Body extends MassObject implements AVLSerializable  {
     static final long serialVersionUID = -8843371548047761515L;
 
