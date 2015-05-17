@@ -162,7 +162,7 @@ object CRRCSimEditor{
       val avl = this.crrcsim.getAvl()
       val lengthUnit = avl.getLengthUnit()
       val centerOfMass = crrcsim.getCenterOfMass()
-      val m = JAXBContext.newInstance(classOf[CRRCSim].getName).createMarshaller()
+      val m = JAXBContext.newInstance(classOf[CRRCSim]).createMarshaller()
 
       m.setAdapter(new XRelativeToCG(lengthUnit, centerOfMass.getX()))
       m.setAdapter(new YRelativeToCG(lengthUnit, centerOfMass.getY()))
