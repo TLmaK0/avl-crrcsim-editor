@@ -1,6 +1,7 @@
 package com.abajar.crrcsimeditor.swt.dsl
 
 import org.eclipse.swt.widgets._
+import org.eclipse.swt.layout._
 import org.eclipse.swt.custom._
 import org.eclipse.swt.events._;
 import org.eclipse.swt._
@@ -26,7 +27,14 @@ object Shell{
       return tree
     }
 
-    def addTable(style: Int) = new Table(shell, style)
+    def addTable(style: Int): Table = {
+      val table = new Table(shell, style)
+      table.setLinesVisible(true)
+      table.setHeaderVisible(true)
+      table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
+      return table
+    }
+
     def addStyledText(style: Int) = new StyledText(shell, style)
     def addToolBar(style: Int) = new ToolBar(shell, style)
     

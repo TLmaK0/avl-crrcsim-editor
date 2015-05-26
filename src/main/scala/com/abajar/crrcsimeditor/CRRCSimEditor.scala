@@ -36,12 +36,14 @@ import org.eclipse.swt.widgets.{Event, TreeItem, TableItem}
 import org.eclipse.swt.events._;
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorReadOnly
 import java.lang.reflect.Method
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
 import java.util.ArrayList
 import scala.collection.JavaConverters._
 import com.abajar.crrcsimeditor.view.annotations
+import java.lang.reflect.Field
 
 object CRRCSimEditor{
 
@@ -80,7 +82,7 @@ object CRRCSimEditor{
         treeSourceHandler,
         handleTreeEvent,
         handleClickMenu,
-        tableSourceHandler
+        propertiesSourceHandler
       )
     
     window.show
@@ -210,24 +212,43 @@ object CRRCSimEditor{
       }
     }
 
+    private def getFieldValue(field: Field, data: Any): String = {
+      field.setAccessible(true)
+      val result = field.get(data)
+      return if (result == null) "" else result.toString
+    }
+
+    private def getMethodValue(method: Method, data: Any): String = {
+      method.setAccessible(true)
+      val result = method.invoke(data)
+      return if (result == null) "" else result.toString
+    }
+
     private def extractProperties(data: Any) = {
       val objClass = data.getClass
-      for{
+      (for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorField]))
-      } yield field
+      } yield (field.getAnnotation(classOf[CRRCSimEditorField]).text(), getFieldValue(field, data))) ++ (
+      for{
+        method <- objClass.getMethods
+        if (method.isAnnotationPresent(classOf[annotations.CRRCSimEditorReadOnly]))
+      } yield (method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(), getMethodValue(method, data))
+      )
     }
 
-    private def loadPropertiesRowNumberByObject(data: Any) = {
+    private def loadPropertiesForTreeItem(data: Any) = {
       window.properties.setItemCount(extractProperties(data).length)
+      window.properties.clearAll
     }
 
-    private def tableSourceHandler(event: Event): Unit = {
+    private def propertiesSourceHandler(event: Event): Unit = {
       val item = event.item.asInstanceOf[TableItem]
-      
-      val label = extractProperties(window.treeNodeSelected.get)(window.properties.indexOf(item)).getAnnotation(classOf[CRRCSimEditorField]).text()
+      val properties = extractProperties(window.treeNodeSelected.get)
+      val (label, value) = properties(window.properties.indexOf(item))
 
-      item.setText(label)
+      item.setText(0, label)
+      item.setText(1, value)
     }
 
     private def treeSourceHandler(event: Event) = {
@@ -253,7 +274,7 @@ object CRRCSimEditor{
         val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
       }else window.disableAllButtons
-      loadPropertiesRowNumberByObject(data)
+      loadPropertiesForTreeItem(data)
     }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {

@@ -56,7 +56,7 @@ object Widget{
   }
 
   implicit class AddMenuItemWrapper(menu: Menu){
-    def addItem(text: String, callback: (SelectionEvent) => Unit) = {
+    def addItem(text: String, callback: (SelectionEvent) => Unit): Menu = {
       val item = new MenuItem(menu, SWT.PUSH)
       item.setText(text)
       item.addSelectionListener(new SelectionAdapter{
@@ -64,7 +64,16 @@ object Widget{
           callback(se)
         }
       })
-      menu
+      return menu
+    }
+  }
+
+  implicit class AddColumnTableWrapper(table: Table){
+    def addColumn(title: String): Table = {
+      val column = new TableColumn(table, SWT.NONE)
+      column.setText(title)
+      column.pack
+      return table
     }
   }
 

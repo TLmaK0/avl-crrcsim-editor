@@ -22,11 +22,22 @@ object MenuOption extends Enumeration {
 
 import MenuOption._
 
-class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler: (Event) => Unit, treeClickHandler: (Any) => Unit, menuClickHandler: (MenuOption) => Unit, tableUpdateHandler: (Event) => Unit) {
+class MainWindow(
+      buttonClickHandler: (ENABLE_BUTTONS) => Unit,
+      treeUpdateHandler: (Event) => Unit,
+      treeClickHandler: (Any) => Unit,
+      menuClickHandler: (MenuOption) => Unit,
+      tableUpdateHandler: (Event) => Unit) {
 
   implicit class AddButtonCoolBarAndRegister(toolBar: ToolBar){
-    def addButtonRegister(text: String, callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit, button: ENABLE_BUTTONS): ToolBar = {
-      buttonsMap += ((button, toolBar.addButtonAndReturn(text, callback(button))))
+    def addButtonRegister(
+          text: String, 
+          callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit, 
+          button: ENABLE_BUTTONS): ToolBar = {
+      buttonsMap += ((
+        button, 
+        toolBar.addButtonAndReturn(text, callback(button))
+      ))
       return toolBar
     }
   }
@@ -38,11 +49,14 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
   var tree: Tree = _
   var properties: Table = _
 
-  def notifyButtonClick(buttonType: ENABLE_BUTTONS) = (se: SelectionEvent) => buttonClickHandler(buttonType)
+  def notifyButtonClick(buttonType: ENABLE_BUTTONS) = 
+        (se: SelectionEvent) => buttonClickHandler(buttonType)
 
-  def notifyTreeClick(se: SelectionEvent)= treeClickHandler(se.item.getData)
+  def notifyTreeClick(se: SelectionEvent) = 
+        treeClickHandler(se.item.getData)
 
-  def notifyMenuClick(menuOption: MenuOption) = (se: SelectionEvent) => menuClickHandler(menuOption)
+  def notifyMenuClick(menuOption: MenuOption) = 
+        (se: SelectionEvent) => menuClickHandler(menuOption)
 
   def disableAllButtons = {
     for{
@@ -50,7 +64,8 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     } yield button.setEnabled(false)
   }
 
-  def buttonsEnableOnly(buttons: scala.collection.immutable.List[ENABLE_BUTTONS]) = {
+  def buttonsEnableOnly(
+        buttons: scala.collection.immutable.List[ENABLE_BUTTONS]) = {
     disableAllButtons
     for{
       button <- buttons
@@ -58,28 +73,33 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     } yield buttonsMap(button).setEnabled(true)
   }
 
-  def showOpenDialog(path: String, description: String, 
-      extension: String): Option[File] 
-      = showOpenDialog(path, Array(description), Array(extension))
+  def showOpenDialog(
+        path: String, description: String, extension: String): Option[File] =
+    showOpenDialog(path, Array(description), Array(extension))
 
-  def showOpenDialog(path: String, descriptions: Array[String], 
-      extensions: Array[String]): Option[File] 
-      = shell.openFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
+  def showOpenDialog(
+        path: String,
+        descriptions: Array[String], 
+        extensions: Array[String]): Option[File] =
+    shell.openFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
 
-  def showSaveDialog(path: String, description: String, 
-      extension: String): Option[File] 
-      = showSaveDialog(path, Array(description), Array(extension))
+  def showSaveDialog(
+        path: String, description: String, extension: String): Option[File] =
+    showSaveDialog(path, Array(description), Array(extension))
 
-  def showSaveDialog(path: String, descriptions: Array[String], 
-      extensions: Array[String]): Option[File] 
-      = shell.saveFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
+  def showSaveDialog(
+        path: String, 
+        descriptions: Array[String], 
+        extensions: Array[String]): Option[File] 
+    = shell.saveFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
 
   def refreshTree = tree.clearAll(true)
 
-  private def addWildcard(extensions: Array[String]) = extensions.map(
-    extension =>
-      if (extension.contains("*")) extension else "*." + extension
-  )
+  private def addWildcard(extensions: Array[String]) = 
+    extensions.map(
+      extension =>  if (extension.contains("*")) extension 
+                    else "*." + extension
+    )
     
   private val shell = Shell( display, { shell => {
     val layout = new GridLayout
@@ -91,7 +111,10 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
           .addItem("Save as...", notifyMenuClick(MenuOption.SaveAs))
           .addItem("Open...", notifyMenuClick(MenuOption.Open))
           .addItem("Export As Avl", notifyMenuClick(MenuOption.ExportAsAvl))
-          .addItem("Export As CRRCSim", notifyMenuClick(MenuOption.ExportAsCRRCSim))
+          .addItem(
+                "Export As CRRCSim", 
+                notifyMenuClick(MenuOption.ExportAsCRRCSim)
+          )
 
         menu.addSubmenu("Edit")
           .addItem("Set AVL executable", notifyMenuClick(MenuOption.SetAvlExecutable))
@@ -124,10 +147,13 @@ class MainWindow(buttonClickHandler: (ENABLE_BUTTONS) => Unit, treeUpdateHandler
     tree.setItemCount(1)
 
     properties = shell.addTable(SWT.VIRTUAL | SWT.BORDER)
+      .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
+      .addColumn("Property")
+      .addColumn("Value")
       .setSourceHandler(tableUpdateHandler)
 
     shell.addStyledText(SWT.READ_ONLY)
-      .layoutData(new GridData(GridData.FILL_HORIZONTAL))
+      .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .text("styleText")
 
     shell pack
