@@ -1,6 +1,7 @@
 package com.abajar.crrcsimeditor.swt
 
 import org.eclipse.swt.widgets.{Event, TreeItem, Listener, Display, TableItem}
+import org.eclipse.swt.custom.StyledText
 import org.eclipse.swt.layout._
 import org.eclipse.swt._
 import org.eclipse.swt.events._;
@@ -24,10 +25,12 @@ import MenuOption._
 
 class MainWindow(
       buttonClickHandler: (ENABLE_BUTTONS) => Unit,
-      treeUpdateHandler: (Event) => Unit,
+      treeUpdateHandler: (Option[Any], Integer) => (String, Any, Integer),
       treeClickHandler: (Any) => Unit,
       menuClickHandler: (MenuOption) => Unit,
-      tableUpdateHandler: (Event) => Unit) {
+      tableUpdateHandler: (Integer) => (String, Any, Any),
+      tableClickHandler: (Any) => Unit
+      ) {
 
   implicit class AddButtonCoolBarAndRegister(toolBar: ToolBar){
     def addButtonRegister(
@@ -48,12 +51,16 @@ class MainWindow(
 
   var tree: Tree = _
   var properties: Table = _
+  var help: StyledText = _
 
   def notifyButtonClick(buttonType: ENABLE_BUTTONS) = 
         (se: SelectionEvent) => buttonClickHandler(buttonType)
 
   def notifyTreeClick(se: SelectionEvent) = 
         treeClickHandler(se.item.getData)
+
+  def notifyTableClick(se: SelectionEvent) = 
+        tableClickHandler(se.item.getData)
 
   def notifyMenuClick(menuOption: MenuOption) = 
         (se: SelectionEvent) => menuClickHandler(menuOption)
@@ -146,15 +153,14 @@ class MainWindow(
 
     tree.setItemCount(1)
 
-    properties = shell.addTable(SWT.VIRTUAL | SWT.BORDER)
+    properties = shell.addTable(SWT.VIRTUAL | SWT.BORDER, notifyTableClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .addColumn("Property")
       .addColumn("Value")
       .setSourceHandler(tableUpdateHandler)
 
-    shell.addStyledText(SWT.READ_ONLY)
+    help = shell.addStyledText(SWT.READ_ONLY)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
-      .text("styleText")
 
     shell pack
   }})

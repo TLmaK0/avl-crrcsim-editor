@@ -22,12 +22,37 @@ object Widget{
     }
   }
 
-  implicit class SetAddListenerWrapper[T <: {def addListener(eventType: Int, listener:Listener)}](val subject:T) {
-    def setSourceHandler(listenerMethod: Event => Unit): T = {
-      subject.addListener(SWT.SetData, new Listener {
-        def handleEvent(event: Event) = listenerMethod(event)
+  implicit class SetAddListenerWrapper(tree: Tree){
+    def setSourceHandler(listenerMethod: (Option[Any], Integer) => (String, Any, Integer)): Tree = {
+      tree.addListener(SWT.SetData, new Listener {
+        def handleEvent(event: Event) = {
+          val item = event.item.asInstanceOf[TreeItem]
+          val parentItem = if (item.getParentItem == null)
+            None
+          else
+            Some(item.getParentItem.getData)
+          val (title, data, itemsCount) = listenerMethod(parentItem, event.index)
+          item.setData(data)
+          item.setText(title)
+          item.setItemCount(itemsCount)
+        }
       })
-      return subject
+      return tree
+    }
+  }
+
+  implicit class SetAddListenerTableWrapper(table: Table){
+    def setSourceHandler(listenerMethod: (Integer) => (String, Any, Any)): Table = {
+      table.addListener(SWT.SetData, new Listener {
+        def handleEvent(event: Event) = {
+          val item = event.item.asInstanceOf[TableItem]
+          val (title, value, data) = listenerMethod(table.indexOf(item))
+          item.setText(0, title)
+          item.setText(1, value.toString)
+          item.setData(data)
+        }
+      })
+      return table
     }
   }
 
@@ -69,12 +94,14 @@ object Widget{
   }
 
   implicit class AddColumnTableWrapper(table: Table){
+
     def addColumn(title: String): Table = {
       val column = new TableColumn(table, SWT.NONE)
       column.setText(title)
       column.pack
       return table
     }
+
   }
 
   implicit class FileDialogWrapper(fileDialog: FileDialog){

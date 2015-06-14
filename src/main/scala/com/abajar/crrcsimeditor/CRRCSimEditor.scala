@@ -82,7 +82,8 @@ object CRRCSimEditor{
         treeSourceHandler,
         handleTreeEvent,
         handleClickMenu,
-        propertiesSourceHandler
+        propertiesSourceHandler,
+        handleClickProperties
       )
     
     window.show
@@ -229,12 +230,11 @@ object CRRCSimEditor{
       (for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorField]))
-      } yield (field.getAnnotation(classOf[CRRCSimEditorField]).text(), getFieldValue(field, data))) ++ (
-      for{
+      } yield (field.getAnnotation(classOf[CRRCSimEditorField]).text(), getFieldValue(field, data), field.getAnnotation(classOf[CRRCSimEditorField]).help())) ++
+      (for{
         method <- objClass.getMethods
         if (method.isAnnotationPresent(classOf[annotations.CRRCSimEditorReadOnly]))
-      } yield (method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(), getMethodValue(method, data))
-      )
+      } yield (method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(), getMethodValue(method, data), method.getAnnotation(classOf[CRRCSimEditorReadOnly]).help()))
     }
 
     private def loadPropertiesForTreeItem(data: Any) = {
@@ -242,30 +242,21 @@ object CRRCSimEditor{
       window.properties.clearAll
     }
 
-    private def propertiesSourceHandler(event: Event): Unit = {
-      val item = event.item.asInstanceOf[TableItem]
+    private def propertiesSourceHandler(index: Integer): (String, Any, Any) = {
       val properties = extractProperties(window.treeNodeSelected.get)
-      val (label, value) = properties(window.properties.indexOf(item))
 
-      item.setText(0, label)
-      item.setText(1, value)
+      return properties(index)
     }
 
-    private def treeSourceHandler(event: Event) = {
-      val item = event.item.asInstanceOf[TreeItem]
-
-      val parentItem = item.getParentItem
-
-      val node = if (parentItem == null) 
-        (crrcsim.toString, crrcsim)
-      else
-        getChilds(parentItem.getData)(event.index)
+    private def treeSourceHandler(parentData: Option[Any], index: Integer): (String, Any, Integer) = {
+      val node = parentData match {
+        case Some(data) => getChilds(data)(index)
+        case None => (crrcsim.toString, crrcsim)
+      }
 
       val childs = getChilds(node._2)
 
-      item.setData(node._2)
-      item.setText(node._1)
-      item.setItemCount(childs.length)
+      return (node._1, node._2, childs.length)
     }
 
     private def handleTreeEvent(data: Any): Unit = {
@@ -276,6 +267,8 @@ object CRRCSimEditor{
       }else window.disableAllButtons
       loadPropertiesForTreeItem(data)
     }
+
+    private def handleClickProperties(data: Any): Unit = window.help.setText(data.toString)
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
       case childs: ArrayList[Any] =>

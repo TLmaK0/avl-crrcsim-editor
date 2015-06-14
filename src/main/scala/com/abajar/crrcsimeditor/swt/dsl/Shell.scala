@@ -27,11 +27,15 @@ object Shell{
       return tree
     }
 
-    def addTable(style: Int): Table = {
+    def addTable(style: Int, handler: SelectionEvent => Unit): Table = {
       val table = new Table(shell, style)
       table.setLinesVisible(true)
       table.setHeaderVisible(true)
       table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
+      table.addSelectionListener(new SelectionAdapter(){
+        override def widgetSelected(se: SelectionEvent) = handler(se)
+      })
+
       return table
     }
 
