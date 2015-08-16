@@ -31,7 +31,6 @@ object Shell{
       val table = new Table(shell, style)
       table.setLinesVisible(true)
       table.setHeaderVisible(true)
-      table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
       table.addSelectionListener(new SelectionAdapter(){
         override def widgetSelected(se: SelectionEvent) = handler(se)
       })

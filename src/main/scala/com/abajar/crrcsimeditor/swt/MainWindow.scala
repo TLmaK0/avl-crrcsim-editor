@@ -153,7 +153,7 @@ class MainWindow(
 
     tree.setItemCount(1)
 
-    properties = shell.addTable(SWT.VIRTUAL | SWT.BORDER, notifyTableClick)
+    properties = shell.addTable(SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.BORDER, notifyTableClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .addColumn("Property")
       .addColumn("Value")

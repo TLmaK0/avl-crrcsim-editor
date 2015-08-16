@@ -268,7 +268,9 @@ object CRRCSimEditor{
       loadPropertiesForTreeItem(data)
     }
 
-    private def handleClickProperties(data: Any): Unit = window.help.setText(data.toString)
+    private def handleClickProperties(data: Any): Unit = data match {
+      case (title:String, value:Any, help:String) => window.help.setText(help)
+    }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
       case childs: ArrayList[Any] =>

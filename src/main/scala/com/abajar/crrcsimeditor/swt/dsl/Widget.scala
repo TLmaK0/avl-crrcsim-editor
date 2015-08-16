@@ -49,9 +49,20 @@ object Widget{
           val (title, value, data) = listenerMethod(table.indexOf(item))
           item.setText(0, title)
           item.setText(1, value.toString)
-          item.setData(data)
+          item.setData((title, value, data))
+          table.getColumn(0).pack
+          table.getColumn(1).pack
         }
       })
+      return table
+    }
+  }
+
+  implicit class AddColumnTableWrapper(table: Table){
+    def addColumn(title: String): Table = {
+      val column = new TableColumn(table, SWT.NONE)
+      column.setText(title)
+      column.pack
       return table
     }
   }
@@ -91,17 +102,6 @@ object Widget{
       })
       return menu
     }
-  }
-
-  implicit class AddColumnTableWrapper(table: Table){
-
-    def addColumn(title: String): Table = {
-      val column = new TableColumn(table, SWT.NONE)
-      column.setText(title)
-      column.pack
-      return table
-    }
-
   }
 
   implicit class FileDialogWrapper(fileDialog: FileDialog){
