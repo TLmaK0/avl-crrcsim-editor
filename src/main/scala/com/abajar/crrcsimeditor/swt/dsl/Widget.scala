@@ -4,8 +4,8 @@ import org.eclipse.swt.custom._
 import org.eclipse.swt.layout._
 import org.eclipse.swt.widgets._
 import org.eclipse.swt._
-import org.eclipse.swt.events._;
-import java.io.File;
+import org.eclipse.swt.events._
+import java.io.File
 
 object Widget{
   implicit class SetTextWrapper[T <: {def setText(text:String)}](val subject:T) {
@@ -59,10 +59,43 @@ object Widget{
   }
 
   implicit class AddColumnTableWrapper(table: Table){
-    def addColumn(title: String): Table = {
+    val editor = new TableEditor(table)
+    editor.horizontalAlignment = SWT.LEFT
+    editor.grabHorizontal = true
+    editor.minimumWidth = 50
+
+    def addColumn(title: String, editable: Boolean = false): Table = {
       val column = new TableColumn(table, SWT.NONE)
       column.setText(title)
       column.pack
+
+      val columnNumber = table.getColumnCount - 1
+
+      if (editable) table.addSelectionListener(new SelectionAdapter{
+        override def widgetSelected(e: SelectionEvent) = {
+          val oldEditor = editor.getEditor
+          if (oldEditor != null) oldEditor.dispose
+
+          val item = e.item.asInstanceOf[TableItem]
+
+          val newEditor = new Text(table, SWT.NONE)
+          newEditor.setText(item.getText(columnNumber))
+          newEditor.addModifyListener(new ModifyListener{
+            override def modifyText(me: ModifyEvent) = {
+              val text = editor.getEditor.asInstanceOf[Text]
+              editor.getItem.setText(columnNumber, text.getText)
+            }
+          })
+          newEditor.addListener(SWT.FocusOut, new Listener{
+            override def handleEvent(e: Event) = {
+              editor.getEditor.dispose()
+            }
+          })
+          newEditor.selectAll
+          newEditor.setFocus
+          editor.setEditor(newEditor, item, columnNumber)
+        }
+      })
       return table
     }
   }

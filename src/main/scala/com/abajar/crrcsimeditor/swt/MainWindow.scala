@@ -156,7 +156,7 @@ class MainWindow(
     properties = shell.addTable(SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.BORDER, notifyTableClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .addColumn("Property")
-      .addColumn("Value")
+      .addColumn("Value", true)
       .setSourceHandler(tableUpdateHandler)
 
     help = shell.addStyledText(SWT.READ_ONLY)
