@@ -26,24 +26,29 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.lang.reflect.Method
+import java.util.ArrayList
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import swt.MainWindow
 import org.eclipse.swt.widgets.{Event, TreeItem, TableItem}
 import org.eclipse.swt.events._;
+import scala.collection.JavaConverters._
+
+import swt.MainWindow
+import swt.dsl.TableFieldWritable
+import swt.dsl.TableFieldReadOnly
+import com.abajar.crrcsimeditor.view.annotations
+import java.lang.reflect.Field
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorReadOnly
-import java.lang.reflect.Method
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
-import java.util.ArrayList
-import scala.collection.JavaConverters._
-import com.abajar.crrcsimeditor.view.annotations
-import java.lang.reflect.Field
+import com.abajar.crrcsimeditor.swt.dsl.TableField
+
 
 object CRRCSimEditor{
 
@@ -213,28 +218,26 @@ object CRRCSimEditor{
       }
     }
 
-    private def getFieldValue(field: Field, data: Any): String = {
-      field.setAccessible(true)
-      val result = field.get(data)
-      return if (result == null) "" else result.toString
-    }
-
-    private def getMethodValue(method: Method, data: Any): String = {
-      method.setAccessible(true)
-      val result = method.invoke(data)
-      return if (result == null) "" else result.toString
-    }
-
     private def extractProperties(data: Any) = {
       val objClass = data.getClass
       (for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorField]))
-      } yield (field.getAnnotation(classOf[CRRCSimEditorField]).text(), getFieldValue(field, data), field.getAnnotation(classOf[CRRCSimEditorField]).help())) ++
+      } yield new TableFieldWritable(
+        data,
+        field,
+        field.getAnnotation(classOf[CRRCSimEditorField]).text(),
+        field.getAnnotation(classOf[CRRCSimEditorField]).help()
+      )) ++
       (for{
         method <- objClass.getMethods
         if (method.isAnnotationPresent(classOf[annotations.CRRCSimEditorReadOnly]))
-      } yield (method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(), getMethodValue(method, data), method.getAnnotation(classOf[CRRCSimEditorReadOnly]).help()))
+      } yield new TableFieldReadOnly(
+        data,
+        method,
+        method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(),
+        method.getAnnotation(classOf[CRRCSimEditorReadOnly]).help()
+      )) 
     }
 
     private def loadPropertiesForTreeItem(data: Any) = {
@@ -242,7 +245,7 @@ object CRRCSimEditor{
       window.properties.clearAll
     }
 
-    private def propertiesSourceHandler(index: Integer): (String, Any, Any) = {
+    private def propertiesSourceHandler(index: Integer): TableField = {
       val properties = extractProperties(window.treeNodeSelected.get)
 
       return properties(index)
@@ -269,7 +272,7 @@ object CRRCSimEditor{
     }
 
     private def handleClickProperties(data: Any): Unit = data match {
-      case (title:String, value:Any, help:String) => window.help.setText(help)
+      case tableField: TableField => window.help.setText(tableField.help)
     }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {

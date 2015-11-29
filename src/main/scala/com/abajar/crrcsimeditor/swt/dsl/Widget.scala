@@ -42,14 +42,14 @@ object Widget{
   }
 
   implicit class SetAddListenerTableWrapper(table: Table){
-    def setSourceHandler(listenerMethod: (Integer) => (String, Any, Any)): Table = {
+    def setSourceHandler(listenerMethod: (Integer) => TableField): Table = {
       table.addListener(SWT.SetData, new Listener {
         def handleEvent(event: Event) = {
           val item = event.item.asInstanceOf[TableItem]
-          val (title, value, data) = listenerMethod(table.indexOf(item))
-          item.setText(0, title)
-          item.setText(1, value.toString)
-          item.setData((title, value, data))
+          val tableField = listenerMethod(table.indexOf(item))
+          item.setText(0, tableField.text)
+          item.setText(1, tableField.value)
+          item.setData(tableField)
           table.getColumn(0).pack
           table.getColumn(1).pack
         }
@@ -88,11 +88,15 @@ object Widget{
           })
           newEditor.addListener(SWT.FocusOut, new Listener{
             override def handleEvent(e: Event) = {
+              val text = editor.getEditor.asInstanceOf[Text]
+              val tableField = item.getData.asInstanceOf[TableField]
+              tableField.value = text.getText
               editor.getEditor.dispose()
             }
           })
           newEditor.selectAll
           newEditor.setFocus
+
           editor.setEditor(newEditor, item, columnNumber)
         }
       })

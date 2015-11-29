@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets._
 import dsl.Widget._
 import dsl.Shell
 import dsl.Shell._
+import dsl.TableField
 import com.abajar.crrcsimeditor.crrcsim.CRRCSim
 import java.util.ArrayList
 import org.eclipse.swt.widgets.Widget
@@ -28,7 +29,7 @@ class MainWindow(
       treeUpdateHandler: (Option[Any], Integer) => (String, Any, Integer),
       treeClickHandler: (Any) => Unit,
       menuClickHandler: (MenuOption) => Unit,
-      tableUpdateHandler: (Integer) => (String, Any, Any),
+      tableUpdateHandler: (Integer) => TableField,
       tableClickHandler: (Any) => Unit
       ) {
 
