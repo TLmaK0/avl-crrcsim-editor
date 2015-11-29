@@ -1,7 +1,7 @@
 avl-crrcsim-editor
 ==================
 
-An editor for AVL (Athena Vortex Lattice) and a exporter for Crrcsim simulator
+An editor for AVL (Athena Vortex Lattice) and a exporter for Crrcsim an Open source model airplane simulator http://sourceforge.net/projects/crrcsim/
 
 Install first avl 3.35 from here http://web.mit.edu/drela/Public/web/avl/
 
