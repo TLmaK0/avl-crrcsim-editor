@@ -56,7 +56,7 @@ object CRRCSimEditor{
 
     val CONFIGURATION_ROOT = System.getProperty("user.home") + "/.crrcsimeditor"
     val CONFIGURATION_PATH = CONFIGURATION_ROOT + "/configuration.xml"
-    
+
     var configuration = new Properties()
 
     val dir = new File(CONFIGURATION_ROOT)
@@ -77,7 +77,7 @@ object CRRCSimEditor{
           configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
         } catch {
           case ex: Exception =>
-            logger.log(Level.FINE, null, ex)
+            logger.log(Level.FINE, "Unable to store configuration file", ex)
         }
       }
     })
@@ -90,13 +90,13 @@ object CRRCSimEditor{
         propertiesSourceHandler,
         handleClickProperties
       )
-    
+
     window.show
 
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
       window.treeNodeSelected match {
         case Some(nodeSelected) => {
-          TreeHelper.modifyTree(button, nodeSelected, window.treeNodeSelectedParent) 
+          TreeHelper.modifyTree(button, nodeSelected, window.treeNodeSelectedParent)
           window.refreshTree
         }
         case None => throw new Exception("Button click without node selected")
@@ -126,10 +126,9 @@ object CRRCSimEditor{
 
 
     def openFile = {
-      val path = 
       window.showOpenDialog(
         configuration.getProperty("crrcsim.save", "~/"),
-        "CRRCsim editor file (*.crr)", 
+        "CRRCsim editor file (*.crr)",
         "crr"
       ) match {
         case Some(file) =>
@@ -141,29 +140,30 @@ object CRRCSimEditor{
 
     def saveFile = {
       val path = this.configuration.getProperty("crrcsim.save", "~/")
-      val file = showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr")
-      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-      this.saveAs(file)
+      showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr").foreach(file => {
+        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+        this.saveAs(file)
+      })
     }
 
     def exportAsAVL: Unit = {
       val path = this.configuration.getProperty("crrcsim.save", "~/")
-      val file = this.showSaveDialog(path, "AVL file (*.avl)","avl")
-      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-
-      exportAsAVL(Paths.get(file.getPath()))
+      this.showSaveDialog(path, "AVL file (*.avl)","avl").foreach(file => {
+        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+        exportAsAVL(Paths.get(file.getPath()))
+      })
     }
 
     def exportAsCRRCsim: Unit = {
       val path = this.configuration.getProperty("crrcsim.save", "~/")
-      val file = this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml")
-      this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
-      if (existsAvlExecutable) exportAsCRRCsim(file)
+      this.showSaveDialog(path, "CRRCsim file (*.xml)", "xml").foreach(file => {
+        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+        if (existsAvlExecutable) exportAsCRRCsim(file)
+      })
     }
 
     private def existsAvlExecutable: Boolean = {
-      val path = this.configuration.getProperty("avl.path")
-      path != null && Files.exists(Paths.get(path))
+      Option(this.configuration.getProperty("avl.path")).isDefined
     }
 
     private def exportAsCRRCsim(file: File): Unit = {
@@ -190,32 +190,28 @@ object CRRCSimEditor{
     }
 
     def setAvlExecutable = {
-      val path = 
       window.showOpenDialog(
-        this.configuration.getProperty("avl.path", "~/"), 
-        "AVL executable", 
+        this.configuration.getProperty("avl.path", "~/"),
+        "AVL executable",
         "exe") match {
           case Some(file) =>
             this.configuration.setProperty("avl.path", file.getAbsolutePath())
             try {
-                this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), null)
-            } catch { 
+                this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
+            } catch {
               case ex: Exception =>
-                logger.log(Level.FINE, null, ex)
+                logger.log(Level.FINE, "Unable to save configuation", ex)
             }
           case None =>
       }
     }
 
-    private def showSaveDialog(path: String, description: String, extensions: String): File = {
+    private def showSaveDialog(path: String, description: String, extensions: String): Option[File] = {
       window.showSaveDialog(
         configuration.getProperty("crrcsim.save", "~/"),
-        description, 
+        description,
         extensions
-      ) match {
-        case Some(file: File) => file
-        case None => null
-      }
+      )
     }
 
     private def extractProperties(data: Any) = {
@@ -237,7 +233,7 @@ object CRRCSimEditor{
         method,
         method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(),
         method.getAnnotation(classOf[CRRCSimEditorReadOnly]).help()
-      )) 
+      ))
     }
 
     private def loadPropertiesForTreeItem(data: Any) = {
@@ -246,9 +242,7 @@ object CRRCSimEditor{
     }
 
     private def propertiesSourceHandler(index: Integer): TableField = {
-      val properties = extractProperties(window.treeNodeSelected.get)
-
-      return properties(index)
+      extractProperties(window.treeNodeSelected.get)(index)
     }
 
     private def treeSourceHandler(parentData: Option[Any], index: Integer): (String, Any, Integer) = {
@@ -259,7 +253,7 @@ object CRRCSimEditor{
 
       val childs = getChilds(node._2)
 
-      return (node._1, node._2, childs.length)
+      (node._1, node._2, childs.length)
     }
 
     private def handleTreeEvent(data: Any): Unit = {
@@ -267,7 +261,9 @@ object CRRCSimEditor{
       if (objClass.isAnnotationPresent(classOf[annotations.CRRCSimEditor])) {
         val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
-      }else window.disableAllButtons
+      } else {
+        window.disableAllButtons
+      }
       loadPropertiesForTreeItem(data)
     }
 
@@ -281,10 +277,11 @@ object CRRCSimEditor{
       case node =>
         node.getClass.getMethods.foldLeft(List[(String, Any)]())(
           (nodes, method)=>
-            if (method.isAnnotationPresent(classOf[CRRCSimEditorNode]))
+            if (method.isAnnotationPresent(classOf[CRRCSimEditorNode])){
               nodes :+ getNameNodePair(method, node)
-            else 
+            } else {
               nodes
+            }
         )
     }
 

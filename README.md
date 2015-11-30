@@ -35,4 +35,6 @@ The first time you run sbt it will download and install a whole bunch of depende
     cd avl-crrcsim-editor
     sbt tasks
 
+Run with 
 
+	sbt run
