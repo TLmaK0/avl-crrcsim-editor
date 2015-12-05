@@ -7,13 +7,4 @@
  * of the License, or (at your option) any later version.
  *
  */
-package com.abajar.crrcsimeditor.ui;
 
-/**
- *
- * @author Hugo
- */
-public abstract class ChangeSelectionListener {
-
-    public abstract void notify(int rowIndex, int columnIndex);
-}

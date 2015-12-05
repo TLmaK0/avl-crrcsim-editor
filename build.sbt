@@ -1,3 +1,10 @@
+import de.heikoseeberger.sbtheader.HeaderPattern
+
+import sbt.ProjectRef
+
+lazy val crrcSimEditor = project
+  .in(file("."))
+
 name := "Avl CRRCSim Editor"
 
 version := "0.7.0"
@@ -22,3 +29,14 @@ fork in run := true
 libraryDependencies += "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2"
 
 libraryDependencies += "org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" % "4.4"
+
+headers := Map(
+  "scala" -> (
+    HeaderPattern.cStyleBlockComment,
+    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\Z").next()
+  ),
+  "java" -> (
+    HeaderPattern.cStyleBlockComment,
+    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\Z").next()
+  )
+)
