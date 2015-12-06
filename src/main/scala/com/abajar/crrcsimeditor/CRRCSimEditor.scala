@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2015  Hugo Freire Gil 
- * 
+ * Copyright (C) 2015  Hugo Freire Gil
+ *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
@@ -9,41 +9,41 @@
  */
 package com.abajar.crrcsimeditor;
 
-import com.abajar.crrcsimeditor.avl.AVL;
-import com.abajar.crrcsimeditor.avl.AVLS;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSim;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory;
-import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository;
-import com.abajar.crrcsimeditor.crrcsim.MetersConversor;
-import com.abajar.crrcsimeditor.crrcsim.MetersConversorInverted;
-import com.abajar.crrcsimeditor.crrcsim.XRelativeToCG;
-import com.abajar.crrcsimeditor.crrcsim.XRelativeToCGInverted;
-import com.abajar.crrcsimeditor.crrcsim.MultiUnit;
-import com.abajar.crrcsimeditor.crrcsim.YRelativeToCG;
-import com.abajar.crrcsimeditor.crrcsim.YRelativeToCGInverted;
-import com.abajar.crrcsimeditor.crrcsim.ZRelativeToCG;
-import com.abajar.crrcsimeditor.crrcsim.ZRelativeToCGInverted;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.Files;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import com.abajar.crrcsimeditor.avl.AVL
+import com.abajar.crrcsimeditor.avl.AVLS
+import com.abajar.crrcsimeditor.crrcsim.CRRCSim
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimFactory
+import com.abajar.crrcsimeditor.crrcsim.CRRCSimRepository
+import com.abajar.crrcsimeditor.crrcsim.MetersConversor
+import com.abajar.crrcsimeditor.crrcsim.MetersConversorInverted
+import com.abajar.crrcsimeditor.crrcsim.XRelativeToCG
+import com.abajar.crrcsimeditor.crrcsim.XRelativeToCGInverted
+import com.abajar.crrcsimeditor.crrcsim.MultiUnit
+import com.abajar.crrcsimeditor.crrcsim.YRelativeToCG
+import com.abajar.crrcsimeditor.crrcsim.YRelativeToCGInverted
+import com.abajar.crrcsimeditor.crrcsim.ZRelativeToCG
+import com.abajar.crrcsimeditor.crrcsim.ZRelativeToCGInverted
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileNotFoundException
+import java.io.FileOutputStream
+import java.io.IOException
+import java.nio.file.Path
+import java.nio.file.Paths
+import java.nio.file.Files
+import java.util.Properties
+import java.util.logging.Level
+import java.util.logging.LogManager
+import java.util.logging.Logger
 import java.lang.reflect.Method
 import java.util.ArrayList
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
+import javax.xml.bind.JAXBContext
+import javax.xml.bind.JAXBException
+import javax.xml.bind.Marshaller
 
 import org.eclipse.swt.widgets.{Event, TreeItem, TableItem}
-import org.eclipse.swt.events._;
+import org.eclipse.swt.events._
 import scala.collection.JavaConverters._
 
 import swt.MainWindow
