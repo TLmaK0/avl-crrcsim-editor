@@ -101,7 +101,9 @@ object CRRCSimEditor{
         handleClickProperties
       )
 
-    window.show
+    def apply():Unit = {
+      window.show
+    }
 
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
       window.treeNodeSelected match {

@@ -193,5 +193,5 @@ class MainWindow(
     }
   }
 
-  def show = shell.start
+  def show: Unit = shell.start
 }
