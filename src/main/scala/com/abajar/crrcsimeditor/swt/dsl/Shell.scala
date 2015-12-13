@@ -22,7 +22,7 @@ object Shell{
 
   implicit class ShellWrapper(shell: Shell){
 
-    def start = {
+    def start: Unit = {
       val display = shell.getDisplay
       shell.open
       while (!shell.isDisposed) if (!display.readAndDispatch) display.sleep
@@ -32,9 +32,9 @@ object Shell{
     def addTree(style: Int, handler: SelectionEvent => Unit): Tree = {
       val tree = new Tree(shell, style)
       tree.addSelectionListener(new SelectionAdapter(){
-        override def widgetSelected(se: SelectionEvent) = handler(se) 
+        override def widgetSelected(se: SelectionEvent) = handler(se)
       })
-      return tree
+      tree
     }
 
     def addTable(style: Int, handler: SelectionEvent => Unit): Table = {
@@ -44,13 +44,12 @@ object Shell{
       table.addSelectionListener(new SelectionAdapter(){
         override def widgetSelected(se: SelectionEvent) = handler(se)
       })
-
-      return table
+      table
     }
 
-    def addStyledText(style: Int) = new StyledText(shell, style)
-    def addToolBar(style: Int) = new ToolBar(shell, style)
-    
+    def addStyledText(style: Int): StyledText = new StyledText(shell, style)
+    def addToolBar(style: Int): ToolBar = new ToolBar(shell, style)
+
     val openFileDialog = new FileDialog(shell, SWT.OPEN)
 
     val saveFileDialog = new FileDialog(shell, SWT.SAVE)
@@ -59,13 +58,14 @@ object Shell{
       val menu = new Menu(shell, SWT.BAR)
       menuDecorator(menu)
       shell.setMenuBar(menu)
-      return menu
+      menu
     }
   }
 
   def apply(display: Display, buildScreen: (Shell) => Unit ): Shell = {
     val shell = new Shell(display)
     buildScreen(shell)
-    return shell
+    shell
   }
 }
+

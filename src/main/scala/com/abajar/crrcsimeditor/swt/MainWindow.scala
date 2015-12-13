@@ -45,18 +45,18 @@ class MainWindow(
 
   implicit class AddButtonCoolBarAndRegister(toolBar: ToolBar){
     def addButtonRegister(
-          text: String, 
-          callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit, 
+          text: String,
+          callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit,
           button: ENABLE_BUTTONS): ToolBar = {
       buttonsMap += ((
-        button, 
+        button,
         toolBar.addButtonAndReturn(text, callback(button))
       ))
-      return toolBar
+      toolBar
     }
   }
 
-  val buttonsMap = collection.mutable.Map[ENABLE_BUTTONS, ToolItem]() 
+  val buttonsMap = collection.mutable.Map[ENABLE_BUTTONS, ToolItem]()
 
   val display = new Display
 
@@ -64,26 +64,26 @@ class MainWindow(
   var properties: Table = _
   var help: StyledText = _
 
-  def notifyButtonClick(buttonType: ENABLE_BUTTONS) = 
+  private def notifyButtonClick(buttonType: ENABLE_BUTTONS) =
         (se: SelectionEvent) => buttonClickHandler(buttonType)
 
-  def notifyTreeClick(se: SelectionEvent) = 
+  private def notifyTreeClick(se: SelectionEvent) =
         treeClickHandler(se.item.getData)
 
-  def notifyTableClick(se: SelectionEvent) = 
+  private def notifyTableClick(se: SelectionEvent) =
         tableClickHandler(se.item.getData)
 
-  def notifyMenuClick(menuOption: MenuOption) = 
+  private def notifyMenuClick(menuOption: MenuOption) =
         (se: SelectionEvent) => menuClickHandler(menuOption)
 
-  def disableAllButtons = {
+  def disableAllButtons: Unit = {
     for{
       button <- buttonsMap.values
     } yield button.setEnabled(false)
   }
 
   def buttonsEnableOnly(
-        buttons: scala.collection.immutable.List[ENABLE_BUTTONS]) = {
+        buttons: scala.collection.immutable.List[ENABLE_BUTTONS]): Unit = {
     disableAllButtons
     for{
       button <- buttons
@@ -97,7 +97,7 @@ class MainWindow(
 
   def showOpenDialog(
         path: String,
-        descriptions: Array[String], 
+        descriptions: Array[String],
         extensions: Array[String]): Option[File] =
     shell.openFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
 
@@ -106,19 +106,19 @@ class MainWindow(
     showSaveDialog(path, Array(description), Array(extension))
 
   def showSaveDialog(
-        path: String, 
-        descriptions: Array[String], 
-        extensions: Array[String]): Option[File] 
+        path: String,
+        descriptions: Array[String],
+        extensions: Array[String]): Option[File]
     = shell.saveFileDialog.setNameExtensions(descriptions).setExtensions(addWildcard(extensions)).show
 
-  def refreshTree = tree.clearAll(true)
+  def refreshTree: Unit = tree.clearAll(true)
 
-  private def addWildcard(extensions: Array[String]) = 
+  private def addWildcard(extensions: Array[String]) =
     extensions.map(
-      extension =>  if (extension.contains("*")) extension 
-                    else "*." + extension
+      extension =>  if (extension.contains("*")) { extension }
+                    else { "*." + extension }
     )
-    
+
   private val shell = Shell( display, { shell => {
     val layout = new GridLayout
     layout.numColumns = 3
@@ -130,7 +130,7 @@ class MainWindow(
           .addItem("Open...", notifyMenuClick(MenuOption.Open))
           .addItem("Export As Avl", notifyMenuClick(MenuOption.ExportAsAvl))
           .addItem(
-                "Export As CRRCSim", 
+                "Export As CRRCSim",
                 notifyMenuClick(MenuOption.ExportAsCRRCSim)
           )
 
@@ -176,23 +176,20 @@ class MainWindow(
     shell pack
   }})
 
-  def treeNodeSelected = {
-    if (tree != null){
+  def treeNodeSelected: Option[Any] = {
+    Option(tree).map { tree =>
       val items = tree.getSelection
-      if (items.length > 0) Some(items(0).getData)
-      else None
-    }else{
-      None
+      if (items.length > 0) { Some(items(0).getData) }
+      else { None }
     }
   }
 
-  def treeNodeSelectedParent = {
-    if (tree != null){
+  def treeNodeSelectedParent: Option[Any] = {
+    Option(tree).map { tree =>
       val items = tree.getSelection
-      if (items.length > 0 && items(0).getParentItem != null) Some(items(0).getParentItem.getData)
-      else None
-    }else{
-      None
+      if (items.length > 0 && Option(items(0).getParentItem).isDefined) {
+        Some(items(0).getParentItem.getData)
+      } else { None }
     }
   }
 

@@ -18,7 +18,7 @@ import com.abajar.crrcsimeditor.crrcsim._
 import java.util.ArrayList
 
 object TreeHelper{
-  def modifyTree(button: ENABLE_BUTTONS, node: Any, parent: Option[Any]) = button match {
+  def modifyTree(button: ENABLE_BUTTONS, node: Any, parent: Option[Any]): Unit = button match {
     case ADD_SURFACE => node.asInstanceOf[AVLGeometry].createSurface
     case ADD_BODY => node.asInstanceOf[AVLGeometry].createBody
     case ADD_SECTION => node.asInstanceOf[Surface].createSection
@@ -30,7 +30,7 @@ object TreeHelper{
     case ADD_BATTERY => node.asInstanceOf[Power].createBattery
     case ADD_SHAFT => node.asInstanceOf[Battery].createShaft
     case ADD_ENGINE => node.asInstanceOf[Shaft].createEngine
-    case ADD_DATA => node.asInstanceOf[Engine].createData 
+    case ADD_DATA => node.asInstanceOf[Engine].createData
     case ADD_DATA_IDLE => node.asInstanceOf[Engine].createDataIdle
     case ADD_SYMPLE_TRUST => node.asInstanceOf[Shaft].createSimpleTrust
     case ADD_COLLISION_POINT => node.asInstanceOf[CRRCSim].createWheel
@@ -41,3 +41,4 @@ object TreeHelper{
     case _ => throw new Exception(s"Button ${button} not defined")
   }
 }
+

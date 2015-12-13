@@ -82,7 +82,7 @@ object CRRCSimEditor{
     }
 
     Runtime.getRuntime().addShutdownHook(new Thread(){
-      override def run = {
+      override def run: Unit = {
         try {
           configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
         } catch {
@@ -125,17 +125,17 @@ object CRRCSimEditor{
       AVLS.avlToFile(this.crrcsim.getAvl(), avlFile, avlFile.getParent())
     }
 
-    def saveAs(file: File) = {
+    private def saveAs(file: File) = {
       new CRRCSimRepository().storeToFile(file, crrcsim)
     }
 
-    def open(file: File) = {
+    private def open(file: File) = {
       crrcsim = new CRRCSimRepository().restoreFromFile(file)
       window.refreshTree
     }
 
 
-    def openFile = {
+    private def openFile = {
       window.showOpenDialog(
         configuration.getProperty("crrcsim.save", "~/"),
         "CRRCsim editor file (*.crr)",
@@ -148,7 +148,7 @@ object CRRCSimEditor{
       }
     }
 
-    def saveFile = {
+    private def saveFile = {
       val path = this.configuration.getProperty("crrcsim.save", "~/")
       showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr").foreach(file => {
         this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
@@ -199,7 +199,7 @@ object CRRCSimEditor{
       fos.close()
     }
 
-    def setAvlExecutable = {
+    private def setAvlExecutable = {
       window.showOpenDialog(
         this.configuration.getProperty("avl.path", "~/"),
         "AVL executable",
@@ -301,3 +301,4 @@ object CRRCSimEditor{
       (if (name == "Node") node.toString else name , node)
     }
 }
+

@@ -18,17 +18,10 @@ import org.eclipse.swt.events._
 import java.io.File
 
 object Widget{
-  implicit class SetTextWrapper[T <: {def setText(text:String)}](val subject:T) {
-    def text(text : String) : T = {
-      subject.setText(text)
-      return subject
-    }
-  }
-
-  implicit class SetLayoutDataWrapper[T <: {def setLayoutData(data:Object)}](val subject:T) {
+  implicit class SetLayoutDataWrapper[T <: Control](val subject:T) {
     def layoutData(data: GridData): T = {
       subject.setLayoutData(data)
-      return subject
+      subject
     }
   }
 
@@ -37,17 +30,14 @@ object Widget{
       tree.addListener(SWT.SetData, new Listener {
         def handleEvent(event: Event) = {
           val item = event.item.asInstanceOf[TreeItem]
-          val parentItem = if (item.getParentItem == null)
-            None
-          else
-            Some(item.getParentItem.getData)
+          val parentItem = Option(item.getParentItem).map(_.getData)
           val (title, data, itemsCount) = listenerMethod(parentItem, event.index)
           item.setData(data)
           item.setText(title)
           item.setItemCount(itemsCount)
         }
       })
-      return tree
+      tree
     }
   }
 
@@ -64,15 +54,17 @@ object Widget{
           table.getColumn(1).pack
         }
       })
-      return table
+      table
     }
   }
 
   implicit class AddColumnTableWrapper(table: Table){
+    val minimumWidth = 50
+
     val editor = new TableEditor(table)
     editor.horizontalAlignment = SWT.LEFT
     editor.grabHorizontal = true
-    editor.minimumWidth = 50
+    editor.minimumWidth = minimumWidth
 
     def addColumn(title: String, editable: Boolean = false): Table = {
       val column = new TableColumn(table, SWT.NONE)
@@ -83,8 +75,7 @@ object Widget{
 
       if (editable) table.addSelectionListener(new SelectionAdapter{
         override def widgetSelected(e: SelectionEvent) = {
-          val oldEditor = editor.getEditor
-          if (oldEditor != null) oldEditor.dispose
+          Option(editor.getEditor).map(_.dispose)
 
           val item = e.item.asInstanceOf[TableItem]
 
@@ -110,7 +101,7 @@ object Widget{
           editor.setEditor(newEditor, item, columnNumber)
         }
       })
-      return table
+      table
     }
   }
 
@@ -123,17 +114,17 @@ object Widget{
           callback(se)
         }
       })
-      return item
+      item
     }
   }
 
   implicit class AddMenuWrapper(menu: Menu){
     def addSubmenu(text: String): Menu = {
-      val menuItem = new MenuItem(menu, SWT.CASCADE) 
+      val menuItem = new MenuItem(menu, SWT.CASCADE)
       menuItem.setText(text)
       val submenu = new Menu(menu.getShell, SWT.DROP_DOWN)
       menuItem.setMenu(submenu)
-      return submenu
+      submenu
     }
 
   }
@@ -147,24 +138,21 @@ object Widget{
           callback(se)
         }
       })
-      return menu
+      menu
     }
   }
 
   implicit class FileDialogWrapper(fileDialog: FileDialog){
-    def show: Option[File] = fileDialog.open match {
-      case null => None
-      case path: String => Some(new File(path))
-    }
+    def show: Option[File] = Option(fileDialog.open).map(new File(_))
 
     def setExtensions(extensions: Array[String]): FileDialog = {
       fileDialog.setFilterExtensions(extensions)
-      return fileDialog
+      fileDialog
     }
 
     def setNameExtensions(names: Array[String]): FileDialog = {
       fileDialog.setFilterNames(names)
-      return fileDialog
+      fileDialog
     }
   }
 }

@@ -18,3 +18,4 @@ object Main extends App {
     CRRCSimEditor
   }
 }
+

@@ -23,16 +23,18 @@ trait TableField {
 }
 
 class TableFieldWritable(protected val instance: Any, protected val field: Field, val textArg: String, helpArg: String) extends TableField{
-  def text() = textArg
-  def help() = helpArg
+  def text(): String = textArg
+  def help(): String = helpArg
 
-  def value = {
+  def value: String = {
     field.setAccessible(true)
-    val result = field.get(instance)
-    if (result == null) "" else result.toString
+    Option(field.get(instance)) match {
+      case Some(result) => result.toString
+      case None => ""
+    }
   }
 
-  def value_=(value: String) = {
+  def value_=(value: String): Unit = {
     val parsedValue = field.get(instance).asInstanceOf[Any] match {
       case float: Float => value.toFloat
       case int: Int => value.toInt
@@ -44,15 +46,17 @@ class TableFieldWritable(protected val instance: Any, protected val field: Field
 }
 
 class TableFieldReadOnly(protected val instance: Any, protected val method: Method, val textArg: String, helpArg: String) extends TableField{
-  def text() = textArg
-  def help() = helpArg
+  def text(): String = textArg
+  def help(): String = helpArg
 
-  def value = {
+  def value: String = {
     method.setAccessible(true)
-    val result = method.invoke(instance)
-    if (result == null) "" else result.toString
+    Option(method.invoke(instance)) match {
+      case Some(result) => result.toString
+      case None => ""
+    }
   }
 
   //TODO: Raise exception
-  final def value_=(value: String) = { }
+  final def value_=(value: String): Unit = { }
 }
