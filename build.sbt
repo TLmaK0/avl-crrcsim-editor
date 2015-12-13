@@ -33,10 +33,10 @@ libraryDependencies += "org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" 
 headers := Map(
   "scala" -> (
     HeaderPattern.cStyleBlockComment,
-    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\Z").next()
+    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\z").next()
   ),
   "java" -> (
     HeaderPattern.cStyleBlockComment,
-    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\Z").next()
+    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\z").next()
   )
 )

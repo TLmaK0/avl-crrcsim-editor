@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  *
  */
+
 package com.abajar.crrcsimeditor.view.annotations;
 
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS;

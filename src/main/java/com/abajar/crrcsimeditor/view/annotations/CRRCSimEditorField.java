@@ -7,6 +7,7 @@
  * of the License, or (at your option) any later version.
  *
  */
+
 package com.abajar.crrcsimeditor.view.annotations;
 
 import java.lang.annotation.ElementType;
