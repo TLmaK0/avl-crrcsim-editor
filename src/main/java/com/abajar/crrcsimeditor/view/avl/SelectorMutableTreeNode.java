@@ -122,24 +122,52 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
     ,   SHAFT, ENGINE, DATA, DATA_IDLE
     ,   PROPELLER, SIMPLE_TRUST, WHEEL}
 
+    private static final TreeModificator addSurface = new AddSurface();
+    private static final TreeModificator addBody = new AddBody();
+    private static final TreeModificator addSection = new AddSection();
+    private static final TreeModificator addControl = new AddControl();
+    private static final TreeModificator addMass = new AddMass();
+    private static final TreeModificator addChangeLog = new AddChangeLog();
+    //private static final TreeModificator addConfig = new AddConfig();
+    //private static final TreeModificator addSound = new AddSound();
+    private static final TreeModificator addBattery = new AddBattery();
+    private static final TreeModificator addShaft = new AddShaft();
+    private static final TreeModificator addEngine = new AddEngine();
+    private static final TreeModificator addData = new AddData();
+    private static final TreeModificator addDataIdle = new AddDataIdle();
+    private static final TreeModificator addSimpleTrust = new AddSimpleTrust();
+    private static final TreeModificator addWheel = new AddCollisionPoint();
+    private static final TreeModificator addCollisionPoint = new AddCollisionPoint();
+    private static final TreeModificator delete = new Delete();
+
     public enum ENABLE_BUTTONS {
-        ADD_SURFACE,
-        ADD_BODY,
-        ADD_SECTION,
-        ADD_CONTROL,
-        ADD_MASS,
-        ADD_CHANGELOG,
-        ADD_CONFIG,
-        ADD_SOUND,
-        ADD_BATTERY,
-        ADD_SHAFT,
-        ADD_ENGINE,
-        ADD_DATA,
-        ADD_DATA_IDLE,
-        ADD_SYMPLE_TRUST,
-        ADD_WHEEL,
-        DELETE,
-        ADD_COLLISION_POINT,
+        ADD_SURFACE         (addSurface),
+        ADD_BODY            (addBody),
+        ADD_SECTION         (addSection),
+        ADD_CONTROL         (addControl),
+        ADD_MASS            (addMass),
+        ADD_CHANGELOG       (addChangeLog),
+        //ADD_CONFIG          (addConfig),
+        //ADD_SOUND           (addSound),
+        ADD_BATTERY         (addBattery),
+        ADD_SHAFT           (addShaft),
+        ADD_ENGINE          (addEngine),
+        ADD_DATA            (addData),
+        ADD_DATA_IDLE       (addDataIdle),
+        ADD_SYMPLE_TRUST    (addSimpleTrust),
+        ADD_WHEEL           (addWheel),
+        ADD_COLLISION_POINT (addCollisionPoint),
+        DELETE              (delete);
+
+        private final TreeModificator modificator;
+
+        ENABLE_BUTTONS(TreeModificator modificator){
+          this.modificator = modificator;
+        }
+
+        public void click(Object node, Object parent){
+          this.modificator.modify(node, parent);
+        }
     }
 
     public SelectorMutableTreeNode(Object obj){
@@ -163,3 +191,4 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         return options;
     }
 }
+

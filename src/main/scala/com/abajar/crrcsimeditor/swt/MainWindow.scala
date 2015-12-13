@@ -179,7 +179,7 @@ class MainWindow(
   def treeNodeSelected: Option[Any] = {
     Option(tree).map { tree =>
       val items = tree.getSelection
-      if (items.length > 0) { Some(items(0).getData) }
+      if (items.length > 0) { items(0).getData }
       else { None }
     }
   }
@@ -188,7 +188,7 @@ class MainWindow(
     Option(tree).map { tree =>
       val items = tree.getSelection
       if (items.length > 0 && Option(items(0).getParentItem).isDefined) {
-        Some(items(0).getParentItem.getData)
+        items(0).getParentItem.getData
       } else { None }
     }
   }
