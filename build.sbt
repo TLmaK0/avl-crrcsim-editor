@@ -30,6 +30,8 @@ libraryDependencies += "org.eclipse.persistence" % "org.eclipse.persistence.moxy
 
 libraryDependencies += "org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" % "4.4"
 
+libraryDependencies += "junit" % "junit" % "4.12"
+
 headers := Map(
   "scala" -> (
     HeaderPattern.cStyleBlockComment,
