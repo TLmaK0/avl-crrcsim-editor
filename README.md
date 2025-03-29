@@ -19,12 +19,15 @@ Please, help me to improve it.
 Building from sources on Debian/Ubuntu
 --------------------------------------
 
-Building avl-crrcsim-editor requires scala 2.10.4 with sbt 0.13.7
+Building avl-crrcsim-editor requires scala with sbt
 
 To install these in debian or ubuntu, download and install the .deb from scala-sbt.org:
 
-    wget http://repo.scala-sbt.org/scalasbt/sbt-native-packages/org/scala-sbt/sbt/0.13.7/sbt.deb
-    sudo dpkg -i sbt.deb
+    echo "deb https://repo.scala-sbt.org/scalasbt/debian all main" | sudo tee /etc/apt/sources.list.d/sbt.list
+    echo "deb https://repo.scala-sbt.org/scalasbt/debian /" | sudo tee /etc/apt/sources.list.d/sbt_old.list
+    curl -sL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x2EE0EA64E40A89B84B2DF73499E82A75642AC823" | sudo tee /etc/apt/trusted.gpg.d/sbt.asc
+    sudo apt-get update
+    sudo apt-get install sbt
 
 Of course you will need the avl-crrcsim-editor sources too:
 

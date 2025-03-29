@@ -13,6 +13,7 @@ package com.abajar.crrcsimeditor.swt.dsl
 import org.eclipse.swt.custom._
 import org.eclipse.swt.layout._
 import org.eclipse.swt.widgets._
+import org.eclipse.swt.widgets._
 import org.eclipse.swt._
 import org.eclipse.swt.events._
 import java.io.File

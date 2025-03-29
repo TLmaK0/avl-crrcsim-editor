@@ -1,5 +1,3 @@
-import de.heikoseeberger.sbtheader.HeaderPattern
-
 import sbt.ProjectRef
 
 lazy val crrcSimEditor = project
@@ -26,19 +24,10 @@ scalacOptions ++= Seq("-language:postfixOps", "-language:reflectiveCalls")
 
 fork in run := true
 
-libraryDependencies += "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2"
-
-libraryDependencies += "org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" % "4.4"
-
-libraryDependencies += "junit" % "junit" % "4.12"
-
-headers := Map(
-  "scala" -> (
-    HeaderPattern.cStyleBlockComment,
-    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\z").next()
-  ),
-  "java" -> (
-    HeaderPattern.cStyleBlockComment,
-    new java.util.Scanner(new java.io.File("LICENSE_HEADER")).useDelimiter("\\z").next()
-  )
+libraryDependencies ++= Seq(
+  "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2",
+  //"org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" % "4.3",
+  "org.eclipse.swt" % "org.eclipse.swt.gtk.linux.x86_64" % "4.3" % "provided",
+  "junit" % "junit" % "4.12",
+  "javax.xml.bind" % "jaxb-api" % "2.3.1"
 )
