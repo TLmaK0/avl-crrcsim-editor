@@ -205,7 +205,7 @@ object CRRCSimEditor{
       window.showOpenDialog(
         this.configuration.getProperty("avl.path", "~/"),
         "AVL executable",
-        "exe") match {
+        "*") match {
           case Some(file) =>
             this.configuration.setProperty("avl.path", file.getAbsolutePath())
             try {
