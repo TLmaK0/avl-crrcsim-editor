@@ -102,6 +102,7 @@ object CRRCSimEditor{
       )
 
     def apply():Unit = {
+      window.disableAllButtons
       window.show
     }
 
@@ -270,6 +271,7 @@ object CRRCSimEditor{
 
     private def handleTreeEvent(data: Any): Unit = {
       val objClass = data.getClass
+      val parentClass = window.treeNodeSelectedParent.map(_.getClass.getName).getOrElse("No Parent")
       if (objClass.isAnnotationPresent(classOf[annotations.CRRCSimEditor])) {
         val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
@@ -284,8 +286,8 @@ object CRRCSimEditor{
     }
 
     private def getChilds(node: Any): scala.collection.immutable.List[(String, Any)] = node match {
-      case childs: ArrayList[Any] =>
-        childs.asScala.toList.map(child => (child.toString, child))
+      case childs: java.util.List[_] =>
+        childs.asScala.toList.map(child => (child.toString, child.asInstanceOf[Any]))
       case node =>
         node.getClass.getMethods.foldLeft(List[(String, Any)]())(
           (nodes, method)=>

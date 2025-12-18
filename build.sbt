@@ -24,6 +24,8 @@ scalacOptions ++= Seq("-language:postfixOps", "-language:reflectiveCalls")
 
 run / fork := true
 
+run / envVars := Map("SWT_GTK3" -> "0")
+
 val swtVersion = "4.3"
 val osName = System.getProperty("os.name").toLowerCase
 
