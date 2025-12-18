@@ -30,6 +30,10 @@ nohup sbt run &
 
 This will free up your terminal, and the application will continue running even if you close the terminal.
 
+### Commit Message Guidelines
+
+Commit messages should be concise, clear, and a maximum of two lines. The first line should be a brief summary, and the second line can optionally provide more context if needed.
+
 ### Recent UI Changes
 
 - The button to add a new section to a surface has been changed to a `+` button for a more intuitive user experience.
