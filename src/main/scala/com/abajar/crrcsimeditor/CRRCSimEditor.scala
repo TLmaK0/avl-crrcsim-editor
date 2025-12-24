@@ -43,8 +43,9 @@ import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 import javax.xml.bind.Marshaller
 
-import org.eclipse.swt.widgets.{Event, TreeItem, TableItem}
+import org.eclipse.swt.widgets.{Event, TreeItem, TableItem, Listener}
 import org.eclipse.swt.events._
+import org.eclipse.swt.SWT
 import scala.collection.JavaConverters._
 
 import swt.MainWindow
@@ -101,8 +102,29 @@ object CRRCSimEditor{
         handleClickProperties
       )
 
+    // Set up log handler to display logs in footer BEFORE logging anything
+    val logFooterHandler = new LogFooterHandler(window.display, window.footerLabel)
+    Logger.getLogger("").addHandler(logFooterHandler)
+
+    // Set up log window
+    val logWindow = new swt.LogWindow(window.display, logFooterHandler.logHistory)
+
+    // Add click listener to footer to open log window
+    window.footerLabel.addListener(SWT.MouseDown, new Listener {
+      override def handleEvent(e: Event): Unit = {
+        logWindow.open()
+      }
+    })
+
+    // Check and ensure AVL is available on startup (now logs will be captured)
+    logger.log(Level.INFO, "Application starting...")
+    logger.log(Level.INFO, "Checking AVL availability...")
+    AvlManager.ensureAvlAvailable(configuration)
+    logger.log(Level.INFO, "Application initialized successfully")
+
     def apply():Unit = {
       window.disableAllButtons
+      logger.log(Level.INFO, "Ready")
       window.show
     }
 
@@ -122,6 +144,7 @@ object CRRCSimEditor{
       case ExportAsAvl => exportAsAVL
       case ExportAsCRRCSim => exportAsCRRCsim
       case SetAvlExecutable => setAvlExecutable
+      case ClearAvlConfiguration => clearAvlConfiguration
     }
 
     def exportAsAVL(avlFile: Path): Unit = {
@@ -211,11 +234,27 @@ object CRRCSimEditor{
             this.configuration.setProperty("avl.path", file.getAbsolutePath())
             try {
                 this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
+                logger.log(Level.INFO, s"AVL executable set to: ${file.getAbsolutePath()}")
             } catch {
               case ex: Exception =>
                 logger.log(Level.FINE, "Unable to save configuation", ex)
             }
           case None =>
+      }
+    }
+
+    private def clearAvlConfiguration = {
+      this.configuration.remove("avl.path")
+      try {
+        this.configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
+        logger.log(Level.INFO, "AVL configuration cleared. Application will download AVL on next export.")
+
+        // Optionally trigger re-download immediately
+        logger.log(Level.INFO, "Re-checking AVL availability...")
+        AvlManager.ensureAvlAvailable(configuration)
+      } catch {
+        case ex: Exception =>
+          logger.log(Level.SEVERE, "Unable to clear AVL configuration", ex)
       }
     }
 

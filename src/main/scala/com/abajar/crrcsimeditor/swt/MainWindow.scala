@@ -29,7 +29,7 @@ import java.io.File;
 
 object MenuOption extends Enumeration {
   type MenuOption = Value
-  val SaveAs, Open, ExportAsAvl, ExportAsCRRCSim, SetAvlExecutable = Value
+  val SaveAs, Open, ExportAsAvl, ExportAsCRRCSim, SetAvlExecutable, ClearAvlConfiguration = Value
 }
 
 import MenuOption._
@@ -64,6 +64,7 @@ class MainWindow(
   var tree: Tree = _
   var properties: Table = _
   var help: StyledText = _
+  var footerLabel: Label = _
 
   private def notifyButtonClick(buttonType: ENABLE_BUTTONS) =
         (se: SelectionEvent) => buttonClickHandler(buttonType)
@@ -153,6 +154,7 @@ class MainWindow(
 
         menu.addSubmenu("Edit")
           .addItem("Set AVL executable", notifyMenuClick(MenuOption.SetAvlExecutable))
+          .addItem("Clear AVL configuration", notifyMenuClick(MenuOption.ClearAvlConfiguration))
      })
 
     val toolbar1 = shell.addToolBar(SWT.BORDER)
@@ -191,6 +193,11 @@ class MainWindow(
 
     help = shell.addStyledText(SWT.READ_ONLY)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
+
+    footerLabel = new Label(shell, SWT.BORDER)
+    footerLabel.setText("Ready")
+    footerLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 3, 1))
+    footerLabel.setCursor(display.getSystemCursor(SWT.CURSOR_HAND))
 
     shell pack
   }})
