@@ -10,6 +10,7 @@ version := "0.7.0"
 scalaVersion := "2.10.4"
 
 resolvers += "swt-repo" at "https://swt-repo.googlecode.com/svn/repo/"
+resolvers += "jogamp-remote" at "https://jogamp.org/deployment/maven"
 
 Compile / run / mainClass := Some("com.abajar.crrcsimeditor.Main")
 
@@ -43,5 +44,7 @@ val swtDependency: Option[sbt.ModuleID] = {
 libraryDependencies ++= Seq(
   "org.eclipse.persistence" % "org.eclipse.persistence.moxy" % "2.5.2",
   "junit" % "junit" % "4.12",
-  "javax.xml.bind" % "jaxb-api" % "2.3.1"
+  "javax.xml.bind" % "jaxb-api" % "2.3.1",
+  "org.jogamp.gluegen" % "gluegen-rt-main" % "2.5.0",
+  "org.jogamp.jogl" % "jogl-all-main" % "2.5.0"
 ) ++ swtDependency.toSeq

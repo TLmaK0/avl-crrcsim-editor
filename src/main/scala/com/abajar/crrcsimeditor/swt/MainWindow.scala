@@ -50,6 +50,14 @@ class MainWindow(
           button: ENABLE_BUTTONS): ToolBar = {
       allButtons += ButtonData(text, button, callback(button), toolBar)
       toolbars += toolBar
+      // Create button initially
+      val item = new ToolItem(toolBar, SWT.PUSH)
+      item.setText(text)
+      item.addSelectionListener(new SelectionAdapter {
+        override def widgetSelected(se: SelectionEvent) = {
+          callback(button)(se)
+        }
+      })
       toolBar
     }
   }
@@ -65,6 +73,7 @@ class MainWindow(
   var properties: Table = _
   var help: StyledText = _
   var footerLabel: Label = _
+  var viewer3D: Viewer3D = _
 
   private def notifyButtonClick(buttonType: ENABLE_BUTTONS) =
         (se: SelectionEvent) => buttonClickHandler(buttonType)
@@ -83,8 +92,6 @@ class MainWindow(
       for (item <- tb.getItems) {
         item.dispose()
       }
-      tb.update()
-      tb.layout()
     }
   }
 
@@ -102,11 +109,6 @@ class MainWindow(
         })
       }
     }
-    for (tb <- toolbars) {
-      tb.update()
-      tb.layout()
-    }
-    shell.layout(true, true)
   }
 
   def showOpenDialog(
@@ -179,20 +181,44 @@ class MainWindow(
 
 
 
+    // Column 1: Tree
     tree = shell.addTree(SWT.VIRTUAL | SWT.BORDER, notifyTreeClick)
       .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
       .setSourceHandler(treeUpdateHandler)
 
     tree.setItemCount(1)
 
-    properties = shell.addTable(SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.BORDER, notifyTableClick)
-      .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
-      .addColumn("Property")
+    // Column 2: Properties + Help stacked vertically
+    val propsHelpComposite = new Composite(shell, SWT.NONE)
+    val propsHelpLayout = new GridLayout(1, false)
+    propsHelpLayout.marginWidth = 0
+    propsHelpLayout.marginHeight = 0
+    propsHelpComposite.setLayout(propsHelpLayout)
+    propsHelpComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
+
+    properties = new Table(propsHelpComposite, SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.BORDER)
+    properties.setLinesVisible(true)
+    properties.setHeaderVisible(true)
+    val propsGridData = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL)
+    propsGridData.heightHint = 300
+    properties.setLayoutData(propsGridData)
+    properties.addColumn("Property")
       .addColumn("Value", true)
       .setSourceHandler(tableUpdateHandler)
+    properties.addSelectionListener(new SelectionAdapter {
+      override def widgetSelected(e: SelectionEvent) = notifyTableClick(e)
+    })
 
-    help = shell.addStyledText(SWT.READ_ONLY)
-      .layoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL))
+    help = new StyledText(propsHelpComposite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP)
+    val helpGridData = new GridData(GridData.FILL_HORIZONTAL)
+    helpGridData.heightHint = 80
+    help.setLayoutData(helpGridData)
+
+    // Column 3: 3D Viewer
+    viewer3D = new Viewer3D(shell, SWT.BORDER)
+    val viewerGridData = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL)
+    viewerGridData.widthHint = 400
+    viewer3D.setLayoutData(viewerGridData)
 
     footerLabel = new Label(shell, SWT.BORDER)
     footerLabel.setText("Ready")
@@ -219,8 +245,5 @@ class MainWindow(
     }
   }
 
-  def show: Unit = {
-    shell.setMaximized(true)
-    shell.start
-  }
+  def show: Unit = shell.start
 }

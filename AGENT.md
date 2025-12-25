@@ -49,6 +49,7 @@ Commit messages should be concise, clear, and a maximum of two lines. The first 
 The project uses a local `PLAN.md` file (not tracked in git) to maintain context across sessions for the current feature being developed.
 
 **Usage:**
+- Plans must be written in English
 - This file should be rewritten/reset when starting a new feature
 - It contains the feature description, current status, next steps, and relevant context
 - Helps the agent continue work after context cleanup

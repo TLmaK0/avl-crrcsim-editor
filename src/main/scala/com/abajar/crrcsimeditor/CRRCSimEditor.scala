@@ -51,10 +51,12 @@ import scala.collection.JavaConverters._
 import swt.MainWindow
 import swt.dsl.TableFieldWritable
 import swt.dsl.TableFieldReadOnly
+import swt.dsl.TableFieldFile
 import com.abajar.crrcsimeditor.view.annotations
 import java.lang.reflect.Field
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorNode
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorFileField
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorReadOnly
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
@@ -268,7 +270,7 @@ object CRRCSimEditor{
 
     private def extractProperties(data: Any) = {
       val objClass = data.getClass
-      (for{
+      val regularFields = for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorField]))
       } yield new TableFieldWritable(
@@ -276,8 +278,22 @@ object CRRCSimEditor{
         field,
         field.getAnnotation(classOf[CRRCSimEditorField]).text(),
         field.getAnnotation(classOf[CRRCSimEditorField]).help()
-      )) ++
-      (for{
+      )
+      val fileFields = for{
+        field <- objClass.getDeclaredFields
+        if (field.isAnnotationPresent(classOf[annotations.CRRCSimEditorFileField]))
+      } yield {
+        logger.info(s"Found file field: ${field.getName}")
+        new TableFieldFile(
+          data,
+          field,
+          field.getAnnotation(classOf[CRRCSimEditorFileField]).text(),
+          field.getAnnotation(classOf[CRRCSimEditorFileField]).help(),
+          field.getAnnotation(classOf[CRRCSimEditorFileField]).extensions(),
+          field.getAnnotation(classOf[CRRCSimEditorFileField]).extensionDescription()
+        )
+      }
+      val readOnlyFields = for{
         method <- objClass.getMethods
         if (method.isAnnotationPresent(classOf[annotations.CRRCSimEditorReadOnly]))
       } yield new TableFieldReadOnly(
@@ -285,7 +301,8 @@ object CRRCSimEditor{
         method,
         method.getAnnotation(classOf[CRRCSimEditorReadOnly]).text(),
         method.getAnnotation(classOf[CRRCSimEditorReadOnly]).help()
-      ))
+      )
+      regularFields ++ fileFields ++ readOnlyFields
     }
 
     private def loadPropertiesForTreeItem(data: Any) = {
@@ -318,6 +335,26 @@ object CRRCSimEditor{
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
       } else {
         window.disableAllButtons
+      }
+
+      // Load 3D model if Graphics node is selected
+      data match {
+        case graphics: com.abajar.crrcsimeditor.crrcsim.Graphics =>
+          val modelPath = graphics.getModel
+          logger.info(s"Graphics selected, model path: $modelPath")
+          if (modelPath != null && modelPath.nonEmpty) {
+            val file = new File(modelPath)
+            logger.info(s"File exists: ${file.exists}, absolute: ${file.getAbsolutePath}")
+            if (file.exists) {
+              val loaded = window.viewer3D.loadModel(modelPath)
+              logger.info(s"Model loaded: $loaded")
+            } else {
+              window.viewer3D.clearModel()
+            }
+          } else {
+            window.viewer3D.clearModel()
+          }
+        case _ => // Keep current model displayed
       }
     }
 

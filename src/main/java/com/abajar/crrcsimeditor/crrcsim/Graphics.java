@@ -11,6 +11,7 @@
 package com.abajar.crrcsimeditor.crrcsim;
 
 import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorField;
+import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorFileField;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.eclipse.persistence.oxm.annotations.XmlPath;
@@ -22,8 +23,10 @@ import org.eclipse.persistence.oxm.annotations.XmlPath;
 public class Graphics implements Serializable {
     private String version="1";
 
-    @CRRCSimEditorField(text="model",
-        help="name of the graphics file"
+    @CRRCSimEditorFileField(text="model",
+        help="name of the graphics file",
+        extensions={"ac"},
+        extensionDescription="AC3D files"
     )
     private String model="Crossfire.ac";
 

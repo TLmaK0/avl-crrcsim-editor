@@ -60,3 +60,30 @@ class TableFieldReadOnly(protected val instance: Any, protected val method: Meth
   //TODO: Raise exception
   final def value_=(value: String): Unit = { }
 }
+
+class TableFieldFile(
+    protected val instance: Any,
+    protected val field: Field,
+    val textArg: String,
+    helpArg: String,
+    val extensions: Array[String],
+    val extensionDescription: String
+) extends TableField {
+  def text(): String = textArg
+  def help(): String = helpArg
+
+  def value: String = {
+    field.setAccessible(true)
+    Option(field.get(instance)) match {
+      case Some(result) => result.toString
+      case None => ""
+    }
+  }
+
+  def value_=(value: String): Unit = {
+    field.setAccessible(true)
+    field.set(instance, value)
+  }
+
+  def isFileField: Boolean = true
+}

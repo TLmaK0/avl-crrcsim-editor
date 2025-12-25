@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets._
 import org.eclipse.swt._
 import org.eclipse.swt.events._
 import java.io.File
+import org.eclipse.swt.widgets.{Button, Composite}
 
 object Widget{
   implicit class SetLayoutDataWrapper[T <: Control](val subject:T) {
@@ -79,27 +80,40 @@ object Widget{
           Option(editor.getEditor).map(_.dispose)
 
           val item = e.item.asInstanceOf[TableItem]
+          val tableField = item.getData.asInstanceOf[TableField]
+          println(s"DEBUG: tableField class = ${tableField.getClass.getName}")
 
-          val newEditor = new Text(table, SWT.NONE)
-          newEditor.setText(item.getText(columnNumber))
-          newEditor.addModifyListener(new ModifyListener{
-            override def modifyText(me: ModifyEvent) = {
-              val text = editor.getEditor.asInstanceOf[Text]
-              editor.getItem.setText(columnNumber, text.getText)
-            }
-          })
-          newEditor.addListener(SWT.FocusOut, new Listener{
-            override def handleEvent(e: Event) = {
-              val text = editor.getEditor.asInstanceOf[Text]
-              val tableField = item.getData.asInstanceOf[TableField]
-              tableField.value = text.getText
-              editor.getEditor.dispose()
-            }
-          })
-          newEditor.selectAll
-          newEditor.setFocus
+          tableField match {
+            case fileField: TableFieldFile =>
+              val dialog = new FileDialog(table.getShell, SWT.OPEN)
+              dialog.setFilterExtensions(fileField.extensions.map(ext => "*." + ext))
+              dialog.setFilterNames(Array(fileField.extensionDescription))
+              Option(dialog.open).foreach { path =>
+                item.setText(columnNumber, path)
+                fileField.value = path
+              }
 
-          editor.setEditor(newEditor, item, columnNumber)
+            case _ =>
+              val newEditor = new Text(table, SWT.NONE)
+              newEditor.setText(item.getText(columnNumber))
+              newEditor.addModifyListener(new ModifyListener{
+                override def modifyText(me: ModifyEvent) = {
+                  val text = editor.getEditor.asInstanceOf[Text]
+                  editor.getItem.setText(columnNumber, text.getText)
+                }
+              })
+              newEditor.addListener(SWT.FocusOut, new Listener{
+                override def handleEvent(e: Event) = {
+                  val text = editor.getEditor.asInstanceOf[Text]
+                  tableField.value = text.getText
+                  editor.getEditor.dispose()
+                }
+              })
+              newEditor.selectAll
+              newEditor.setFocus
+
+              editor.setEditor(newEditor, item, columnNumber)
+          }
         }
       })
       table
