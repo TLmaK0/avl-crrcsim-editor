@@ -311,13 +311,14 @@ object CRRCSimEditor{
     private def handleTreeEvent(data: Any): Unit = {
       val objClass = data.getClass
       val parentClass = window.treeNodeSelectedParent.map(_.getClass.getName).getOrElse("No Parent")
+      // Load properties BEFORE button layout to ensure itemCount is correct
+      loadPropertiesForTreeItem(data)
       if (objClass.isAnnotationPresent(classOf[annotations.CRRCSimEditor])) {
         val crrcsimAnnotations = objClass.getAnnotation(classOf[annotations.CRRCSimEditor]).asInstanceOf[annotations.CRRCSimEditor]
         window.buttonsEnableOnly(crrcsimAnnotations.buttons.toList)
       } else {
         window.disableAllButtons
       }
-      loadPropertiesForTreeItem(data)
     }
 
     private def handleClickProperties(data: Any): Unit = data match {
