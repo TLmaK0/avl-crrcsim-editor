@@ -1,0 +1,108 @@
+!!com.abajar.crrcsimeditor.crrcsim.CRRCSim
+avl:
+  alpha: 0.0
+  geometry:
+    Bref: 100.0
+    CDp: 0.02
+    Cref: 7.5
+    Mach: 0.0
+    Sref: 750.0
+    Xref: 0.0
+    Yref: 0.0
+    Zref: 0.0
+    Zsym: 0.0
+    body: [
+      ]
+    iYsym: 0
+    iZsym: 0
+    masses: [
+      ]
+    name: Geometry
+    surfaces:
+    - Cspace: 1.0
+      Nchord: 8
+      Nspan: 8
+      Sspace: 1.0
+      Ydupl: 0.0
+      dAinc: 0.0
+      dX: 0.0
+      dY: 0.0
+      dZ: 0.0
+      masses: [
+        ]
+      name: new surface
+      sections:
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 10.0
+        NACA: '4412'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 15.0
+        Yle: 0.0
+        Zle: 0.0
+        controls: [
+          ]
+        masses: [
+          ]
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 5.0
+        NACA: '4412'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 15.0
+        Yle: 50.0
+        Zle: 0.0
+        controls: [
+          ]
+        masses: [
+          ]
+  lengthUnit: cm
+  massUnit: g
+  reynoldsNumber: 1.225
+  timeUnit: s
+  velocity: 30.0
+changelog1: [
+  ]
+config:
+  aero: null
+  descr_long: null
+  descr_short: new config
+  mass_inertia:
+    I_xx: 0.0
+    I_xz: 0.0
+    I_yy: 0.0
+    I_zz: 0.0
+    Mass: 0.0
+    units: '1'
+    version: '1'
+  power:
+    bateries: [
+      ]
+  sound:
+    sample:
+      dist_max: 0
+      filename: sound.wav
+      maxvolume: 0.0
+      pitchfactor: 0.0
+      type: '0'
+      v_max: 0
+      v_min: 0
+description:
+  en: null
+graphics:
+  descr_long: Default description
+  descr_short: default
+  model: Crossfire.ac
+  version: '1'
+internalVersion: 21
+version: '2'
+wheels: [
+  ]
+wheelsUnits: '1'
+wheelsVersion: '1'
