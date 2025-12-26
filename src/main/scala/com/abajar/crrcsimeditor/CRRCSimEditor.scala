@@ -49,6 +49,7 @@ import org.eclipse.swt.SWT
 import scala.collection.JavaConverters._
 
 import swt.MainWindow
+import swt.AvlResultsWindow
 import swt.dsl.TableFieldWritable
 import swt.dsl.TableFieldReadOnly
 import swt.dsl.TableFieldFile
@@ -61,6 +62,7 @@ import com.abajar.crrcsimeditor.view.annotations.CRRCSimEditorReadOnly
 import com.abajar.crrcsimeditor.view.avl.SelectorMutableTreeNode.ENABLE_BUTTONS
 import com.abajar.crrcsimeditor.swt.MenuOption._
 import com.abajar.crrcsimeditor.swt.dsl.TableField
+import com.abajar.crrcsimeditor.avl.connectivity.AvlRunner
 
 
 object CRRCSimEditor{
@@ -76,6 +78,7 @@ object CRRCSimEditor{
     if (!dir.exists) dir.mkdir
 
     var crrcsim = new CRRCSimFactory().create()
+    var currentFile: Option[File] = None
 
     try {
       configuration.loadFromXML(new FileInputStream(CONFIGURATION_PATH))
@@ -111,6 +114,9 @@ object CRRCSimEditor{
     // Set up log window
     val logWindow = new swt.LogWindow(window.display, logFooterHandler.logHistory)
 
+    // Set up AVL results window
+    val avlResultsWindow = new AvlResultsWindow(window.display)
+
     // Add click listener to footer to open log window
     window.footerLabel.addListener(SWT.MouseDown, new Listener {
       override def handleEvent(e: Event): Unit = {
@@ -126,8 +132,25 @@ object CRRCSimEditor{
 
     def apply():Unit = {
       window.disableAllButtons
+      loadLastFile()
       logger.log(Level.INFO, "Ready")
       window.show
+    }
+
+    private def loadLastFile(): Unit = {
+      Option(configuration.getProperty("crrcsim.lastFile")).foreach { lastFilePath =>
+        val file = new File(lastFilePath)
+        if (file.exists() && file.getName.endsWith(".avle")) {
+          try {
+            logger.log(Level.INFO, s"Loading last file: ${file.getAbsolutePath}")
+            currentFile = Some(file)
+            open(file)
+          } catch {
+            case ex: Exception =>
+              logger.log(Level.WARNING, s"Failed to load last file: ${ex.getMessage}")
+          }
+        }
+      }
     }
 
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
@@ -141,10 +164,12 @@ object CRRCSimEditor{
     }
 
     private def handleClickMenu(menuOption: MenuOption): Unit = menuOption match {
+      case Save => save
       case SaveAs => saveFile
       case Open => openFile
       case ExportAsAvl => exportAsAVL
       case ExportAsCRRCSim => exportAsCRRCsim
+      case RunAvl => runAvl
       case SetAvlExecutable => setAvlExecutable
       case ClearAvlConfiguration => clearAvlConfiguration
     }
@@ -166,22 +191,49 @@ object CRRCSimEditor{
     private def openFile = {
       window.showOpenDialog(
         configuration.getProperty("crrcsim.save", "~/"),
-        "CRRCsim editor file (*.crr)",
-        "crr"
+        Array("AVL Editor files (*.avle)", "CRRCsim editor file (*.crr)"),
+        Array("avle", "crr")
       ) match {
         case Some(file) =>
-          configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+          configuration.setProperty("crrcsim.save", file.getAbsolutePath())
+          currentFile = Some(file)
           open(file)
+          if (file.getName.endsWith(".avle")) {
+            setLastFile(file)
+          }
         case None =>
+      }
+    }
+
+    private def save = {
+      currentFile match {
+        case Some(file) =>
+          saveAs(file)
+          setLastFile(file)
+          logger.log(Level.INFO, s"Saved: ${file.getAbsolutePath}")
+        case None =>
+          saveFile
       }
     }
 
     private def saveFile = {
       val path = this.configuration.getProperty("crrcsim.save", "~/")
-      showSaveDialog(path, "CRRCsim editor file (*.crr)", "crr").foreach(file => {
-        this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
+      showSaveDialog(path, "AVL Editor file (*.avle)", "avle").foreach(file => {
+        this.configuration.setProperty("crrcsim.save", file.getAbsolutePath())
+        currentFile = Some(file)
         this.saveAs(file)
+        setLastFile(file)
       })
+    }
+
+    private def setLastFile(file: File): Unit = {
+      configuration.setProperty("crrcsim.lastFile", file.getAbsolutePath())
+      try {
+        configuration.storeToXML(new FileOutputStream(CONFIGURATION_PATH), "Configuration file")
+      } catch {
+        case ex: Exception =>
+          logger.log(Level.FINE, "Unable to save configuration", ex)
+      }
     }
 
     def exportAsAVL: Unit = {
@@ -198,6 +250,57 @@ object CRRCSimEditor{
         this.configuration.setProperty("crrcsim.save",file.getAbsolutePath())
         if (existsAvlExecutable) exportAsCRRCsim(file)
       })
+    }
+
+    def runAvl: Unit = {
+      if (!existsAvlExecutable) {
+        logger.log(Level.WARNING, "AVL executable not configured")
+        return
+      }
+
+      val avl = this.crrcsim.getAvl()
+      val geometry = avl.getGeometry()
+      val errors = geometry.validate()
+
+      if (!errors.isEmpty) {
+        import scala.collection.JavaConverters._
+        for (error <- errors.asScala) {
+          logger.log(Level.WARNING, s"Validation error: $error")
+        }
+        logger.log(Level.SEVERE, "Model validation failed. Please fix the errors above before running AVL.")
+        return
+      }
+
+      logger.log(Level.INFO, "Running AVL analysis...")
+      val avlPath = this.configuration.getProperty("avl.path")
+      val originPath = this.crrcsim.getOriginPath()
+
+      new Thread(new Runnable {
+        def run(): Unit = {
+          try {
+            logger.log(Level.INFO, s"Starting AvlRunner with path: $avlPath")
+            val runner = new AvlRunner(avlPath, avl, originPath)
+            logger.log(Level.INFO, "AvlRunner finished, getting calculation...")
+            val calculation = runner.getCalculation()
+            logger.log(Level.INFO, s"Got calculation: $calculation")
+
+            window.display.asyncExec(new Runnable {
+              def run(): Unit = {
+                logger.log(Level.INFO, "AVL analysis completed successfully")
+                avlResultsWindow.open(calculation)
+              }
+            })
+          } catch {
+            case ex: Throwable =>
+              ex.printStackTrace()
+              window.display.asyncExec(new Runnable {
+                def run(): Unit = {
+                  logger.log(Level.SEVERE, s"Error running AVL: ${ex.getMessage}", ex)
+                }
+              })
+          }
+        }
+      }).start()
     }
 
     private def existsAvlExecutable: Boolean = {

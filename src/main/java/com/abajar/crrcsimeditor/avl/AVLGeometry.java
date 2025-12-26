@@ -428,4 +428,109 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
 
         return masses;
     }
+
+    /**
+     * Validates the geometry for AVL analysis.
+     * If Sref, Cref, Bref are 0, attempts to calculate them automatically.
+     * @return list of validation errors, empty if valid
+     */
+    public ArrayList<String> validate() {
+        ArrayList<String> errors = new ArrayList<String>();
+
+        // Check surfaces first
+        if (surfaces.isEmpty()) {
+            errors.add("At least one surface is required");
+            return errors;
+        }
+
+        for (Surface surface : surfaces) {
+            if (surface.getSections().size() < 2) {
+                errors.add("Surface '" + surface.getName() + "' needs at least 2 sections");
+            }
+        }
+
+        // If we have surface errors, don't try to calculate
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+
+        // Auto-calculate if values are 0
+        if (Sref <= 0 || Cref <= 0 || Bref <= 0) {
+            logger.log(Level.INFO, "Reference values are 0, calculating automatically...");
+            calculateReferenceValues();
+        }
+
+        // Validate after calculation
+        if (Sref <= 0) {
+            errors.add("Sref must be > 0 (could not calculate from surfaces)");
+        }
+        if (Cref <= 0) {
+            errors.add("Cref must be > 0 (could not calculate from surfaces)");
+        }
+        if (Bref <= 0) {
+            errors.add("Bref must be > 0 (could not calculate from surfaces)");
+        }
+
+        return errors;
+    }
+
+    /**
+     * Checks if the geometry is valid for AVL analysis.
+     * @return true if valid
+     */
+    public boolean isValid() {
+        return validate().isEmpty();
+    }
+
+    /**
+     * Calculates reference values (Sref, Cref, Bref) from surface geometry.
+     * Uses trapezoidal integration for area calculation.
+     * Assumes YDUPLICATE symmetry (multiplies by 2).
+     */
+    public void calculateReferenceValues() {
+        float totalArea = 0;
+        float maxSpan = 0;
+
+        for (Surface surface : surfaces) {
+            ArrayList<Section> sections = surface.getSections();
+            if (sections.size() < 2) continue;
+
+            // Sort sections by Yle for proper integration
+            ArrayList<Section> sortedSections = new ArrayList<Section>(sections);
+            java.util.Collections.sort(sortedSections, new java.util.Comparator<Section>() {
+                public int compare(Section s1, Section s2) {
+                    return Float.compare(s1.getYle(), s2.getYle());
+                }
+            });
+
+            // Calculate area using trapezoidal rule
+            for (int i = 0; i < sortedSections.size() - 1; i++) {
+                Section s1 = sortedSections.get(i);
+                Section s2 = sortedSections.get(i + 1);
+                float dy = Math.abs(s2.getYle() - s1.getYle());
+                float avgChord = (s1.getChord() + s2.getChord()) / 2;
+                totalArea += dy * avgChord;
+            }
+
+            // Track max span
+            for (Section section : sections) {
+                float absY = Math.abs(section.getYle());
+                if (absY > maxSpan) {
+                    maxSpan = absY;
+                }
+            }
+        }
+
+        // Apply YDUPLICATE symmetry (double the values)
+        this.Bref = maxSpan * 2;
+        this.Sref = totalArea * 2;
+
+        // Mean chord = Area / Span
+        if (this.Bref > 0) {
+            this.Cref = this.Sref / this.Bref;
+        }
+
+        logger.log(Level.INFO, "Calculated reference values: Sref={0}, Cref={1}, Bref={2}",
+                   new Object[]{this.Sref, this.Cref, this.Bref});
+    }
 }

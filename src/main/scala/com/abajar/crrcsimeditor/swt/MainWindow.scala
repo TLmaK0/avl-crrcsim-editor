@@ -29,7 +29,7 @@ import java.io.File;
 
 object MenuOption extends Enumeration {
   type MenuOption = Value
-  val SaveAs, Open, ExportAsAvl, ExportAsCRRCSim, SetAvlExecutable, ClearAvlConfiguration = Value
+  val Save, SaveAs, Open, ExportAsAvl, ExportAsCRRCSim, RunAvl, SetAvlExecutable, ClearAvlConfiguration = Value
 }
 
 import MenuOption._
@@ -146,6 +146,7 @@ class MainWindow(
 
     shell.addMenu(menu => {
         menu.addSubmenu("File")
+          .addItem("Save", notifyMenuClick(MenuOption.Save))
           .addItem("Save as...", notifyMenuClick(MenuOption.SaveAs))
           .addItem("Open...", notifyMenuClick(MenuOption.Open))
           .addItem("Export As Avl", notifyMenuClick(MenuOption.ExportAsAvl))
@@ -153,6 +154,7 @@ class MainWindow(
                 "Export As CRRCSim",
                 notifyMenuClick(MenuOption.ExportAsCRRCSim)
           )
+          .addItem("Run AVL", notifyMenuClick(MenuOption.RunAvl))
 
         menu.addSubmenu("Edit")
           .addItem("Set AVL executable", notifyMenuClick(MenuOption.SetAvlExecutable))

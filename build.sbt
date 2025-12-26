@@ -46,5 +46,6 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.12",
   "javax.xml.bind" % "jaxb-api" % "2.3.1",
   "org.jogamp.gluegen" % "gluegen-rt-main" % "2.5.0",
-  "org.jogamp.jogl" % "jogl-all-main" % "2.5.0"
+  "org.jogamp.jogl" % "jogl-all-main" % "2.5.0",
+  "org.yaml" % "snakeyaml" % "2.0"
 ) ++ swtDependency.toSeq

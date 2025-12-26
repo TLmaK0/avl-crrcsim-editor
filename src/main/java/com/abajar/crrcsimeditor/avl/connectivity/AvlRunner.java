@@ -59,8 +59,10 @@ public class AvlRunner {
         this.avlFileBase = this.executionPath.toString() + "/crrcsim_tmp";
         this.avlFileName = Paths.get(this.avlFileBase + ".avl");
 
+        logger.log(Level.INFO, "Writing AVL file to: " + this.avlFileName);
         AVLS.avlToFile(avl, avlFileName, originPath);
 
+        logger.log(Level.INFO, "Starting AVL process: " + avlPath);
         ProcessBuilder pb = new ProcessBuilder(avlPath, this.avlFileName.toString());
         pb.directory(executionPath.toFile().getAbsoluteFile());
 
@@ -70,10 +72,24 @@ public class AvlRunner {
         stdin = process.getOutputStream ();
         stdout = process.getInputStream ();
 
+        // Start a thread to capture AVL output in real-time
+        Thread outputReader = new Thread(() -> {
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(stdout));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    logger.log(Level.INFO, "[AVL] " + line);
+                }
+            } catch (IOException e) {
+                logger.log(Level.WARNING, "Error reading AVL output: " + e.getMessage());
+            }
+        });
+        outputReader.setDaemon(true);
+        outputReader.start();
+
         this.run(avl.getElevatorPosition(), avl.getRudderPosition(), avl.getAileronPosition());
 
         stdin.close();
-        stdout.close();
         //this.removeDirectory(this.executionPath);
     }
 
@@ -94,7 +110,7 @@ public class AvlRunner {
         });
     }
 
-    private void run(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException{
+    private void run(int elevatorPosition, int rudderPosition, int aileronPosition) throws IOException, InterruptedException, Exception{
         String resultFile = this.avlFileName.toString().replace(".avl", ".st");
         UnitConversor uc = new UnitConversor();
 
@@ -119,9 +135,17 @@ public class AvlRunner {
         sendCommand(resultFile + "\n");
         sendCommand("c1\n\n");
         sendCommand("\nq\n");
-        flush();
-        
-        process.waitFor();
+        stdin.flush();
+
+        // Wait for AVL process to finish
+        boolean finished = process.waitFor(30, java.util.concurrent.TimeUnit.SECONDS);
+        if (!finished) {
+            logger.log(Level.WARNING, "AVL process timed out after 30 seconds, destroying...");
+            process.destroyForcibly();
+            throw new Exception("AVL process timed out");
+        }
+
+        logger.log(Level.INFO, "AVL process finished with exit code: " + process.exitValue());
 
         InputStream fis = new FileInputStream(new File(resultFile));
         Scanner scanner = new Scanner(fis);
@@ -195,16 +219,7 @@ public class AvlRunner {
         logger.log(Level.FINE, "Sending command: {0}", command);
     }
 
-    private void flush() throws IOException{
-        String line;
-         BufferedReader brCleanUp =  new BufferedReader (new InputStreamReader (stdout));
-            while ((line = brCleanUp.readLine ()) != null) {
-                logger.log(Level.FINE, "[AVL out]{0}", line);
-            }
-
-        brCleanUp.close();
-    }
-
+    
     private Float readFloat(String pattern, Scanner scanner){
         scanner.findWithinHorizon(pattern, 0);
         String value = scanner.next();

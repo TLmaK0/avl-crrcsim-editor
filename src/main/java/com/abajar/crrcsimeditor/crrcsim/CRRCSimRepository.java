@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,11 +28,15 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.introspector.BeanAccess;
 
 /**
  *
@@ -41,59 +46,77 @@ public class CRRCSimRepository {
     static final Logger logger = Logger.getLogger(CRRCSimRepository.class.getName());
 
     public CRRCSim restoreFromFile(File file) throws FileNotFoundException{
-        FileInputStream data = new FileInputStream(file);
-
         CRRCSim crrcsim = null;
-        Unmarshaller u;
-        try {
-            JAXBContext context;
-            int version = this.getVersion(data);
 
-            logger.log(Level.INFO, "Loading file version {0}", version);
-            switch(version){
-                case 10:
-                    context = JAXBContext.newInstance(AVLGeometry.class);
-                    u = context.createUnmarshaller();
-                    AVL avl = new AVL();
-                    avl.setGeometry((AVLGeometry)u.unmarshal(data));
-                    crrcsim = new CRRCSimFactory().create(avl);
-                    break;
-                case 13:
-                    context = JAXBContext.newInstance(CRRCSim.class);
-                    u = context.createUnmarshaller();
-                    crrcsim = (CRRCSim)u.unmarshal(data);
-                    break;
-                default:
-                    ObjectInput input = new ObjectInputStream (data);
-                    crrcsim = (CRRCSim)input.readObject();
-                    break;
+        try {
+            // Check if file is YAML
+            String content = new String(Files.readAllBytes(file.toPath()));
+            if (content.startsWith("!!") || content.contains("\n!!") ||
+                (content.contains(":") && !content.contains("<?xml"))) {
+                // Load as YAML
+                logger.log(Level.INFO, "Loading YAML file");
+                Yaml yaml = new Yaml();
+                yaml.setBeanAccess(BeanAccess.FIELD);
+                FileInputStream fis = new FileInputStream(file);
+                crrcsim = yaml.loadAs(fis, CRRCSim.class);
+                fis.close();
+            } else {
+                // Legacy formats (XML or binary)
+                FileInputStream data = new FileInputStream(file);
+                JAXBContext context;
+                Unmarshaller u;
+                int version = this.getVersion(data);
+
+                logger.log(Level.INFO, "Loading file version {0}", version);
+                switch(version){
+                    case 10:
+                        context = JAXBContext.newInstance(AVLGeometry.class);
+                        u = context.createUnmarshaller();
+                        AVL avl = new AVL();
+                        avl.setGeometry((AVLGeometry)u.unmarshal(data));
+                        crrcsim = new CRRCSimFactory().create(avl);
+                        break;
+                    case 13:
+                        context = JAXBContext.newInstance(CRRCSim.class);
+                        u = context.createUnmarshaller();
+                        crrcsim = (CRRCSim)u.unmarshal(data);
+                        break;
+                    default:
+                        ObjectInput input = new ObjectInputStream(data);
+                        crrcsim = (CRRCSim)input.readObject();
+                        break;
+                }
+                data.close();
             }
+
             fixCrrcsimDefaultsNewVersions(crrcsim);
             crrcsim.setOriginPath(file.getParentFile().toPath());
         } catch (Exception ex) {
-ex.printStackTrace();
+            ex.printStackTrace();
             logger.log(Level.SEVERE, null, ex);
         }
         return crrcsim;
     }
 
     public void storeToFile(File file, CRRCSim crrcsim){
-        OutputStream fileStream = null;
         try {
-            fileStream = new FileOutputStream(file);
-            ObjectOutput output = new ObjectOutputStream(fileStream);
-            output.writeObject(crrcsim);
-            output.close();
+            DumperOptions options = new DumperOptions();
+            options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+            options.setPrettyFlow(true);
+            options.setIndent(2);
+            options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
+
+            Yaml yaml = new Yaml(options);
+            yaml.setBeanAccess(BeanAccess.FIELD);
+
+            FileWriter writer = new FileWriter(file);
+            yaml.dump(crrcsim, writer);
+            writer.close();
+
+            logger.log(Level.INFO, "Saved to YAML: {0}", file.getAbsolutePath());
         } catch (IOException ex) {
-ex.printStackTrace();
+            ex.printStackTrace();
             Logger.getLogger(CRRCSimRepository.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                fileStream.close();
-            } catch (IOException ex) {
-ex.printStackTrace();
-                Logger.getLogger(CRRCSimRepository.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
 
