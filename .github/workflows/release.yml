@@ -51,6 +51,8 @@ jobs:
           cd target/universal
           unzip *.zip -d temp
           rm -f temp/*/bin/*.bat
+          chmod +x temp/*/bin/*
+          chmod +x temp/*/*.desktop 2>/dev/null || true
           rm -f *.zip
           cd temp && zip -r ../package.zip * && cd ..
           rm -rf temp

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=AVL Editor
+Comment=Editor for CRRCSim aircraft with AVL aerodynamic analysis
+Exec=sh -c "cd $(dirname %k)/bin && ./avl-crrcsimeditor"
+Icon=avl-editor
+Terminal=false
+Categories=Education;Science;Engineering;
+StartupNotify=true
