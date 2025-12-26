@@ -44,10 +44,27 @@ jobs:
       - name: Build package
         run: sbt universal:packageBin
 
+      - name: Clean package for platform
+        shell: bash
+        run: |
+          cd target/universal
+          unzip *.zip -d temp
+          cd temp/*/bin
+          if [ "${{ matrix.platform }}" = "windows" ]; then
+            rm -f *.sh 2>/dev/null || true
+          else
+            rm -f *.bat 2>/dev/null || true
+          fi
+          cd ../..
+          rm -f ../*.zip
+          zip -r ../package.zip *
+          cd ..
+          rm -rf temp
+
       - name: Rename artifact
         shell: bash
         run: |
-          mv target/universal/*.zip avl-editor-${{ steps.version.outputs.version }}-${{ matrix.platform }}.zip
+          mv target/universal/package.zip avl-editor-${{ steps.version.outputs.version }}-${{ matrix.platform }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
