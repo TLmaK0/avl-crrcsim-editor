@@ -44,22 +44,27 @@ jobs:
       - name: Build package
         run: sbt universal:packageBin
 
-      - name: Clean package for platform
+      - name: Clean package for platform (Unix)
+        if: matrix.platform != 'windows'
         shell: bash
         run: |
           cd target/universal
           unzip *.zip -d temp
-          cd temp/*/bin
-          if [ "${{ matrix.platform }}" = "windows" ]; then
-            rm -f *.sh 2>/dev/null || true
-          else
-            rm -f *.bat 2>/dev/null || true
-          fi
-          cd ../..
-          rm -f ../*.zip
-          zip -r ../package.zip *
-          cd ..
+          rm -f temp/*/bin/*.bat
+          rm -f *.zip
+          cd temp && zip -r ../package.zip * && cd ..
           rm -rf temp
+
+      - name: Clean package for platform (Windows)
+        if: matrix.platform == 'windows'
+        shell: pwsh
+        run: |
+          cd target/universal
+          Expand-Archive -Path *.zip -DestinationPath temp
+          Remove-Item temp/*/bin/*.sh -ErrorAction SilentlyContinue
+          Remove-Item *.zip
+          Compress-Archive -Path temp/* -DestinationPath package.zip
+          Remove-Item temp -Recurse
 
       - name: Rename artifact
         shell: bash
