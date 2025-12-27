@@ -2,7 +2,7 @@
 nbproject/private
 Thumbs.db
 dist/*
-CRRCsimEditor/*
+AvlEditor/*
 run/*
 *.orig
 sample/**/*.avl

@@ -1,4 +1,4 @@
-# AVL-CRRCsim Editor
+# AVL Editor
 
 This project is an editor for CRRCsim, a radio-controlled aircraft simulator, and integrates with AVL for aerodynamic analysis.
 It allows users to modify aircraft parameters and configurations for simulation.

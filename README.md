@@ -1,5 +1,5 @@
-avl-crrcsim-editor
-==================
+AVL Editor
+==========
 
 An editor for AVL (Athena Vortex Lattice) and a exporter for Crrcsim an Open source model airplane simulator http://sourceforge.net/projects/crrcsim/
 
@@ -19,7 +19,7 @@ Please, help me to improve it.
 Building from sources on Debian/Ubuntu
 --------------------------------------
 
-Building avl-crrcsim-editor requires scala with sbt
+Building AVL Editor requires scala with sbt
 
 To install these in debian or ubuntu, download and install the .deb from scala-sbt.org:
 
@@ -29,7 +29,7 @@ To install these in debian or ubuntu, download and install the .deb from scala-s
     sudo apt-get update
     sudo apt-get install sbt
 
-Of course you will need the avl-crrcsim-editor sources too:
+Of course you will need the AVL Editor sources too:
 
     git clone https://github.com/TLmaK0/avl-crrcsim-editor.git
 

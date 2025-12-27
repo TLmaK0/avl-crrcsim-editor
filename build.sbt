@@ -1,9 +1,9 @@
 import sbt.ProjectRef
 
-lazy val crrcSimEditor = project
+lazy val avlEditor = project
   .in(file("."))
 
-name := "Avl CRRCSim Editor"
+name := "AVL Editor"
 
 version := "0.7.0"
 
@@ -12,7 +12,7 @@ scalaVersion := "2.10.4"
 resolvers += "swt-repo" at "https://swt-repo.googlecode.com/svn/repo/"
 resolvers += "jogamp-remote" at "https://jogamp.org/deployment/maven"
 
-Compile / run / mainClass := Some("com.abajar.crrcsimeditor.Main")
+Compile / run / mainClass := Some("com.abajar.avleditor.Main")
 
 enablePlugins(JavaAppPackaging)
 
