@@ -114,6 +114,8 @@ object AvlEditor{
           window.viewer3D.setScale(graphics.getScale)
         case _ => // Do nothing for other types
       }
+      // Reload AVL surfaces when any property changes
+      loadAvlSurfaces()
     })
 
     // Set up log handler to display logs in footer BEFORE logging anything
@@ -214,6 +216,24 @@ object AvlEditor{
         } else {
           window.viewer3D.clearModel()
         }
+      }
+      // Load AVL surfaces
+      loadAvlSurfaces()
+    }
+
+    private def loadAvlSurfaces(): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl != null && avl.getGeometry() != null) {
+        val surfaces = avl.getGeometry().getSurfaces().asScala.map { surface =>
+          val dX = surface.getdX()
+          val dY = surface.getdY()
+          val dZ = surface.getdZ()
+          surface.getSections().asScala.map { section =>
+            (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ, section.getChord())
+          }.toArray
+        }.toArray
+        window.viewer3D.setAvlSurfaces(surfaces)
       }
     }
 

@@ -68,6 +68,10 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var displayScale: Float = 1.0f
   @volatile private var showDimensions: Boolean = true
   @volatile private var wireframeMode: Boolean = true
+  @volatile private var showAvlSurfaces: Boolean = true
+
+  // AVL surface data: Array of surfaces, each surface is Array of sections (x, y, z, chord)
+  @volatile private var avlSurfaces: Array[Array[(Float, Float, Float, Float)]] = Array()
 
   // Create AWT Frame embedded in SWT
   private val awtComposite = new Composite(this, SWT.EMBEDDED)
@@ -75,9 +79,9 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   awtComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
   private val awtFrame = SWT_AWT.new_Frame(awtComposite)
 
-  // Bottom bar with checkbox and info label
+  // Bottom bar with checkboxes and info label
   private val bottomBar = new Composite(this, SWT.NONE)
-  private val bottomLayout = new GridLayout(2, false)
+  private val bottomLayout = new GridLayout(3, false)
   bottomLayout.marginWidth = 0
   bottomLayout.marginHeight = 0
   bottomBar.setLayout(bottomLayout)
@@ -94,10 +98,21 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     }
   })
 
+  // AVL surfaces checkbox
+  private val avlSurfacesCheckbox = new Button(bottomBar, SWT.CHECK)
+  avlSurfacesCheckbox.setText("AVL")
+  avlSurfacesCheckbox.setSelection(true)
+  avlSurfacesCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false))
+  avlSurfacesCheckbox.addSelectionListener(new SelectionAdapter {
+    override def widgetSelected(e: SelectionEvent): Unit = {
+      showAvlSurfaces = avlSurfacesCheckbox.getSelection
+    }
+  })
+
   // Info label for dimensions and controls
   private val infoLabel = new Label(bottomBar, SWT.NONE)
   infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false))
-  infoLabel.setText("Drag: rotate | Right-drag: pan | Wheel: zoom | Double-click: reset")
+  infoLabel.setText("Drag: rotate | Middle-drag: pan | Wheel: zoom | Double-click: reset")
 
   // OpenGL setup using AWT GLCanvas
   private val glProfile = GLProfile.getDefault
@@ -157,7 +172,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       lastMouseX = e.getX
       lastMouseY = e.getY
       if (e.getButton == java.awt.event.MouseEvent.BUTTON1) isDragging = true
-      else if (e.getButton == java.awt.event.MouseEvent.BUTTON3) isPanning = true
+      else if (e.getButton == java.awt.event.MouseEvent.BUTTON2) isPanning = true
     }
 
     override def mouseReleased(e: java.awt.event.MouseEvent): Unit = {
@@ -327,6 +342,10 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def getViewAngles: (Float, Float) = (rotationX, rotationY)
 
+  def setAvlSurfaces(surfaces: Array[Array[(Float, Float, Float, Float)]]): Unit = {
+    avlSurfaces = surfaces
+  }
+
   def setScale(scale: Float): Unit = {
     displayScale = scale
     if (vertices.nonEmpty) updateInfoLabel()
@@ -388,7 +407,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     getDisplay.asyncExec(new Runnable {
       override def run(): Unit = {
         if (!isDisposed && !infoLabel.isDisposed) {
-          infoLabel.setText(f"Wingspan: $wingspan%.2f | Length: $length%.2f | Drag: rotate | Right-drag: pan | Wheel: zoom")
+          infoLabel.setText(f"Wingspan: $wingspan%.2f | Length: $length%.2f | Drag: rotate | Middle-drag: pan | Wheel: zoom")
         }
       }
     })
@@ -472,9 +491,56 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glPopMatrix()
 
       if (showDimensions) drawDimensionLines(gl, drawable)
+      if (showAvlSurfaces && avlSurfaces.nonEmpty) drawAvlSurfaces(gl)
     }
 
     gl.glFlush()
+  }
+
+  private def drawAvlSurfaces(gl: GL2): Unit = {
+    gl.glDisable(GLLightingFunc.GL_LIGHTING)
+    gl.glDisable(GL.GL_DEPTH_TEST)
+    gl.glLineWidth(2.0f)
+
+    gl.glPushMatrix()
+    gl.glScalef(modelScale, modelScale, modelScale)
+    gl.glTranslatef(-centerX, -centerY, -centerZ)
+
+    for (surface <- avlSurfaces) {
+      if (surface.length >= 2) {
+        // Draw surface outline - green color
+        gl.glColor3f(0.0f, 1.0f, 0.0f)
+
+        // Draw leading edge line connecting all sections
+        gl.glBegin(GL.GL_LINE_STRIP)
+        for ((xle, yle, zle, _) <- surface) {
+          // AVL uses X forward, Y right, Z up
+          // Our 3D model uses X right, Y forward, Z up
+          gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+        }
+        gl.glEnd()
+
+        // Draw trailing edge line connecting all sections
+        gl.glBegin(GL.GL_LINE_STRIP)
+        for ((xle, yle, zle, chord) <- surface) {
+          gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+        }
+        gl.glEnd()
+
+        // Draw chord lines for each section
+        for ((xle, yle, zle, chord) <- surface) {
+          gl.glBegin(GL.GL_LINES)
+          gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+          gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+          gl.glEnd()
+        }
+      }
+    }
+
+    gl.glPopMatrix()
+    gl.glLineWidth(1.0f)
+    gl.glEnable(GL.GL_DEPTH_TEST)
+    gl.glEnable(GLLightingFunc.GL_LIGHTING)
   }
 
   private def drawDimensionLines(gl: GL2, drawable: GLAutoDrawable): Unit = {

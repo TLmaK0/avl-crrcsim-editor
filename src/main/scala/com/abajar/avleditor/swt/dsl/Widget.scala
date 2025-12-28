@@ -37,6 +37,7 @@ object Widget{
           item.setData(data)
           item.setText(title)
           item.setItemCount(itemsCount)
+          item.setExpanded(true)
         }
       })
       tree
@@ -111,13 +112,24 @@ object Widget{
                   editor.getItem.setText(columnNumber, text.getText)
                 }
               })
-              newEditor.addListener(SWT.FocusOut, new Listener{
+              val confirmValue = new Listener {
                 override def handleEvent(e: Event) = {
-                  val text = editor.getEditor.asInstanceOf[Text]
-                  tableField.value = text.getText
-                  editor.getEditor.dispose()
-                  // Notify property change callback
-                  propertyChangeCallback.foreach(callback => callback())
+                  val editorControl = editor.getEditor
+                  if (editorControl != null && !editorControl.isDisposed) {
+                    val text = editorControl.asInstanceOf[Text]
+                    tableField.value = text.getText
+                    editorControl.dispose()
+                    // Notify property change callback
+                    propertyChangeCallback.foreach(callback => callback())
+                  }
+                }
+              }
+              newEditor.addListener(SWT.FocusOut, confirmValue)
+              newEditor.addListener(SWT.Traverse, new Listener {
+                override def handleEvent(e: Event) = {
+                  if (e.detail == SWT.TRAVERSE_RETURN) {
+                    confirmValue.handleEvent(e)
+                  }
                 }
               })
               newEditor.selectAll
