@@ -112,10 +112,22 @@ object AvlEditor{
       window.treeNodeSelected.foreach {
         case graphics: com.abajar.avleditor.crrcsim.Graphics =>
           window.viewer3D.setScale(graphics.getScale)
+        case section: com.abajar.avleditor.avl.geometry.Section =>
+          // Update selected section in 3D viewer when properties change
+          selectSectionIn3D(section)
         case _ => // Do nothing for other types
       }
       // Reload AVL surfaces when any property changes
       loadAvlSurfaces()
+    })
+
+    // Set up section update callback for 3D editing
+    window.viewer3D.setSectionUpdateCallback((surfaceIdx: Int, sectionIdx: Int, x: Float, y: Float, z: Float, chord: Float) => {
+      window.display.asyncExec(new Runnable {
+        override def run(): Unit = {
+          updateSectionFromViewer(surfaceIdx, sectionIdx, x, y, z, chord)
+        }
+      })
     })
 
     // Set up log handler to display logs in footer BEFORE logging anything
@@ -237,6 +249,39 @@ object AvlEditor{
       }
     }
 
+    private def updateSectionFromViewer(surfaceIdx: Int, sectionIdx: Int, x: Float, y: Float, z: Float, chord: Float): Unit = {
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val surfaces = avl.getGeometry().getSurfaces()
+      if (surfaceIdx >= surfaces.size()) return
+
+      val surface = surfaces.get(surfaceIdx)
+      val sections = surface.getSections()
+      if (sectionIdx >= sections.size()) return
+
+      val section = sections.get(sectionIdx)
+
+      // Subtract surface offsets to get local coordinates
+      val dX = surface.getdX()
+      val dY = surface.getdY()
+      val dZ = surface.getdZ()
+
+      section.setXle(x - dX)
+      section.setYle(y - dY)
+      section.setZle(z - dZ)
+      section.setChord(chord)
+
+      // Refresh properties table if this section is selected
+      window.treeNodeSelected.foreach {
+        case s: com.abajar.avleditor.avl.geometry.Section if s eq section =>
+          loadPropertiesForTreeItem(section)
+        case _ =>
+      }
+
+      // Reload AVL surfaces to reflect the change
+      loadAvlSurfaces()
+    }
 
     private def openFile = {
       window.showOpenDialog(
@@ -516,7 +561,44 @@ object AvlEditor{
           } else {
             window.viewer3D.clearModel()
           }
-        case _ => // Keep current model displayed
+          window.viewer3D.clearSelectedSection()
+        case section: com.abajar.avleditor.avl.geometry.Section =>
+          // Find the parent surface and section index
+          selectSectionIn3D(section)
+        case _ =>
+          // Clear section selection for other nodes
+          window.viewer3D.clearSelectedSection()
+      }
+    }
+
+    private def selectSectionIn3D(section: com.abajar.avleditor.avl.geometry.Section): Unit = {
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val surfaces = avl.getGeometry().getSurfaces()
+      var surfaceIdx = 0
+      var found = false
+      while (surfaceIdx < surfaces.size() && !found) {
+        val surface = surfaces.get(surfaceIdx)
+        val sections = surface.getSections()
+        var sectionIdx = 0
+        while (sectionIdx < sections.size() && !found) {
+          if (sections.get(sectionIdx) eq section) {
+            found = true
+            val dX = surface.getdX()
+            val dY = surface.getdY()
+            val dZ = surface.getdZ()
+            window.viewer3D.setSelectedSection(
+              surfaceIdx, sectionIdx,
+              section.getXle() + dX,
+              section.getYle() + dY,
+              section.getZle() + dZ,
+              section.getChord()
+            )
+          }
+          sectionIdx += 1
+        }
+        surfaceIdx += 1
       }
     }
 

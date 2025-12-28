@@ -73,6 +73,12 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   // AVL surface data: Array of surfaces, each surface is Array of sections (x, y, z, chord)
   @volatile private var avlSurfaces: Array[Array[(Float, Float, Float, Float)]] = Array()
 
+  // Selected section for editing (surfaceIndex, sectionIndex, x, y, z, chord)
+  @volatile private var selectedSection: Option[(Int, Int, Float, Float, Float, Float)] = None
+  @volatile private var isDraggingSection: Boolean = false
+  @volatile private var isDraggingChord: Boolean = false
+  private var sectionUpdateCallback: Option[(Int, Int, Float, Float, Float, Float) => Unit] = None
+
   // Create AWT Frame embedded in SWT
   private val awtComposite = new Composite(this, SWT.EMBEDDED)
   awtComposite.setLayout(new FillLayout())
@@ -112,7 +118,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   // Info label for dimensions and controls
   private val infoLabel = new Label(bottomBar, SWT.NONE)
   infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false))
-  infoLabel.setText("Drag: rotate | Middle-drag: pan | Wheel: zoom | Double-click: reset")
+  infoLabel.setText("Right-drag: rotate | Middle-drag: pan | Wheel: zoom | Double-click: fit")
 
   // OpenGL setup using AWT GLCanvas
   private val glProfile = GLProfile.getDefault
@@ -171,11 +177,35 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     override def mousePressed(e: java.awt.event.MouseEvent): Unit = {
       lastMouseX = e.getX
       lastMouseY = e.getY
-      if (e.getButton == java.awt.event.MouseEvent.BUTTON1) isDragging = true
-      else if (e.getButton == java.awt.event.MouseEvent.BUTTON2) isPanning = true
+      if (e.getButton == java.awt.event.MouseEvent.BUTTON1) {
+        // Left click to drag section when one is selected
+        if (selectedSection.isDefined) {
+          // Check which handle is closer
+          val clickedHandle = getClosestHandle(e.getX, e.getY)
+          if (clickedHandle == "trailing") {
+            isDraggingChord = true
+          } else {
+            isDraggingSection = true
+          }
+        }
+      } else if (e.getButton == java.awt.event.MouseEvent.BUTTON3) {
+        // Right click to rotate
+        isDragging = true
+      } else if (e.getButton == java.awt.event.MouseEvent.BUTTON2) {
+        // Middle click to pan
+        isPanning = true
+      }
     }
 
     override def mouseReleased(e: java.awt.event.MouseEvent): Unit = {
+      if (isDraggingSection || isDraggingChord) {
+        isDraggingSection = false
+        isDraggingChord = false
+        // Notify callback with updated position and chord
+        selectedSection.foreach { case (surfIdx, secIdx, x, y, z, chord) =>
+          sectionUpdateCallback.foreach(_(surfIdx, secIdx, x, y, z, chord))
+        }
+      }
       isDragging = false
       isPanning = false
     }
@@ -187,7 +217,36 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   glCanvas.addMouseMotionListener(new java.awt.event.MouseMotionAdapter {
     override def mouseDragged(e: java.awt.event.MouseEvent): Unit = {
-      if (isDragging) {
+      if (isDraggingSection) {
+        // Move section based on mouse movement
+        val sensitivity = 0.1f / zoom / displayScale
+        val deltaScreenX = (e.getX - lastMouseX) * sensitivity
+        val deltaScreenY = (e.getY - lastMouseY) * sensitivity
+        selectedSection.foreach { case (surfIdx, secIdx, xle, yle, zle, chord) =>
+          var newXle = xle - deltaScreenY  // Mouse up = forward
+          var newYle = yle + deltaScreenX  // Mouse right = right
+          var newZle = zle
+          // Snap to nearest vertex based on screen projection
+          findNearestVertexByScreenPos(e.getX, e.getY).foreach { case (vx, vy, vz) =>
+            newYle = vx / displayScale
+            newXle = vy / displayScale
+            newZle = vz / displayScale
+          }
+          selectedSection = Some((surfIdx, secIdx, newXle, newYle, newZle, chord))
+        }
+        lastMouseX = e.getX
+        lastMouseY = e.getY
+      } else if (isDraggingChord) {
+        // Change chord based on mouse movement (vertical = chord change)
+        val sensitivity = 0.1f / zoom / displayScale
+        val deltaScreenY = (e.getY - lastMouseY) * sensitivity
+        selectedSection.foreach { case (surfIdx, secIdx, xle, yle, zle, chord) =>
+          val newChord = scala.math.max(0.1f, chord - deltaScreenY)  // Mouse up = larger chord
+          selectedSection = Some((surfIdx, secIdx, xle, yle, zle, newChord))
+        }
+        lastMouseX = e.getX
+        lastMouseY = e.getY
+      } else if (isDragging) {
         rotationY += (e.getX - lastMouseX) * 0.5f
         rotationX += (e.getY - lastMouseY) * 0.5f
         lastMouseX = e.getX
@@ -355,6 +414,155 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     showDimensions = show
   }
 
+  def setSelectedSection(surfaceIdx: Int, sectionIdx: Int, x: Float, y: Float, z: Float, chord: Float): Unit = {
+    selectedSection = Some((surfaceIdx, sectionIdx, x, y, z, chord))
+  }
+
+  def clearSelectedSection(): Unit = {
+    selectedSection = None
+  }
+
+  def setSectionUpdateCallback(callback: (Int, Int, Float, Float, Float, Float) => Unit): Unit = {
+    sectionUpdateCallback = Some(callback)
+  }
+
+  private def getClosestHandle(mouseX: Int, mouseY: Int): String = {
+    selectedSection.map { case (_, _, xle, yle, zle, chord) =>
+      val leadingPos = projectToScreen(yle, xle, zle)
+      val trailingPos = projectToScreen(yle, xle + chord, zle)
+
+      (leadingPos, trailingPos) match {
+        case (Some((lx, ly)), Some((tx, ty))) =>
+          val distLeading = (mouseX - lx) * (mouseX - lx) + (mouseY - ly) * (mouseY - ly)
+          val distTrailing = (mouseX - tx) * (mouseX - tx) + (mouseY - ty) * (mouseY - ty)
+          // If closer to trailing edge, use trailing for chord
+          // Otherwise use leading for position
+          if (distTrailing < distLeading) "trailing"
+          else "leading"
+        case _ => "leading"  // Default to leading edge if projection fails
+      }
+    }.getOrElse("leading")
+  }
+
+  // Find nearest vertex based on screen position (2D projection)
+  private def findNearestVertexByScreenPos(mouseX: Int, mouseY: Int): Option[(Float, Float, Float)] = {
+    val verts = vertices
+    if (verts.isEmpty) return None
+
+    var minDistSq = Float.MaxValue
+    var nearestX = 0f
+    var nearestY = 0f
+    var nearestZ = 0f
+
+    var i = 0
+    while (i < verts.length - 2) {
+      val vx = verts(i)
+      val vy = verts(i + 1)
+      val vz = verts(i + 2)
+
+      // Project vertex to screen (model coords: x=yle, y=xle, z=zle)
+      projectToScreen(vx / displayScale, vy / displayScale, vz / displayScale).foreach { case (sx, sy) =>
+        val dx = mouseX - sx
+        val dy = mouseY - sy
+        val distSq = dx * dx + dy * dy
+        if (distSq < minDistSq) {
+          minDistSq = distSq
+          nearestX = vx
+          nearestY = vy
+          nearestZ = vz
+        }
+      }
+      i += 3
+    }
+
+    // Snap threshold in pixels (15 pixels)
+    val snapThresholdPx = 15
+    if (minDistSq < snapThresholdPx * snapThresholdPx) {
+      Some((nearestX, nearestY, nearestZ))
+    } else {
+      None
+    }
+  }
+
+  private def projectToScreen(avlYle: Float, avlXle: Float, avlZle: Float): Option[(Int, Int)] = {
+    val canvasWidth = glCanvas.getWidth
+    val canvasHeight = glCanvas.getHeight
+    if (canvasWidth == 0 || canvasHeight == 0) return None
+
+    // Model coordinates: X = yle, Y = xle, Z = zle (AVL to model transform)
+    val worldX = (avlYle * displayScale - centerX) * modelScale
+    val worldY = (avlXle * displayScale - centerY) * modelScale
+    val worldZ = (avlZle * displayScale - centerZ) * modelScale
+
+    // OpenGL applies transforms in reverse order, so rotateY then rotateX
+    val radX = scala.math.toRadians(rotationX)
+    val radY = scala.math.toRadians(rotationY)
+    val cosX = scala.math.cos(radX).toFloat
+    val sinX = scala.math.sin(radX).toFloat
+    val cosY = scala.math.cos(radY).toFloat
+    val sinY = scala.math.sin(radY).toFloat
+
+    // First rotate around Y axis (to match OpenGL's reverse order)
+    val rx1 = worldX * cosY + worldZ * sinY
+    val rz1 = -worldX * sinY + worldZ * cosY
+    // Then rotate around X axis
+    val ry2 = worldY * cosX - rz1 * sinX
+    val rz2 = worldY * sinX + rz1 * cosX
+
+    val viewX = rx1
+    val viewY = ry2
+
+    // Apply pan
+    val viewXPanned = viewX + panX
+    val viewYPanned = viewY + panY
+
+    // Ortho projection: size = 150 / zoom
+    val size = 150.0f / zoom
+    val aspect = canvasWidth.toFloat / canvasHeight.toFloat
+
+    // Map to screen coordinates
+    val screenX = (canvasWidth / 2.0f + viewXPanned / (size * aspect) * canvasWidth / 2.0f).toInt
+    val screenY = (canvasHeight / 2.0f - viewYPanned / size * canvasHeight / 2.0f).toInt
+
+    Some((screenX, screenY))
+  }
+
+  private def isClickOnHandle(mouseX: Int, mouseY: Int): Boolean = {
+    selectedSection.exists { case (_, _, xle, yle, zle, _) =>
+      // Project the 3D point to 2D screen coordinates
+      val canvasWidth = glCanvas.getWidth
+      val canvasHeight = glCanvas.getHeight
+      if (canvasWidth == 0 || canvasHeight == 0) return false
+
+      // Apply the same transformations as in render
+      val worldX = (yle * displayScale - centerX) * modelScale
+      val worldY = (xle * displayScale - centerY) * modelScale
+      val worldZ = (zle * displayScale - centerZ) * modelScale
+
+      // Apply rotation
+      val radX = scala.math.toRadians(rotationX)
+      val radY = scala.math.toRadians(rotationY)
+      val cosX = scala.math.cos(radX)
+      val sinX = scala.math.sin(radX)
+      val cosY = scala.math.cos(radY)
+      val sinY = scala.math.sin(radY)
+
+      // Rotate around Y axis first, then X
+      val rx1 = worldX * cosY - worldZ * sinY
+      val rz1 = worldX * sinY + worldZ * cosY
+      val ry1 = worldY * cosX - rz1 * sinX
+
+      // Apply zoom and pan
+      val screenX = (rx1 * zoom * 20 + panX + canvasWidth / 2).toInt
+      val screenY = (canvasHeight / 2 - ry1 * zoom * 20 + panY).toInt
+
+      // Check if click is within 15 pixels of handle
+      val dx = mouseX - screenX
+      val dy = mouseY - screenY
+      dx * dx + dy * dy < 225  // 15^2
+    }
+  }
+
   private def calculateBounds(): Unit = {
     if (vertices.isEmpty) return
 
@@ -407,7 +615,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     getDisplay.asyncExec(new Runnable {
       override def run(): Unit = {
         if (!isDisposed && !infoLabel.isDisposed) {
-          infoLabel.setText(f"Wingspan: $wingspan%.2f | Length: $length%.2f | Drag: rotate | Middle-drag: pan | Wheel: zoom")
+          infoLabel.setText(f"Wingspan: $wingspan%.2f | Length: $length%.2f")
         }
       }
     })
@@ -492,6 +700,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
       if (showDimensions) drawDimensionLines(gl, drawable)
       if (showAvlSurfaces && avlSurfaces.nonEmpty) drawAvlSurfaces(gl)
+      if (selectedSection.isDefined) drawSelectedSectionHandle(gl)
     }
 
     gl.glFlush()
@@ -541,6 +750,45 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glLineWidth(1.0f)
     gl.glEnable(GL.GL_DEPTH_TEST)
     gl.glEnable(GLLightingFunc.GL_LIGHTING)
+  }
+
+  private def drawSelectedSectionHandle(gl: GL2): Unit = {
+    selectedSection.foreach { case (_, _, xle, yle, zle, chord) =>
+      gl.glDisable(GLLightingFunc.GL_LIGHTING)
+      gl.glDisable(GL.GL_DEPTH_TEST)
+
+      gl.glPushMatrix()
+      gl.glScalef(modelScale, modelScale, modelScale)
+      gl.glTranslatef(-centerX, -centerY, -centerZ)
+
+      // Draw leading edge handle - yellow/orange color
+      gl.glColor3f(1.0f, 0.7f, 0.0f)
+      gl.glPointSize(12.0f)
+      gl.glBegin(GL.GL_POINTS)
+      gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+      gl.glEnd()
+
+      // Draw trailing edge handle - lighter color
+      gl.glColor3f(1.0f, 0.9f, 0.5f)
+      gl.glPointSize(8.0f)
+      gl.glBegin(GL.GL_POINTS)
+      gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+      gl.glEnd()
+
+      // Draw chord line highlighted
+      gl.glColor3f(1.0f, 0.7f, 0.0f)
+      gl.glLineWidth(3.0f)
+      gl.glBegin(GL.GL_LINES)
+      gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+      gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+      gl.glEnd()
+
+      gl.glPopMatrix()
+      gl.glPointSize(1.0f)
+      gl.glLineWidth(1.0f)
+      gl.glEnable(GL.GL_DEPTH_TEST)
+      gl.glEnable(GLLightingFunc.GL_LIGHTING)
+    }
   }
 
   private def drawDimensionLines(gl: GL2, drawable: GLAutoDrawable): Unit = {
