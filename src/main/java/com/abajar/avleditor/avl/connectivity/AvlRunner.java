@@ -50,11 +50,19 @@ public class AvlRunner {
     private AvlCalculation result;
     private Path geometryPlotPath;
     private Path trefftzPlotPath;
+    private float viewAzimuth = 45.0f;   // Default view angle
+    private float viewElevation = 20.0f; // Default view angle
 
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
     private final String avlFileBase;
 
-    public AvlRunner(String avlPath, AVL avl, Path originPath) throws IOException, InterruptedException, Exception{
+    public AvlRunner(String avlPath, AVL avl, Path originPath) throws IOException, InterruptedException, Exception {
+        this(avlPath, avl, originPath, 45.0f, 20.0f);
+    }
+
+    public AvlRunner(String avlPath, AVL avl, Path originPath, float azimuth, float elevation) throws IOException, InterruptedException, Exception{
+        this.viewAzimuth = azimuth;
+        this.viewElevation = elevation;
         this.avl = avl;
         this.avlPath = avlPath;
         this.executionPath = Files.createTempDirectory("chrrcsim_");
@@ -140,8 +148,11 @@ public class AvlRunner {
         sendCommand("i\n");  // Enable individual files (plot000.ps, plot001.ps, etc.)
         sendCommand("\n");   // Return to OPER menu
 
-        // Generate geometry plot
+        // Generate geometry plot with custom view angles
         sendCommand("g\n");  // Enter geometry plot mode
+        // Set view angles: 'v' command, then azimuth and elevation
+        sendCommand("v\n");
+        sendCommand(String.format("%.1f %.1f\n", viewAzimuth, viewElevation));
         sendCommand("h\n");  // Hardcopy to PostScript
         sendCommand("\n");   // Return to OPER menu
 

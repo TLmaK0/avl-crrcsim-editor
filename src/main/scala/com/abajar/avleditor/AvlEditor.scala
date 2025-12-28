@@ -309,7 +309,9 @@ object AvlEditor{
         def run(): Unit = {
           try {
             logger.log(Level.INFO, s"Starting AvlRunner with path: $avlPath")
-            val runner = new AvlRunner(avlPath, avl, originPath)
+            val (elevationAngle, azimuthAngle) = window.viewer3D.getViewAngles
+            // Adjust azimuth by +90 degrees to match AVL's coordinate system
+            val runner = new AvlRunner(avlPath, avl, originPath, azimuthAngle + 90, elevationAngle)
             logger.log(Level.INFO, "AvlRunner finished, getting calculation...")
             val calculation = runner.getCalculation()
             val geometryPlotPath = runner.getGeometryPlotPath()

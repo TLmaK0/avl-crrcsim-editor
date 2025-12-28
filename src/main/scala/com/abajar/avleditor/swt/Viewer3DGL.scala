@@ -325,6 +325,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     colors = Array()
   }
 
+  def getViewAngles: (Float, Float) = (rotationX, rotationY)
+
   def setScale(scale: Float): Unit = {
     displayScale = scale
     if (vertices.nonEmpty) updateInfoLabel()
