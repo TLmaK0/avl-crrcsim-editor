@@ -40,6 +40,11 @@ public class Graphics implements Serializable {
     )
     private String descr_short="default";
 
+    @AvlEditorField(text="scale",
+        help="Scale factor (e.g. 10 means 1:10, displayed size = model size / 10)"
+    )
+    private float scale = 1.0f;
+
     @Override
     public String toString() {
         return "Graphics";
@@ -102,5 +107,19 @@ public class Graphics implements Serializable {
      */
     public void setDescr_short(String descr_short) {
         this.descr_short = descr_short;
+    }
+
+    /**
+     * @return the scale factor
+     */
+    public float getScale() {
+        return scale;
+    }
+
+    /**
+     * @param scale the scale factor to set
+     */
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 }

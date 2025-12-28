@@ -43,6 +43,18 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
   private var centerZ: Float = 0
   private var modelScale: Float = 1.0f
 
+  // Model dimensions (in model units)
+  private var modelMinX: Float = 0
+  private var modelMaxX: Float = 0
+  private var modelMinY: Float = 0
+  private var modelMaxY: Float = 0
+  private var modelMinZ: Float = 0
+  private var modelMaxZ: Float = 0
+
+  // Display scale (1:N factor, e.g. 10 means 1:10)
+  private var displayScale: Float = 1.0f
+  private var showDimensions: Boolean = true
+
   addPaintListener(new PaintListener {
     override def paintControl(e: PaintEvent): Unit = {
       render(e.gc)
@@ -60,6 +72,10 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
     override def mouseUp(e: MouseEvent): Unit = {
       isDragging = false
       isPanning = false
+    }
+
+    override def mouseDoubleClick(e: MouseEvent): Unit = {
+      zoomToFit()
     }
   })
 
@@ -98,6 +114,7 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
         vertices = verts
         colors = cols
         calculateBounds()
+        zoomToFit()
         redraw()
         true
       case None =>
@@ -109,10 +126,46 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
     }
   }
 
+  def zoomToFit(): Unit = {
+    if (vertices.isEmpty) return
+
+    // Reset camera to default view
+    panX = 0.0f
+    panY = 0.0f
+    rotationX = 20.0f
+    rotationY = 45.0f
+
+    // Calculate zoom to fit the model in the viewport
+    val bounds = getBounds()
+    val viewportWidth = bounds.width
+    val viewportHeight = bounds.height
+    val viewportSize = math.min(viewportWidth, viewportHeight).toFloat
+
+    if (viewportSize > 50) {
+      // Model is normalized to ~100 units by modelScale
+      // We want it to fill about 70% of the viewport
+      zoom = (viewportSize * 0.35f) / 100.0f
+    } else {
+      zoom = 1.0f
+    }
+
+    redraw()
+  }
+
   def clearModel(): Unit = {
     model = None
     vertices = Array()
     colors = Array()
+    redraw()
+  }
+
+  def setScale(scale: Float): Unit = {
+    displayScale = scale
+    redraw()
+  }
+
+  def setShowDimensions(show: Boolean): Unit = {
+    showDimensions = show
     redraw()
   }
 
@@ -143,6 +196,14 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
     centerX = (minX + maxX) / 2
     centerY = (minY + maxY) / 2
     centerZ = (minZ + maxZ) / 2
+
+    // Store bounds for dimension display
+    modelMinX = minX
+    modelMaxX = maxX
+    modelMinY = minY
+    modelMaxY = maxY
+    modelMinZ = minZ
+    modelMaxZ = maxZ
 
     val sizeX = maxX - minX
     val sizeY = maxY - minY
@@ -240,9 +301,78 @@ class Viewer3D(parent: Composite, style: Int) extends Canvas(parent, style | SWT
       t += 3
     }
 
+    // Draw dimension lines if enabled
+    if (showDimensions && vertices.nonEmpty) {
+      drawDimensionLines(gc, centerXScreen, centerYScreen, cosX, sinX, cosY, sinY)
+    }
+
     // Draw info
     gc.setForeground(getDisplay.getSystemColor(SWT.COLOR_WHITE))
     gc.drawString(s"Triangles: ${projectedPoints.length / 3}", 10, 10, true)
+
+    if (showDimensions && vertices.nonEmpty) {
+      val wingspan = (modelMaxX - modelMinX) / displayScale
+      val length = (modelMaxY - modelMinY) / displayScale
+      gc.drawString(f"Wingspan: $wingspan%.2f m | Length: $length%.2f m | Scale 1:${displayScale.toInt}", 10, 30, true)
+    }
+
     gc.drawString("Drag to rotate, Right-drag to pan, Scroll to zoom", 10, height - 20, true)
+  }
+
+  private def drawDimensionLines(gc: GC, centerXScreen: Int, centerYScreen: Int,
+                                  cosX: Float, sinX: Float, cosY: Float, sinY: Float): Unit = {
+    // Create cyan color for dimension lines
+    val dimColor = new org.eclipse.swt.graphics.Color(getDisplay, 0, 255, 255)
+    gc.setForeground(dimColor)
+    gc.setLineStyle(SWT.LINE_DASH)
+    gc.setLineWidth(2)
+
+    // Helper to project a point
+    def project(px: Float, py: Float, pz: Float): (Int, Int) = {
+      val x = (px - centerX) * modelScale * zoom
+      val y = (py - centerY) * modelScale * zoom
+      val z = (pz - centerZ) * modelScale * zoom
+
+      val x1 = x * cosY - z * sinY
+      val z1 = x * sinY + z * cosY
+      val y1 = y * cosX - z1 * sinX
+
+      (centerXScreen + x1.toInt, centerYScreen - y1.toInt)
+    }
+
+    // Draw wingspan line (X axis) at the back of model, slightly below
+    val offsetY = modelMinY - (modelMaxY - modelMinY) * 0.15f
+    val offsetZ = modelMinZ - (modelMaxZ - modelMinZ) * 0.1f
+
+    val (wsX1, wsY1) = project(modelMinX, offsetY, offsetZ)
+    val (wsX2, wsY2) = project(modelMaxX, offsetY, offsetZ)
+    gc.drawLine(wsX1, wsY1, wsX2, wsY2)
+
+    // Draw end caps for wingspan
+    val capSize = 8
+    gc.drawLine(wsX1, wsY1 - capSize, wsX1, wsY1 + capSize)
+    gc.drawLine(wsX2, wsY2 - capSize, wsX2, wsY2 + capSize)
+
+    // Draw length line (Y axis) at the right side of model
+    val offsetX = modelMaxX + (modelMaxX - modelMinX) * 0.15f
+
+    val (lenX1, lenY1) = project(offsetX, modelMinY, offsetZ)
+    val (lenX2, lenY2) = project(offsetX, modelMaxY, offsetZ)
+    gc.drawLine(lenX1, lenY1, lenX2, lenY2)
+
+    // Draw end caps for length
+    gc.drawLine(lenX1 - capSize, lenY1, lenX1 + capSize, lenY1)
+    gc.drawLine(lenX2 - capSize, lenY2, lenX2 + capSize, lenY2)
+
+    // Draw measurement labels near the lines
+    val wingspan = (modelMaxX - modelMinX) / displayScale
+    val length = (modelMaxY - modelMinY) / displayScale
+
+    gc.setLineStyle(SWT.LINE_SOLID)
+    gc.drawString(f"$wingspan%.2fm", (wsX1 + wsX2) / 2 - 25, math.max(wsY1, wsY2) + 5, true)
+    gc.drawString(f"$length%.2fm", lenX1 + 10, (lenY1 + lenY2) / 2 - 8, true)
+
+    gc.setLineWidth(1)
+    dimColor.dispose()
   }
 }

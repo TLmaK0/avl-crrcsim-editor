@@ -107,6 +107,15 @@ object AvlEditor{
         handleClickProperties
       )
 
+    // Set up property change callback to update 3D viewer when scale changes
+    swt.dsl.Widget.setPropertyChangeCallback(() => {
+      window.treeNodeSelected.foreach {
+        case graphics: com.abajar.avleditor.crrcsim.Graphics =>
+          window.viewer3D.setScale(graphics.getScale)
+        case _ => // Do nothing for other types
+      }
+    })
+
     // Set up log handler to display logs in footer BEFORE logging anything
     val logFooterHandler = new LogFooterHandler(window.display, window.footerLabel)
     Logger.getLogger("").addHandler(logFooterHandler)
@@ -185,6 +194,27 @@ object AvlEditor{
     private def open(file: File) = {
       crrcsim = new CRRCSimRepository().restoreFromFile(file)
       window.refreshTree
+      // Auto-load 3D model if available
+      load3DModel()
+    }
+
+    private def load3DModel(): Unit = {
+      val graphics = crrcsim.getGraphics
+      if (graphics != null) {
+        val modelPath = graphics.getModel
+        window.viewer3D.setScale(graphics.getScale)
+        if (modelPath != null && modelPath.nonEmpty) {
+          val file = new File(modelPath)
+          if (file.exists) {
+            val loaded = window.viewer3D.loadModel(modelPath)
+            logger.info(s"Auto-loaded 3D model: $loaded")
+          } else {
+            window.viewer3D.clearModel()
+          }
+        } else {
+          window.viewer3D.clearModel()
+        }
+      }
     }
 
 
@@ -282,11 +312,16 @@ object AvlEditor{
             val runner = new AvlRunner(avlPath, avl, originPath)
             logger.log(Level.INFO, "AvlRunner finished, getting calculation...")
             val calculation = runner.getCalculation()
+            val geometryPlotPath = runner.getGeometryPlotPath()
+            val trefftzPlotPath = runner.getTrefftzPlotPath()
             logger.log(Level.INFO, s"Got calculation: $calculation")
 
             window.display.asyncExec(new Runnable {
               def run(): Unit = {
                 logger.log(Level.INFO, "AVL analysis completed successfully")
+                // Open plot window with generated images
+                val plotWindow = new swt.AvlPlotWindow(window.display)
+                plotWindow.open(geometryPlotPath, trefftzPlotPath)
                 avlResultsWindow.open(calculation)
               }
             })
@@ -445,6 +480,8 @@ object AvlEditor{
         case graphics: com.abajar.avleditor.crrcsim.Graphics =>
           val modelPath = graphics.getModel
           logger.info(s"Graphics selected, model path: $modelPath")
+          // Set scale for dimension display
+          window.viewer3D.setScale(graphics.getScale)
           if (modelPath != null && modelPath.nonEmpty) {
             val file = new File(modelPath)
             logger.info(s"File exists: ${file.exists}, absolute: ${file.getAbsolutePath}")

@@ -73,7 +73,7 @@ class MainWindow(
   var properties: Table = _
   var help: StyledText = _
   var footerLabel: Label = _
-  var viewer3D: Viewer3D = _
+  var viewer3D: Viewer3DGL = _
 
   private def notifyButtonClick(buttonType: ENABLE_BUTTONS) =
         (se: SelectionEvent) => buttonClickHandler(buttonType)
@@ -216,8 +216,8 @@ class MainWindow(
     helpGridData.heightHint = 80
     help.setLayoutData(helpGridData)
 
-    // Column 3: 3D Viewer
-    viewer3D = new Viewer3D(shell, SWT.BORDER)
+    // Column 3: 3D Viewer (OpenGL)
+    viewer3D = new Viewer3DGL(shell, SWT.BORDER)
     val viewerGridData = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL)
     viewerGridData.widthHint = 400
     viewer3D.setLayoutData(viewerGridData)

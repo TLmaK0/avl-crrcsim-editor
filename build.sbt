@@ -9,7 +9,6 @@ version := "0.7.0"
 
 scalaVersion := "2.10.4"
 
-resolvers += "swt-repo" at "https://swt-repo.googlecode.com/svn/repo/"
 resolvers += "jogamp-remote" at "https://jogamp.org/deployment/maven"
 
 Compile / run / mainClass := Some("com.abajar.avleditor.Main")
@@ -27,16 +26,24 @@ run / fork := true
 
 run / envVars := Map("SWT_GTK3" -> "0")
 
-val swtVersion = "4.3"
 val osName = System.getProperty("os.name").toLowerCase
+val osArch = System.getProperty("os.arch")
 
+// SWT 3.127.0 from Maven Central (org.eclipse.platform group)
 val swtDependency: Option[sbt.ModuleID] = {
   if (osName.contains("linux"))
-    Some("org.eclipse.swt" % "org.eclipse.swt.gtk.linux.x86_64" % swtVersion)
+    Some(("org.eclipse.platform" % "org.eclipse.swt.gtk.linux.x86_64" % "3.127.0")
+      .exclude("org.eclipse.platform", "org.eclipse.swt"))
   else if (osName.contains("windows"))
-    Some("org.eclipse.swt" % "org.eclipse.swt.win32.win32.x86_64" % swtVersion)
+    Some(("org.eclipse.platform" % "org.eclipse.swt.win32.win32.x86_64" % "3.127.0")
+      .exclude("org.eclipse.platform", "org.eclipse.swt"))
   else if (osName.contains("mac"))
-    Some("org.eclipse.swt" % "org.eclipse.swt.cocoa.macosx.x86_64" % swtVersion)
+    if (osArch.contains("aarch64"))
+      Some(("org.eclipse.platform" % "org.eclipse.swt.cocoa.macosx.aarch64" % "3.127.0")
+        .exclude("org.eclipse.platform", "org.eclipse.swt"))
+    else
+      Some(("org.eclipse.platform" % "org.eclipse.swt.cocoa.macosx.x86_64" % "3.127.0")
+        .exclude("org.eclipse.platform", "org.eclipse.swt"))
   else
     None
 }
