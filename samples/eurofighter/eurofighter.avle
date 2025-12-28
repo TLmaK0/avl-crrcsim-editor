@@ -33,30 +33,30 @@ avl:
       sections:
       - AFILE: ''
         Ainc: 0.0
-        Chord: 10.0
+        Chord: 0.6882381
         NACA: '4412'
         Nspan: 0
         Sspace: 0.0
         X1: 0.0
         X2: 0.0
-        Xle: 15.0
-        Yle: 0.0
-        Zle: 0.0
+        Xle: 0.6118066
+        Yle: 0.1096197
+        Zle: -0.016064601
         controls: [
           ]
         masses: [
           ]
       - AFILE: ''
         Ainc: 0.0
-        Chord: 5.0
+        Chord: 0.12719636
         NACA: '4412'
         Nspan: 0
         Sspace: 0.0
         X1: 0.0
         X2: 0.0
-        Xle: 15.0
-        Yle: 50.0
-        Zle: 0.0
+        Xle: 1.1328661
+        Yle: 0.5346084
+        Zle: -0.0318574
         controls: [
           ]
         masses: [
@@ -95,9 +95,14 @@ config:
 description:
   en: null
 graphics:
+  avlXAxis: X
+  avlYAxis: -Z
+  avlZAxis: Y
   descr_long: Default description
   descr_short: default
   model: /home/hugo/projects/avl-editor/samples/eurofighter.ac
+  scale: 10.0
+  showReferenceLine: true
   version: '1'
 internalVersion: 21
 version: '2'

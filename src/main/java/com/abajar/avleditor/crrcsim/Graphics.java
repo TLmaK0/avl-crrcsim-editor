@@ -45,6 +45,26 @@ public class Graphics implements Serializable {
     )
     private float scale = 1.0f;
 
+    @AvlEditorField(text="avlXAxis",
+        help="Model axis for AVL X (forward): X, Y, Z, -X, -Y, or -Z"
+    )
+    private String avlXAxis = "X";
+
+    @AvlEditorField(text="avlYAxis",
+        help="Model axis for AVL Y (spanwise): X, Y, Z, -X, -Y, or -Z"
+    )
+    private String avlYAxis = "-Z";
+
+    @AvlEditorField(text="avlZAxis",
+        help="Model axis for AVL Z (up): X, Y, Z, -X, -Y, or -Z"
+    )
+    private String avlZAxis = "Y";
+
+    @AvlEditorField(text="showReferenceLine",
+        help="Show horizontal plane reference line in 3D viewer"
+    )
+    private boolean showReferenceLine = true;
+
     @Override
     public String toString() {
         return "Graphics";
@@ -121,5 +141,90 @@ public class Graphics implements Serializable {
      */
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    // Helper to get base axis (without sign)
+    private String getBaseAxis(String axis) {
+        return axis.replace("-", "").toUpperCase();
+    }
+
+    /**
+     * @return the AVL X axis mapping
+     */
+    public String getAvlXAxis() {
+        return avlXAxis;
+    }
+
+    /**
+     * @param newValue the AVL X axis mapping to set
+     */
+    public void setAvlXAxis(String newValue) {
+        String oldValue = this.avlXAxis;
+        String newBase = getBaseAxis(newValue);
+        // Swap if another axis has the same base value
+        if (getBaseAxis(avlYAxis).equals(newBase)) {
+            this.avlYAxis = oldValue;
+        } else if (getBaseAxis(avlZAxis).equals(newBase)) {
+            this.avlZAxis = oldValue;
+        }
+        this.avlXAxis = newValue;
+    }
+
+    /**
+     * @return the AVL Y axis mapping
+     */
+    public String getAvlYAxis() {
+        return avlYAxis;
+    }
+
+    /**
+     * @param newValue the AVL Y axis mapping to set
+     */
+    public void setAvlYAxis(String newValue) {
+        String oldValue = this.avlYAxis;
+        String newBase = getBaseAxis(newValue);
+        // Swap if another axis has the same base value
+        if (getBaseAxis(avlXAxis).equals(newBase)) {
+            this.avlXAxis = oldValue;
+        } else if (getBaseAxis(avlZAxis).equals(newBase)) {
+            this.avlZAxis = oldValue;
+        }
+        this.avlYAxis = newValue;
+    }
+
+    /**
+     * @return the AVL Z axis mapping
+     */
+    public String getAvlZAxis() {
+        return avlZAxis;
+    }
+
+    /**
+     * @param newValue the AVL Z axis mapping to set
+     */
+    public void setAvlZAxis(String newValue) {
+        String oldValue = this.avlZAxis;
+        String newBase = getBaseAxis(newValue);
+        // Swap if another axis has the same base value
+        if (getBaseAxis(avlXAxis).equals(newBase)) {
+            this.avlXAxis = oldValue;
+        } else if (getBaseAxis(avlYAxis).equals(newBase)) {
+            this.avlYAxis = oldValue;
+        }
+        this.avlZAxis = newValue;
+    }
+
+    /**
+     * @return whether to show reference line
+     */
+    public boolean getShowReferenceLine() {
+        return showReferenceLine;
+    }
+
+    /**
+     * @param showReferenceLine whether to show reference line
+     */
+    public void setShowReferenceLine(boolean showReferenceLine) {
+        this.showReferenceLine = showReferenceLine;
     }
 }

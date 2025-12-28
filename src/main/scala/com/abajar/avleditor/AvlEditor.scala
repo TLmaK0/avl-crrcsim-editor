@@ -112,6 +112,10 @@ object AvlEditor{
       window.treeNodeSelected.foreach {
         case graphics: com.abajar.avleditor.crrcsim.Graphics =>
           window.viewer3D.setScale(graphics.getScale)
+          window.viewer3D.setAxisMapping(graphics.getAvlXAxis, graphics.getAvlYAxis, graphics.getAvlZAxis)
+          window.viewer3D.setShowReferenceLine(graphics.getShowReferenceLine)
+          // Refresh properties table to show swapped axis values
+          window.properties.clearAll()
         case section: com.abajar.avleditor.avl.geometry.Section =>
           // Update selected section in 3D viewer when properties change
           selectSectionIn3D(section)
@@ -217,6 +221,8 @@ object AvlEditor{
       if (graphics != null) {
         val modelPath = graphics.getModel
         window.viewer3D.setScale(graphics.getScale)
+        window.viewer3D.setAxisMapping(graphics.getAvlXAxis, graphics.getAvlYAxis, graphics.getAvlZAxis)
+        window.viewer3D.setShowReferenceLine(graphics.getShowReferenceLine)
         if (modelPath != null && modelPath.nonEmpty) {
           val file = new File(modelPath)
           if (file.exists) {
@@ -547,8 +553,10 @@ object AvlEditor{
         case graphics: com.abajar.avleditor.crrcsim.Graphics =>
           val modelPath = graphics.getModel
           logger.info(s"Graphics selected, model path: $modelPath")
-          // Set scale for dimension display
+          // Set scale and axis mapping for dimension display
           window.viewer3D.setScale(graphics.getScale)
+          window.viewer3D.setAxisMapping(graphics.getAvlXAxis, graphics.getAvlYAxis, graphics.getAvlZAxis)
+          window.viewer3D.setShowReferenceLine(graphics.getShowReferenceLine)
           if (modelPath != null && modelPath.nonEmpty) {
             val file = new File(modelPath)
             logger.info(s"File exists: ${file.exists}, absolute: ${file.getAbsolutePath}")

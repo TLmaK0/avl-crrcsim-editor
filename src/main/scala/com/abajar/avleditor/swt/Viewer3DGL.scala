@@ -79,6 +79,12 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var isDraggingChord: Boolean = false
   private var sectionUpdateCallback: Option[(Int, Int, Float, Float, Float, Float) => Unit] = None
 
+  // Axis mapping configuration
+  @volatile private var avlXAxis: String = "X"   // Model axis for AVL X (forward)
+  @volatile private var avlYAxis: String = "-Z"  // Model axis for AVL Y (spanwise)
+  @volatile private var avlZAxis: String = "Y"   // Model axis for AVL Z (up)
+  @volatile private var showReferenceLine: Boolean = true
+
   // Create AWT Frame embedded in SWT
   private val awtComposite = new Composite(this, SWT.EMBEDDED)
   awtComposite.setLayout(new FillLayout())
@@ -223,14 +229,16 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         val deltaScreenX = (e.getX - lastMouseX) * sensitivity
         val deltaScreenY = (e.getY - lastMouseY) * sensitivity
         selectedSection.foreach { case (surfIdx, secIdx, xle, yle, zle, chord) =>
-          var newXle = xle - deltaScreenY  // Mouse up = forward
-          var newYle = yle + deltaScreenX  // Mouse right = right
+          // Correct axis mapping with inverted signs
+          var newXle = xle + deltaScreenX  // Mouse left = AVL X+
+          var newYle = yle - deltaScreenY  // Mouse down = AVL Y+
           var newZle = zle
           // Snap to nearest vertex based on screen projection
           findNearestVertexByScreenPos(e.getX, e.getY).foreach { case (vx, vy, vz) =>
-            newYle = vx / displayScale
-            newXle = vy / displayScale
-            newZle = vz / displayScale
+            val (avlX, avlY, avlZ) = modelToAvl(vx / displayScale, vy / displayScale, vz / displayScale)
+            newXle = avlX
+            newYle = avlY
+            newZle = avlZ
           }
           selectedSection = Some((surfIdx, secIdx, newXle, newYle, newZle, chord))
         }
@@ -414,6 +422,67 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     showDimensions = show
   }
 
+  def setAxisMapping(xAxis: String, yAxis: String, zAxis: String): Unit = {
+    avlXAxis = xAxis
+    avlYAxis = yAxis
+    avlZAxis = zAxis
+  }
+
+  def setShowReferenceLine(show: Boolean): Unit = {
+    showReferenceLine = show
+  }
+
+  // Transform AVL coordinates to model coordinates based on axis mapping
+  // avlXAxis says which MODEL axis AVL-X maps to (e.g., "Y" means AVL-X -> Model-Y)
+  private def avlToModel(avlX: Float, avlY: Float, avlZ: Float): (Float, Float, Float) = {
+    var modelX = 0f
+    var modelY = 0f
+    var modelZ = 0f
+
+    def assignToModel(avlValue: Float, modelAxis: String): Unit = {
+      val normalized = modelAxis.trim.toUpperCase
+      val sign = if (normalized.startsWith("-")) -1f else 1f
+      val axis = normalized.replace("-", "")
+      axis match {
+        case "X" => modelX = avlValue * sign
+        case "Y" => modelY = avlValue * sign
+        case "Z" => modelZ = avlValue * sign
+        case _ =>
+      }
+    }
+
+    assignToModel(avlX, avlXAxis)  // AVL X goes to model axis specified by avlXAxis
+    assignToModel(avlY, avlYAxis)  // AVL Y goes to model axis specified by avlYAxis
+    assignToModel(avlZ, avlZAxis)  // AVL Z goes to model axis specified by avlZAxis
+
+    (modelX, modelY, modelZ)
+  }
+
+  // Transform model coordinates to AVL coordinates (inverse of avlToModel)
+  private def modelToAvl(modelX: Float, modelY: Float, modelZ: Float): (Float, Float, Float) = {
+    var avlX = 0f
+    var avlY = 0f
+    var avlZ = 0f
+
+    def extractFromModel(modelAxis: String): Float = {
+      val normalized = modelAxis.trim.toUpperCase
+      val sign = if (normalized.startsWith("-")) -1f else 1f
+      val axis = normalized.replace("-", "")
+      axis match {
+        case "X" => modelX * sign
+        case "Y" => modelY * sign
+        case "Z" => modelZ * sign
+        case _ => 0f
+      }
+    }
+
+    avlX = extractFromModel(avlXAxis)
+    avlY = extractFromModel(avlYAxis)
+    avlZ = extractFromModel(avlZAxis)
+
+    (avlX, avlY, avlZ)
+  }
+
   def setSelectedSection(surfaceIdx: Int, sectionIdx: Int, x: Float, y: Float, z: Float, chord: Float): Unit = {
     selectedSection = Some((surfaceIdx, sectionIdx, x, y, z, chord))
   }
@@ -428,8 +497,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   private def getClosestHandle(mouseX: Int, mouseY: Int): String = {
     selectedSection.map { case (_, _, xle, yle, zle, chord) =>
-      val leadingPos = projectToScreen(yle, xle, zle)
-      val trailingPos = projectToScreen(yle, xle + chord, zle)
+      val leadingPos = projectToScreen(xle, yle, zle)
+      val trailingPos = projectToScreen(xle + chord, yle, zle)
 
       (leadingPos, trailingPos) match {
         case (Some((lx, ly)), Some((tx, ty))) =>
@@ -460,8 +529,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       val vy = verts(i + 1)
       val vz = verts(i + 2)
 
-      // Project vertex to screen (model coords: x=yle, y=xle, z=zle)
-      projectToScreen(vx / displayScale, vy / displayScale, vz / displayScale).foreach { case (sx, sy) =>
+      // Project vertex to screen (model coordinates)
+      projectModelToScreen(vx / displayScale, vy / displayScale, vz / displayScale).foreach { case (sx, sy) =>
         val dx = mouseX - sx
         val dy = mouseY - sy
         val distSq = dx * dx + dy * dy
@@ -484,15 +553,21 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     }
   }
 
-  private def projectToScreen(avlYle: Float, avlXle: Float, avlZle: Float): Option[(Int, Int)] = {
+  // Project AVL coordinates to screen coordinates
+  private def projectToScreen(avlX: Float, avlY: Float, avlZ: Float): Option[(Int, Int)] = {
+    val (mx, my, mz) = avlToModel(avlX, avlY, avlZ)
+    projectModelToScreen(mx, my, mz)
+  }
+
+  // Project model coordinates to screen coordinates
+  private def projectModelToScreen(modelX: Float, modelY: Float, modelZ: Float): Option[(Int, Int)] = {
     val canvasWidth = glCanvas.getWidth
     val canvasHeight = glCanvas.getHeight
     if (canvasWidth == 0 || canvasHeight == 0) return None
 
-    // Model coordinates: X = yle, Y = xle, Z = zle (AVL to model transform)
-    val worldX = (avlYle * displayScale - centerX) * modelScale
-    val worldY = (avlXle * displayScale - centerY) * modelScale
-    val worldZ = (avlZle * displayScale - centerZ) * modelScale
+    val worldX = (modelX * displayScale - centerX) * modelScale
+    val worldY = (modelY * displayScale - centerY) * modelScale
+    val worldZ = (modelZ * displayScale - centerZ) * modelScale
 
     // OpenGL applies transforms in reverse order, so rotateY then rotateX
     val radX = scala.math.toRadians(rotationX)
@@ -699,6 +774,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glPopMatrix()
 
       if (showDimensions) drawDimensionLines(gl, drawable)
+      if (showReferenceLine) drawReferenceLine(gl)
       if (showAvlSurfaces && avlSurfaces.nonEmpty) drawAvlSurfaces(gl)
       if (selectedSection.isDefined) drawSelectedSectionHandle(gl)
     }
@@ -723,24 +799,26 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         // Draw leading edge line connecting all sections
         gl.glBegin(GL.GL_LINE_STRIP)
         for ((xle, yle, zle, _) <- surface) {
-          // AVL uses X forward, Y right, Z up
-          // Our 3D model uses X right, Y forward, Z up
-          gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+          val (mx, my, mz) = avlToModel(xle, yle, zle)
+          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
         }
         gl.glEnd()
 
         // Draw trailing edge line connecting all sections
         gl.glBegin(GL.GL_LINE_STRIP)
         for ((xle, yle, zle, chord) <- surface) {
-          gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+          val (mx, my, mz) = avlToModel(xle + chord, yle, zle)
+          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
         }
         gl.glEnd()
 
         // Draw chord lines for each section
         for ((xle, yle, zle, chord) <- surface) {
+          val (mx1, my1, mz1) = avlToModel(xle, yle, zle)
+          val (mx2, my2, mz2) = avlToModel(xle + chord, yle, zle)
           gl.glBegin(GL.GL_LINES)
-          gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
-          gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+          gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
+          gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
           gl.glEnd()
         }
       }
@@ -761,26 +839,29 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glScalef(modelScale, modelScale, modelScale)
       gl.glTranslatef(-centerX, -centerY, -centerZ)
 
+      val (mx1, my1, mz1) = avlToModel(xle, yle, zle)
+      val (mx2, my2, mz2) = avlToModel(xle + chord, yle, zle)
+
       // Draw leading edge handle - yellow/orange color
       gl.glColor3f(1.0f, 0.7f, 0.0f)
       gl.glPointSize(12.0f)
       gl.glBegin(GL.GL_POINTS)
-      gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
+      gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
       gl.glEnd()
 
       // Draw trailing edge handle - lighter color
       gl.glColor3f(1.0f, 0.9f, 0.5f)
       gl.glPointSize(8.0f)
       gl.glBegin(GL.GL_POINTS)
-      gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+      gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
       gl.glEnd()
 
       // Draw chord line highlighted
       gl.glColor3f(1.0f, 0.7f, 0.0f)
       gl.glLineWidth(3.0f)
       gl.glBegin(GL.GL_LINES)
-      gl.glVertex3f(yle * displayScale, xle * displayScale, zle * displayScale)
-      gl.glVertex3f(yle * displayScale, (xle + chord) * displayScale, zle * displayScale)
+      gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
+      gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
       gl.glEnd()
 
       gl.glPopMatrix()
@@ -789,6 +870,114 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glEnable(GL.GL_DEPTH_TEST)
       gl.glEnable(GLLightingFunc.GL_LIGHTING)
     }
+  }
+
+  private def drawReferenceLine(gl: GL2): Unit = {
+    if (!showReferenceLine) return
+
+    gl.glDisable(GLLightingFunc.GL_LIGHTING)
+    gl.glDisable(GL.GL_DEPTH_TEST)
+
+    gl.glPushMatrix()
+    gl.glScalef(modelScale, modelScale, modelScale)
+    gl.glTranslatef(-centerX, -centerY, -centerZ)
+
+    // Calculate line extent based on model bounds
+    val extent = scala.math.max(
+      scala.math.max(modelMaxX - modelMinX, modelMaxY - modelMinY),
+      modelMaxZ - modelMinZ
+    ) * 2
+
+    // Small offset for label position
+    val labelOffset = extent * 0.12f
+
+    gl.glLineWidth(2.0f)
+
+    // Draw AVL axes using avlToModel transform (solid green lines)
+    // This shows where AVL axes end up after mapping
+    gl.glColor3f(0.0f, 1.0f, 0.0f)
+
+    // AVL X axis (forward direction)
+    val (axXn1, ayXn1, azXn1) = avlToModel(-extent, 0, 0)
+    val (axXp1, ayXp1, azXp1) = avlToModel(extent, 0, 0)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(axXn1, ayXn1, azXn1)
+    gl.glVertex3f(axXp1, ayXp1, azXp1)
+    gl.glEnd()
+
+    // AVL Y axis (spanwise/right direction)
+    val (axYn1, ayYn1, azYn1) = avlToModel(0, -extent, 0)
+    val (axYp1, ayYp1, azYp1) = avlToModel(0, extent, 0)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(axYn1, ayYn1, azYn1)
+    gl.glVertex3f(axYp1, ayYp1, azYp1)
+    gl.glEnd()
+
+    // AVL Z axis (up direction)
+    val (axZn1, ayZn1, azZn1) = avlToModel(0, 0, -extent)
+    val (axZp1, ayZp1, azZp1) = avlToModel(0, 0, extent)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(axZn1, ayZn1, azZn1)
+    gl.glVertex3f(axZp1, ayZp1, azZp1)
+    gl.glEnd()
+
+    // Draw Model 3D axes - dashed colored lines (original model coordinates)
+    gl.glEnable(GL2.GL_LINE_STIPPLE)
+    gl.glLineStipple(2, 0x00FF.toShort)
+
+    // Model x axis - Red dashed
+    gl.glColor3f(0.9f, 0.3f, 0.3f)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(-extent, 0, 0)
+    gl.glVertex3f(extent, 0, 0)
+    gl.glEnd()
+
+    // Model y axis - Blue dashed
+    gl.glColor3f(0.3f, 0.3f, 0.9f)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(0, -extent, 0)
+    gl.glVertex3f(0, extent, 0)
+    gl.glEnd()
+
+    // Model z axis - Cyan dashed
+    gl.glColor3f(0.3f, 0.9f, 0.9f)
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(0, 0, -extent)
+    gl.glVertex3f(0, 0, extent)
+    gl.glEnd()
+
+    gl.glDisable(GL2.GL_LINE_STIPPLE)
+
+    // Draw axis labels
+    if (textRenderer != null) {
+      val textScale = extent * 0.005f / zoom
+
+      textRenderer.begin3DRendering()
+
+      // AVL axis labels (green, uppercase) - at transformed positions
+      textRenderer.setColor(0.0f, 1.0f, 0.0f, 1.0f)
+      val (xlX, ylX, zlX) = avlToModel(labelOffset, 0, 0)
+      val (xlY, ylY, zlY) = avlToModel(0, labelOffset, 0)
+      val (xlZ, ylZ, zlZ) = avlToModel(0, 0, labelOffset)
+      textRenderer.draw3D("X", xlX, ylX, zlX, textScale)
+      textRenderer.draw3D("Y", xlY, ylY, zlY, textScale)
+      textRenderer.draw3D("Z", xlZ, ylZ, zlZ, textScale)
+
+      // Model axis labels (colored, lowercase)
+      textRenderer.setColor(0.9f, 0.4f, 0.4f, 1.0f)
+      textRenderer.draw3D("x", labelOffset * 0.8f, 0, 0, textScale)
+      textRenderer.setColor(0.4f, 0.4f, 0.9f, 1.0f)
+      textRenderer.draw3D("y", 0, labelOffset * 0.8f, 0, textScale)
+      textRenderer.setColor(0.3f, 0.9f, 0.9f, 1.0f)
+      textRenderer.draw3D("z", 0, 0, labelOffset * 0.8f, textScale)
+
+      textRenderer.end3DRendering()
+    }
+
+    gl.glPopMatrix()
+    gl.glLineWidth(1.0f)
+    gl.glEnable(GL.GL_DEPTH_TEST)
+    gl.glEnable(GLLightingFunc.GL_LIGHTING)
   }
 
   private def drawDimensionLines(gl: GL2, drawable: GLAutoDrawable): Unit = {
