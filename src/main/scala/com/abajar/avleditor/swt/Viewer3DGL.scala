@@ -10,9 +10,9 @@
 
 package com.abajar.avleditor.swt
 
-import org.eclipse.swt.widgets.Composite
+import org.eclipse.swt.widgets.{Composite, Label}
 import org.eclipse.swt.SWT
-import org.eclipse.swt.layout.FillLayout
+import org.eclipse.swt.layout.{GridLayout, GridData, FillLayout}
 import org.eclipse.swt.events._
 import org.eclipse.swt.awt.SWT_AWT
 
@@ -21,11 +21,17 @@ import com.jogamp.opengl._
 import com.jogamp.opengl.awt.GLJPanel
 import com.jogamp.opengl.fixedfunc.{GLLightingFunc, GLMatrixFunc}
 import com.jogamp.opengl.util.FPSAnimator
+import com.jogamp.opengl.util.awt.TextRenderer
+import java.awt.Font
 
 import com.abajar.avleditor.ac3d.{AC3DLoader, AC3DModel}
 
 class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style) {
-  setLayout(new FillLayout())
+  private val gridLayout = new GridLayout(1, false)
+  gridLayout.marginWidth = 0
+  gridLayout.marginHeight = 0
+  gridLayout.verticalSpacing = 2
+  setLayout(gridLayout)
 
   private var model: Option[AC3DModel] = None
   @volatile private var vertices: Array[Float] = Array()
@@ -65,7 +71,13 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   // Create AWT Frame embedded in SWT
   private val awtComposite = new Composite(this, SWT.EMBEDDED)
   awtComposite.setLayout(new FillLayout())
+  awtComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
   private val awtFrame = SWT_AWT.new_Frame(awtComposite)
+
+  // Info label for dimensions and controls
+  private val infoLabel = new Label(this, SWT.NONE)
+  infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false))
+  infoLabel.setText("Drag: rotate | Right-drag: pan | Wheel: zoom | Double-click: reset")
 
   // OpenGL setup using AWT GLCanvas
   private val glProfile = GLProfile.getDefault
@@ -81,6 +93,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   glCanvas.setVisible(true)
 
   private var glInitialized = false
+  private var textRenderer: TextRenderer = _
 
   glCanvas.addGLEventListener(new GLEventListener {
     override def init(drawable: GLAutoDrawable): Unit = {
@@ -99,10 +112,14 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightPos, 0)
       gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbient, 0)
       gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, lightDiffuse, 0)
+
+      textRenderer = new TextRenderer(new Font("SansSerif", Font.BOLD, 14))
       glInitialized = true
     }
 
-    override def dispose(drawable: GLAutoDrawable): Unit = {}
+    override def dispose(drawable: GLAutoDrawable): Unit = {
+      if (textRenderer != null) textRenderer.dispose()
+    }
 
     override def display(drawable: GLAutoDrawable): Unit = {
       render(drawable)
@@ -233,6 +250,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def setScale(scale: Float): Unit = {
     displayScale = scale
+    if (vertices.nonEmpty) updateInfoLabel()
   }
 
   def setShowDimensions(show: Boolean): Unit = {
@@ -279,6 +297,22 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     val sizeZ = maxZ - minZ
     val maxSize = scala.math.max(scala.math.max(sizeX, sizeY), sizeZ)
     modelScale = if (maxSize > 0) 100.0f / maxSize else 1.0f
+
+    // Update info label with dimensions
+    updateInfoLabel()
+  }
+
+  private def updateInfoLabel(): Unit = {
+    if (isDisposed) return
+    val wingspan = (modelMaxZ - modelMinZ) / displayScale
+    val length = (modelMaxY - modelMinY) / displayScale
+    getDisplay.asyncExec(new Runnable {
+      override def run(): Unit = {
+        if (!isDisposed && !infoLabel.isDisposed) {
+          infoLabel.setText(f"Wingspan: $wingspan%.2f | Length: $length%.2f | Drag: rotate | Right-drag: pan | Wheel: zoom")
+        }
+      }
+    })
   }
 
   private def render(drawable: GLAutoDrawable): Unit = {
@@ -345,18 +379,19 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
       gl.glPopMatrix()
 
-      if (showDimensions) drawDimensionLines(gl)
+      if (showDimensions) drawDimensionLines(gl, drawable)
     }
 
     gl.glFlush()
   }
 
-  private def drawDimensionLines(gl: GL2): Unit = {
+  private def drawDimensionLines(gl: GL2, drawable: GLAutoDrawable): Unit = {
     gl.glDisable(GLLightingFunc.GL_LIGHTING)
-    gl.glColor3f(0.0f, 1.0f, 1.0f)
-    gl.glLineWidth(2.0f)
+    gl.glDisable(GL.GL_DEPTH_TEST)  // Draw on top of everything
+    gl.glColor3f(0.0f, 1.0f, 1.0f)  // Cyan color
+    gl.glLineWidth(3.0f)
     gl.glEnable(GL2.GL_LINE_STIPPLE)
-    gl.glLineStipple(1, 0x00FF.toShort)
+    gl.glLineStipple(2, 0x00FF.toShort)
 
     gl.glPushMatrix()
     gl.glScalef(modelScale, modelScale, modelScale)
@@ -367,7 +402,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     val offsetX = modelMaxX + (modelMaxX - modelMinX) * 0.15f
     val capSize = (modelMaxX - modelMinX) * 0.02f
 
-    // Wingspan
+    // Wingspan line
     gl.glBegin(GL.GL_LINES)
     gl.glVertex3f(modelMinX, offsetY, offsetZ)
     gl.glVertex3f(modelMaxX, offsetY, offsetZ)
@@ -380,7 +415,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glVertex3f(modelMaxX, offsetY + capSize, offsetZ)
     gl.glEnd()
 
-    // Length
+    // Length line
     gl.glBegin(GL.GL_LINES)
     gl.glVertex3f(offsetX, modelMinY, offsetZ)
     gl.glVertex3f(offsetX, modelMaxY, offsetZ)
@@ -393,9 +428,38 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glVertex3f(offsetX + capSize, modelMaxY, offsetZ)
     gl.glEnd()
 
-    gl.glPopMatrix()
     gl.glDisable(GL2.GL_LINE_STIPPLE)
     gl.glLineWidth(1.0f)
+
+    // Draw dimension text labels in 3D space (inside the transformed space)
+    if (textRenderer != null) {
+      val wingspanVal = (modelMaxX - modelMinX) / displayScale
+      val lengthVal = (modelMaxY - modelMinY) / displayScale
+
+      // Text scale - constant visual size regardless of zoom
+      val textScale = (modelMaxX - modelMinX) * 0.006f / zoom
+
+      textRenderer.begin3DRendering()
+      textRenderer.setColor(0.0f, 1.0f, 1.0f, 1.0f)  // Cyan
+
+      // Wingspan text - centered below the wingspan line
+      val wingspanText = f"$wingspanVal%.2f m"
+      val wingspanTextX = (modelMinX + modelMaxX) / 2
+      val wingspanTextY = offsetY - capSize * 4
+      textRenderer.draw3D(wingspanText, wingspanTextX, wingspanTextY, offsetZ, textScale)
+
+      // Length text - beside the length line
+      val lengthText = f"$lengthVal%.2f m"
+      val lengthTextX = offsetX + capSize * 4
+      val lengthTextY = (modelMinY + modelMaxY) / 2
+      textRenderer.draw3D(lengthText, lengthTextX, lengthTextY, offsetZ, textScale)
+
+      textRenderer.end3DRendering()
+    }
+
+    gl.glPopMatrix()
+
+    gl.glEnable(GL.GL_DEPTH_TEST)
     gl.glEnable(GLLightingFunc.GL_LIGHTING)
   }
 }
