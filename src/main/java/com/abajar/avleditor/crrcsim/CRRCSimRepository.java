@@ -37,6 +37,10 @@ import javax.xml.bind.Unmarshaller;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.introspector.BeanAccess;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.nodes.Tag;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.LoaderOptions;
 
 /**
  *
@@ -55,10 +59,13 @@ public class CRRCSimRepository {
                 (content.contains(":") && !content.contains("<?xml"))) {
                 // Load as YAML
                 logger.log(Level.INFO, "Loading YAML file");
-                Yaml yaml = new Yaml();
+                LoaderOptions loaderOptions = new LoaderOptions();
+                loaderOptions.setTagInspector(tag -> true);
+                Constructor constructor = new Constructor(CRRCSim.class, loaderOptions);
+                Yaml yaml = new Yaml(constructor);
                 yaml.setBeanAccess(BeanAccess.FIELD);
                 FileInputStream fis = new FileInputStream(file);
-                crrcsim = yaml.loadAs(fis, CRRCSim.class);
+                crrcsim = yaml.load(fis);
                 fis.close();
             } else {
                 // Legacy formats (XML or binary)
@@ -106,7 +113,10 @@ public class CRRCSimRepository {
             options.setIndent(2);
             options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
 
-            Yaml yaml = new Yaml(options);
+            Representer representer = new Representer(options);
+            representer.addClassTag(CRRCSim.class, Tag.MAP);
+
+            Yaml yaml = new Yaml(representer, options);
             yaml.setBeanAccess(BeanAccess.FIELD);
 
             FileWriter writer = new FileWriter(file);

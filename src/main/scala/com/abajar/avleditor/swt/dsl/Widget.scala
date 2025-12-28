@@ -60,6 +60,13 @@ object Widget{
     }
   }
 
+  // Companion object to store shared state for property change callbacks
+  private var propertyChangeCallback: Option[() => Unit] = None
+
+  def setPropertyChangeCallback(callback: () => Unit): Unit = {
+    propertyChangeCallback = Some(callback)
+  }
+
   implicit class AddColumnTableWrapper(table: Table){
     val minimumWidth = 50
 
@@ -91,6 +98,8 @@ object Widget{
               Option(dialog.open).foreach { path =>
                 item.setText(columnNumber, path)
                 fileField.value = path
+                // Notify property change callback
+                propertyChangeCallback.foreach(callback => callback())
               }
 
             case _ =>
@@ -107,6 +116,8 @@ object Widget{
                   val text = editor.getEditor.asInstanceOf[Text]
                   tableField.value = text.getText
                   editor.getEditor.dispose()
+                  // Notify property change callback
+                  propertyChangeCallback.foreach(callback => callback())
                 }
               })
               newEditor.selectAll

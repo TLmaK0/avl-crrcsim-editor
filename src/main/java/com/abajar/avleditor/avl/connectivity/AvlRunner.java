@@ -48,6 +48,8 @@ public class AvlRunner {
     final Path executionPath;
     final AVL avl;
     private AvlCalculation result;
+    private Path geometryPlotPath;
+    private Path trefftzPlotPath;
 
     final static Logger logger = Logger.getLogger(AvlRunner.class.getName());
     private final String avlFileBase;
@@ -131,6 +133,23 @@ public class AvlRunner {
         //execute run case
         sendCommand("x\n");
 
+        // Configure plot options for PostScript output
+        sendCommand("plop\n");
+        sendCommand("g\n");  // Disable graphics window (for headless)
+        sendCommand("c\n");  // Enable color
+        sendCommand("i\n");  // Enable individual files (plot000.ps, plot001.ps, etc.)
+        sendCommand("\n");   // Return to OPER menu
+
+        // Generate geometry plot
+        sendCommand("g\n");  // Enter geometry plot mode
+        sendCommand("h\n");  // Hardcopy to PostScript
+        sendCommand("\n");   // Return to OPER menu
+
+        // Generate Trefftz plane plot
+        sendCommand("t\n");  // Enter Trefftz plot mode
+        sendCommand("h\n");  // Hardcopy to PostScript
+        sendCommand("\n");   // Return to OPER menu
+
         sendCommand("st\n");
         sendCommand(resultFile + "\n");
         sendCommand("c1\n\n");
@@ -146,6 +165,9 @@ public class AvlRunner {
         }
 
         logger.log(Level.INFO, "AVL process finished with exit code: " + process.exitValue());
+
+        // Convert PostScript plots to PNG
+        convertPlotsToImages();
 
         InputStream fis = new FileInputStream(new File(resultFile));
         Scanner scanner = new Scanner(fis);
@@ -226,5 +248,95 @@ public class AvlRunner {
         Float realValue = Float.parseFloat(value);
         logger.log(Level.FINE, "{0} {1}", new Object[]{pattern, realValue});
         return realValue;
+    }
+
+    private void convertPlotsToImages() {
+        Path plotFile = executionPath.resolve("plot.ps");
+
+        geometryPlotPath = executionPath.resolve("geometry.png");
+        trefftzPlotPath = executionPath.resolve("trefftz.png");
+
+        if (Files.exists(plotFile)) {
+            // Convert multi-page PS to individual PNGs
+            // Page 0 = geometry, Page 1 = trefftz
+            convertPsToPng(plotFile, geometryPlotPath, 0);
+            convertPsToPng(plotFile, trefftzPlotPath, 1);
+        } else {
+            logger.log(Level.WARNING, "Plot file not found: " + plotFile);
+            geometryPlotPath = null;
+            trefftzPlotPath = null;
+        }
+    }
+
+    private void convertPsToPng(Path psFile, Path pngFile, int pageNumber) {
+        try {
+            // Use Ghostscript to extract specific page
+            ProcessBuilder pb = new ProcessBuilder(
+                "gs",
+                "-dSAFER",
+                "-dBATCH",
+                "-dNOPAUSE",
+                "-dFirstPage=" + (pageNumber + 1),
+                "-dLastPage=" + (pageNumber + 1),
+                "-sDEVICE=png16m",
+                "-r150",
+                "-sOutputFile=" + pngFile.toString(),
+                psFile.toString()
+            );
+            pb.directory(executionPath.toFile());
+            pb.redirectErrorStream(true);
+            Process p = pb.start();
+
+            // Read output to prevent blocking
+            java.io.BufferedReader reader = new java.io.BufferedReader(
+                new java.io.InputStreamReader(p.getInputStream()));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                logger.log(Level.FINE, "[GS] " + line);
+            }
+
+            boolean finished = p.waitFor(10, java.util.concurrent.TimeUnit.SECONDS);
+
+            if (finished && p.exitValue() == 0 && Files.exists(pngFile)) {
+                logger.log(Level.INFO, "Converted page " + pageNumber + " of " + psFile + " to " + pngFile);
+                // Rotate image 90 degrees clockwise
+                rotateImage(pngFile);
+            } else {
+                logger.log(Level.WARNING, "Ghostscript conversion failed for page " + pageNumber);
+                if (pageNumber == 0) geometryPlotPath = null;
+                if (pageNumber == 1) trefftzPlotPath = null;
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error converting PostScript to PNG: " + e.getMessage());
+            if (pageNumber == 0) geometryPlotPath = null;
+            if (pageNumber == 1) trefftzPlotPath = null;
+        }
+    }
+
+    private void rotateImage(Path pngFile) {
+        try {
+            ProcessBuilder pb = new ProcessBuilder(
+                "convert",
+                pngFile.toString(),
+                "-rotate", "90",
+                pngFile.toString()
+            );
+            pb.directory(executionPath.toFile());
+            Process p = pb.start();
+            boolean finished = p.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+            if (finished && p.exitValue() == 0) {
+                logger.log(Level.INFO, "Rotated image: " + pngFile);
+            }
+        } catch (Exception e) {
+            logger.log(Level.WARNING, "Could not rotate image: " + e.getMessage());
+        }
+    }
+
+    public Path getGeometryPlotPath() {
+        return geometryPlotPath;
+    }
+
+    public Path getTrefftzPlotPath() {
+        return trefftzPlotPath;
     }
 }
