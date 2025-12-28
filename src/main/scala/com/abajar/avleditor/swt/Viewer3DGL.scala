@@ -10,7 +10,7 @@
 
 package com.abajar.avleditor.swt
 
-import org.eclipse.swt.widgets.{Composite, Label}
+import org.eclipse.swt.widgets.{Composite, Label, Button}
 import org.eclipse.swt.SWT
 import org.eclipse.swt.layout.{GridLayout, GridData, FillLayout}
 import org.eclipse.swt.events._
@@ -67,6 +67,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   // Display scale
   @volatile private var displayScale: Float = 1.0f
   @volatile private var showDimensions: Boolean = true
+  @volatile private var wireframeMode: Boolean = true
 
   // Create AWT Frame embedded in SWT
   private val awtComposite = new Composite(this, SWT.EMBEDDED)
@@ -74,8 +75,27 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   awtComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true))
   private val awtFrame = SWT_AWT.new_Frame(awtComposite)
 
+  // Bottom bar with checkbox and info label
+  private val bottomBar = new Composite(this, SWT.NONE)
+  private val bottomLayout = new GridLayout(2, false)
+  bottomLayout.marginWidth = 0
+  bottomLayout.marginHeight = 0
+  bottomBar.setLayout(bottomLayout)
+  bottomBar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false))
+
+  // Wireframe checkbox
+  private val wireframeCheckbox = new Button(bottomBar, SWT.CHECK)
+  wireframeCheckbox.setText("Wireframe")
+  wireframeCheckbox.setSelection(true)
+  wireframeCheckbox.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false))
+  wireframeCheckbox.addSelectionListener(new SelectionAdapter {
+    override def widgetSelected(e: SelectionEvent): Unit = {
+      wireframeMode = wireframeCheckbox.getSelection
+    }
+  })
+
   // Info label for dimensions and controls
-  private val infoLabel = new Label(this, SWT.NONE)
+  private val infoLabel = new Label(bottomBar, SWT.NONE)
   infoLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false))
   infoLabel.setText("Drag: rotate | Right-drag: pan | Wheel: zoom | Double-click: reset")
 
@@ -239,7 +259,64 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     panY = 0.0f
     rotationX = 20.0f
     rotationY = 45.0f
-    zoom = 1.0f
+
+    // Calculate projected bounding box after rotation
+    val radX = scala.math.toRadians(rotationX)
+    val radY = scala.math.toRadians(rotationY)
+    val cosX = scala.math.cos(radX).toFloat
+    val sinX = scala.math.sin(radX).toFloat
+    val cosY = scala.math.cos(radY).toFloat
+    val sinY = scala.math.sin(radY).toFloat
+
+    // Get the 8 corners of the bounding box
+    val corners = Array(
+      (modelMinX, modelMinY, modelMinZ),
+      (modelMaxX, modelMinY, modelMinZ),
+      (modelMinX, modelMaxY, modelMinZ),
+      (modelMaxX, modelMaxY, modelMinZ),
+      (modelMinX, modelMinY, modelMaxZ),
+      (modelMaxX, modelMinY, modelMaxZ),
+      (modelMinX, modelMaxY, modelMaxZ),
+      (modelMaxX, modelMaxY, modelMaxZ)
+    )
+
+    var projMinX = Float.MaxValue
+    var projMaxX = Float.MinValue
+    var projMinY = Float.MaxValue
+    var projMaxY = Float.MinValue
+
+    // Project each corner after rotation
+    for ((x, y, z) <- corners) {
+      // Center the point
+      val cx = (x - centerX) * modelScale
+      val cy = (y - centerY) * modelScale
+      val cz = (z - centerZ) * modelScale
+
+      // Rotate around Y axis first
+      val x1 = cx * cosY + cz * sinY
+      val z1 = -cx * sinY + cz * cosY
+
+      // Then rotate around X axis
+      val y2 = cy * cosX - z1 * sinX
+
+      // Project to screen (orthographic, so just use x1 and y2)
+      projMinX = scala.math.min(projMinX, x1)
+      projMaxX = scala.math.max(projMaxX, x1)
+      projMinY = scala.math.min(projMinY, y2)
+      projMaxY = scala.math.max(projMaxY, y2)
+    }
+
+    // Calculate required zoom to fit projected size in view
+    // View shows 300/zoom units total (from -150/zoom to +150/zoom)
+    val projWidth = projMaxX - projMinX
+    val projHeight = projMaxY - projMinY
+    val maxProjSize = scala.math.max(projWidth, projHeight)
+
+    if (maxProjSize > 0) {
+      zoom = 290.0f / maxProjSize
+    } else {
+      zoom = 1.0f
+    }
   }
 
   def clearModel(): Unit = {
@@ -345,6 +422,13 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glScalef(modelScale, modelScale, modelScale)
       gl.glTranslatef(-centerX, -centerY, -centerZ)
 
+      // Set polygon mode (wireframe or solid)
+      // GL_LINE = 0x1B01, GL_FILL = 0x1B02
+      if (wireframeMode) {
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, 0x1B01)
+        gl.glDisable(GLLightingFunc.GL_LIGHTING)
+      }
+
       // Draw triangles
       gl.glBegin(GL.GL_TRIANGLES)
       var i = 0
@@ -376,6 +460,12 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         i += 3
       }
       gl.glEnd()
+
+      // Restore polygon mode and lighting
+      if (wireframeMode) {
+        gl.glPolygonMode(GL.GL_FRONT_AND_BACK, 0x1B02)  // GL_FILL
+        gl.glEnable(GLLightingFunc.GL_LIGHTING)
+      }
 
       gl.glPopMatrix()
 
