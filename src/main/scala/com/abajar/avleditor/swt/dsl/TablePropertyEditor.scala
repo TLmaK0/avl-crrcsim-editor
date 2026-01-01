@@ -26,6 +26,18 @@ class TableFieldWritable(protected val instance: Any, protected val field: Field
   def text(): String = textArg
   def help(): String = helpArg
 
+  def isBoolean: Boolean = field.getType == classOf[Boolean] || field.getType == java.lang.Boolean.TYPE
+
+  def booleanValue: Boolean = {
+    field.setAccessible(true)
+    field.getBoolean(instance)
+  }
+
+  def booleanValue_=(value: Boolean): Unit = {
+    field.setAccessible(true)
+    field.setBoolean(instance, value)
+  }
+
   def value: String = {
     field.setAccessible(true)
     Option(field.get(instance)) match {
@@ -38,6 +50,7 @@ class TableFieldWritable(protected val instance: Any, protected val field: Field
     val parsedValue = field.get(instance).asInstanceOf[Any] match {
       case float: Float => value.toFloat
       case int: Int => value.toInt
+      case bool: Boolean => value.toBoolean
       case _ => value
     }
     field.setAccessible(true)

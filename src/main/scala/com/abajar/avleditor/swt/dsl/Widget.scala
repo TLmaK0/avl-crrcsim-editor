@@ -49,12 +49,21 @@ object Widget{
       table.addListener(SWT.SetData, new Listener {
         def handleEvent(event: Event) = {
           val item = event.item.asInstanceOf[TableItem]
-          val tableField = listenerMethod(table.indexOf(item))
-          item.setText(0, tableField.text)
-          item.setText(1, tableField.value)
-          item.setData(tableField)
-          table.getColumn(0).pack
-          table.getColumn(1).pack
+          val index = table.indexOf(item)
+          if (index >= 0) {
+            val tableField = listenerMethod(index)
+            item.setText(0, tableField.text)
+            // For boolean fields, show checkbox symbol instead of true/false
+            val displayValue = tableField match {
+              case boolField: TableFieldWritable if boolField.isBoolean =>
+                if (boolField.booleanValue) "☑" else "☐"
+              case _ => tableField.value
+            }
+            item.setText(1, displayValue)
+            item.setData(tableField)
+            table.getColumn(0).pack
+            table.getColumn(1).pack
+          }
         }
       })
       table
@@ -102,6 +111,14 @@ object Widget{
                 // Notify property change callback
                 propertyChangeCallback.foreach(callback => callback())
               }
+
+            case boolField: TableFieldWritable if boolField.isBoolean =>
+              // Toggle value directly on click, no editor needed
+              val newValue = !boolField.booleanValue
+              boolField.booleanValue = newValue
+              item.setText(columnNumber, if (newValue) "☑" else "☐")
+              // Notify property change callback
+              propertyChangeCallback.foreach(callback => callback())
 
             case _ =>
               val newEditor = new Text(table, SWT.NONE)
