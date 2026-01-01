@@ -43,29 +43,22 @@ class MainWindow(
       tableClickHandler: (Any) => Unit
       ) {
 
-  implicit class AddButtonCoolBarAndRegister(toolBar: ToolBar){
+  implicit class AddButtonCompositeRegister(composite: Composite){
     def addButtonRegister(
           text: String,
           callback: (ENABLE_BUTTONS) => (SelectionEvent) => Unit,
-          button: ENABLE_BUTTONS): ToolBar = {
-      allButtons += ButtonData(text, button, callback(button), toolBar)
-      toolbars += toolBar
-      // Create button initially
-      val item = new ToolItem(toolBar, SWT.PUSH)
-      item.setText(text)
-      item.addSelectionListener(new SelectionAdapter {
-        override def widgetSelected(se: SelectionEvent) = {
-          callback(button)(se)
-        }
-      })
-      toolBar
+          button: ENABLE_BUTTONS): Composite = {
+      allButtons += ButtonData(text, button, callback(button), composite)
+      buttonContainers += composite
+      composite
     }
   }
 
-  case class ButtonData(text: String, buttonType: ENABLE_BUTTONS, callback: (SelectionEvent) => Unit, toolbar: ToolBar)
+  case class ButtonData(text: String, buttonType: ENABLE_BUTTONS, callback: (SelectionEvent) => Unit, container: Composite)
 
   val allButtons = collection.mutable.ListBuffer[ButtonData]()
-  val toolbars = collection.mutable.Set[ToolBar]()
+  val buttonContainers = collection.mutable.Set[Composite]()
+  val activeButtons = collection.mutable.ListBuffer[Button]()
 
   val display = new Display
 
@@ -88,11 +81,10 @@ class MainWindow(
         (se: SelectionEvent) => menuClickHandler(menuOption)
 
   def disableAllButtons: Unit = {
-    for (tb <- toolbars) {
-      for (item <- tb.getItems) {
-        item.dispose()
-      }
+    for (btn <- activeButtons) {
+      if (!btn.isDisposed) btn.dispose()
     }
+    activeButtons.clear()
   }
 
   def buttonsEnableOnly(
@@ -100,14 +92,20 @@ class MainWindow(
     disableAllButtons
     for (buttonData <- allButtons) {
       if (buttons.contains(buttonData.buttonType)) {
-        val item = new ToolItem(buttonData.toolbar, SWT.PUSH)
-        item.setText(buttonData.text)
-        item.addSelectionListener(new SelectionAdapter {
+        val btn = new Button(buttonData.container, SWT.PUSH)
+        btn.setText(buttonData.text)
+        btn.addSelectionListener(new SelectionAdapter {
           override def widgetSelected(se: SelectionEvent) = {
             buttonData.callback(se)
           }
         })
+        activeButtons += btn
       }
+    }
+    // Force layout update after adding buttons
+    for (container <- buttonContainers) {
+      container.layout(true)
+      container.getParent.layout(true)
     }
   }
 
@@ -161,18 +159,18 @@ class MainWindow(
           .addItem("Clear AVL configuration", notifyMenuClick(MenuOption.ClearAvlConfiguration))
      })
 
-    val toolbar1 = shell.addToolBar(SWT.BORDER)
-    toolbar1.layoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
-    toolbar1.addButtonRegister("+ Surface", notifyButtonClick, ENABLE_BUTTONS.ADD_SURFACE)
+    val buttonBar1 = shell.addButtonBar()
+    buttonBar1.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
+    buttonBar1.addButtonRegister("+ Surface", notifyButtonClick, ENABLE_BUTTONS.ADD_SURFACE)
       .addButtonRegister("+ Body", notifyButtonClick, ENABLE_BUTTONS.ADD_BODY)
       .addButtonRegister("+ Section", notifyButtonClick, ENABLE_BUTTONS.ADD_SECTION)
       .addButtonRegister("+ Control", notifyButtonClick, ENABLE_BUTTONS.ADD_CONTROL)
       .addButtonRegister("+ Mass", notifyButtonClick, ENABLE_BUTTONS.ADD_MASS)
       .addButtonRegister("Delete", notifyButtonClick, ENABLE_BUTTONS.DELETE)
 
-    val toolbar2 = shell.addToolBar(SWT.BORDER)
-    toolbar2.layoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
-    toolbar2.addButtonRegister("+ Change Log", notifyButtonClick, ENABLE_BUTTONS.ADD_CHANGELOG)
+    val buttonBar2 = shell.addButtonBar()
+    buttonBar2.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 3, 1))
+    buttonBar2.addButtonRegister("+ Change Log", notifyButtonClick, ENABLE_BUTTONS.ADD_CHANGELOG)
       .addButtonRegister("+ Battery", notifyButtonClick, ENABLE_BUTTONS.ADD_BATTERY)
       .addButtonRegister("+ Shaft", notifyButtonClick, ENABLE_BUTTONS.ADD_SHAFT)
       .addButtonRegister("+ Engine", notifyButtonClick, ENABLE_BUTTONS.ADD_ENGINE)

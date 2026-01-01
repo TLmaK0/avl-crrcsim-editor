@@ -49,6 +49,15 @@ object Shell{
 
     def addStyledText(style: Int): StyledText = new StyledText(shell, style)
     def addToolBar(style: Int): ToolBar = new ToolBar(shell, style)
+    def addButtonBar(): Composite = {
+      val composite = new Composite(shell, SWT.NONE)
+      val layout = new RowLayout(SWT.HORIZONTAL)
+      layout.spacing = 5
+      layout.marginTop = 2
+      layout.marginBottom = 2
+      composite.setLayout(layout)
+      composite
+    }
 
     val openFileDialog = new FileDialog(shell, SWT.OPEN)
 

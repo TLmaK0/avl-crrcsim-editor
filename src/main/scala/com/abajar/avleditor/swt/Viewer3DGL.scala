@@ -70,8 +70,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var wireframeMode: Boolean = true
   @volatile private var showAvlSurfaces: Boolean = true
 
-  // AVL surface data: Array of (sections, ydupl), where sections is Array of (x, y, z, chord)
-  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float)], Float)] = Array()
+  // AVL surface data: Array of (sections, ydupl), where sections is Array of (x, y, z, chord, ainc, naca)
+  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Float)] = Array()
 
   // Selected section for editing (surfaceIndex, sectionIndex, x, y, z, chord)
   @volatile private var selectedSection: Option[(Int, Int, Float, Float, Float, Float)] = None
@@ -409,7 +409,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def getViewAngles: (Float, Float) = (rotationX, rotationY)
 
-  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float)], Float)]): Unit = {
+  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Float)]): Unit = {
     avlSurfaces = surfaces
   }
 
@@ -798,8 +798,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
         // Draw symmetric surface (mirror across Y=ydupl plane)
         // Y_mirrored = 2*ydupl - Y
-        val mirroredSurface = surface.map { case (xle, yle, zle, chord) =>
-          (xle, 2 * ydupl - yle, zle, chord)
+        val mirroredSurface = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
+          (xle, 2 * ydupl - yle, zle, chord, ainc, naca)
         }
         drawSingleSurface(gl, mirroredSurface)
       }
@@ -811,34 +811,155 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glEnable(GLLightingFunc.GL_LIGHTING)
   }
 
-  private def drawSingleSurface(gl: GL2, surface: Array[(Float, Float, Float, Float)]): Unit = {
+  private def drawSingleSurface(gl: GL2, surface: Array[(Float, Float, Float, Float, Float, String)]): Unit = {
+    import scala.math.{toRadians, cos, sin}
+
     gl.glColor3f(0.0f, 1.0f, 0.0f)
 
-    // Draw leading edge line connecting all sections
-    gl.glBegin(GL.GL_LINE_STRIP)
-    for ((xle, yle, zle, _) <- surface) {
-      val (mx, my, mz) = avlToModel(xle, yle, zle)
-      gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-    }
-    gl.glEnd()
+    // Generate all NACA profiles for the surface
+    val numProfilePoints = 20
+    val profiles = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
+      val profile = generateNaca4Digit(naca, numProfilePoints)
+      val aincRad = toRadians(ainc)
+      val cosA = cos(aincRad).toFloat
+      val sinA = sin(aincRad).toFloat
 
-    // Draw trailing edge line connecting all sections
-    gl.glBegin(GL.GL_LINE_STRIP)
-    for ((xle, yle, zle, chord) <- surface) {
-      val (mx, my, mz) = avlToModel(xle + chord, yle, zle)
-      gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+      // Transform profile points to 3D coordinates
+      profile.map { case (px, pz) =>
+        val dx = px * chord
+        val dz = pz * chord
+        val rotX = dx * cosA - dz * sinA
+        val rotZ = dx * sinA + dz * cosA
+        avlToModel(xle + rotX, yle, zle + rotZ)
+      }
     }
-    gl.glEnd()
 
-    // Draw chord lines for each section
-    for ((xle, yle, zle, chord) <- surface) {
-      val (mx1, my1, mz1) = avlToModel(xle, yle, zle)
-      val (mx2, my2, mz2) = avlToModel(xle + chord, yle, zle)
-      gl.glBegin(GL.GL_LINES)
-      gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
-      gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
+    // Draw NACA airfoil profile for each section
+    for (profile <- profiles) {
+      gl.glBegin(GL.GL_LINE_LOOP)
+      for ((mx, my, mz) <- profile) {
+        gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+      }
       gl.glEnd()
     }
+
+    // Draw spanwise lines connecting corresponding points between adjacent sections
+    if (profiles.length >= 2) {
+      for (i <- 0 until profiles.length - 1) {
+        val profile1 = profiles(i)
+        val profile2 = profiles(i + 1)
+        val minLen = scala.math.min(profile1.length, profile2.length)
+
+        for (j <- 0 until minLen) {
+          val (mx1, my1, mz1) = profile1(j)
+          val (mx2, my2, mz2) = profile2(j)
+          gl.glBegin(GL.GL_LINES)
+          gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
+          gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
+          gl.glEnd()
+        }
+      }
+    }
+  }
+
+  // Generate NACA 4-digit airfoil coordinates
+  // Returns array of (x, z) points normalized to chord = 1
+  private def generateNaca4Digit(naca: String, numPoints: Int = 30): Array[(Float, Float)] = {
+    import scala.math.{Pi, cos, sin, sqrt, atan}
+
+    if (naca == null || naca.isEmpty || naca.length != 4 || !naca.forall(_.isDigit)) {
+      // Return simple line if invalid NACA code
+      return Array((0f, 0f), (1f, 0f))
+    }
+
+    try {
+      val m = naca.charAt(0).asDigit / 100.0  // Max camber
+      val p = naca.charAt(1).asDigit / 10.0   // Position of max camber
+      val t = naca.substring(2).toInt / 100.0 // Thickness
+
+      val points = new scala.collection.mutable.ArrayBuffer[(Float, Float)]()
+
+      // Generate points from trailing edge, along upper surface, to leading edge, along lower surface, back to trailing edge
+      for (i <- 0 until numPoints) {
+        val beta = Pi * i / (numPoints - 1)
+        val x = (1 - cos(beta)) / 2.0  // Cosine spacing for better LE resolution
+
+        // Thickness distribution (NACA formula)
+        val yt = 5 * t * (0.2969 * sqrt(x) - 0.1260 * x - 0.3516 * x * x + 0.2843 * x * x * x - 0.1015 * x * x * x * x)
+
+        // Camber line
+        val yc = if (p == 0 || m == 0) 0.0
+                 else if (x < p) m / (p * p) * (2 * p * x - x * x)
+                 else m / ((1 - p) * (1 - p)) * (1 - 2 * p + 2 * p * x - x * x)
+
+        // Camber line slope
+        val dyc = if (p == 0 || m == 0) 0.0
+                  else if (x < p) 2 * m / (p * p) * (p - x)
+                  else 2 * m / ((1 - p) * (1 - p)) * (p - x)
+
+        val theta = atan(dyc)
+
+        // Upper surface
+        val xu = x - yt * sin(theta)
+        val zu = yc + yt * cos(theta)
+        points += ((xu.toFloat, zu.toFloat))
+      }
+
+      // Lower surface (reverse direction)
+      for (i <- (numPoints - 2) to 1 by -1) {
+        val beta = Pi * i / (numPoints - 1)
+        val x = (1 - cos(beta)) / 2.0
+
+        val yt = 5 * t * (0.2969 * sqrt(x) - 0.1260 * x - 0.3516 * x * x + 0.2843 * x * x * x - 0.1015 * x * x * x * x)
+
+        val yc = if (p == 0 || m == 0) 0.0
+                 else if (x < p) m / (p * p) * (2 * p * x - x * x)
+                 else m / ((1 - p) * (1 - p)) * (1 - 2 * p + 2 * p * x - x * x)
+
+        val dyc = if (p == 0 || m == 0) 0.0
+                  else if (x < p) 2 * m / (p * p) * (p - x)
+                  else 2 * m / ((1 - p) * (1 - p)) * (p - x)
+
+        val theta = atan(dyc)
+
+        // Lower surface
+        val xl = x + yt * sin(theta)
+        val zl = yc - yt * cos(theta)
+        points += ((xl.toFloat, zl.toFloat))
+      }
+
+      points.toArray
+    } catch {
+      case _: Exception => Array((0f, 0f), (1f, 0f))
+    }
+  }
+
+  private def drawNacaProfile(gl: GL2, xle: Float, yle: Float, zle: Float,
+                               chord: Float, ainc: Float, naca: String): Unit = {
+    import scala.math.{toRadians, cos, sin}
+
+    val profile = generateNaca4Digit(naca)
+    if (profile.length < 3) return
+
+    // Convert incidence angle to radians
+    val aincRad = toRadians(ainc)
+    val cosA = cos(aincRad).toFloat
+    val sinA = sin(aincRad).toFloat
+
+    gl.glBegin(GL.GL_LINE_LOOP)
+    for ((px, pz) <- profile) {
+      // Scale by chord and apply incidence rotation around leading edge
+      // Rotation is around Y axis (spanwise), affecting X and Z
+      val dx = px * chord
+      val dz = pz * chord
+      val rotX = dx * cosA - dz * sinA
+      val rotZ = dx * sinA + dz * cosA
+
+      // Transform to AVL coordinates and then to model coordinates
+      val (mx, my, mz) = avlToModel(xle + rotX, yle, zle + rotZ)
+      gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    }
+    gl.glEnd()
   }
 
   private def drawSelectedSectionHandle(gl: GL2): Unit = {

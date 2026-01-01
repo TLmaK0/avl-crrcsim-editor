@@ -241,19 +241,26 @@ object AvlEditor{
 
     private def loadAvlSurfaces(): Unit = {
       import scala.collection.JavaConverters._
-      val avl = crrcsim.getAvl()
-      if (avl != null && avl.getGeometry() != null) {
-        val surfaces = avl.getGeometry().getSurfaces().asScala.map { surface =>
-          val dX = surface.getdX()
-          val dY = surface.getdY()
-          val dZ = surface.getdZ()
-          val ydupl = surface.getYdupl()
-          val sections = surface.getSections().asScala.map { section =>
-            (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ, section.getChord())
+      try {
+        val avl = crrcsim.getAvl()
+        if (avl != null && avl.getGeometry() != null) {
+          val surfaces = avl.getGeometry().getSurfaces().asScala.map { surface =>
+            val dX = surface.getdX()
+            val dY = surface.getdY()
+            val dZ = surface.getdZ()
+            val ydupl = surface.getYdupl()
+            val sections = surface.getSections().asScala.map { section =>
+              val naca = Option(section.getNACA()).getOrElse("0012")
+              (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ,
+               section.getChord(), section.getAinc(), naca)
+            }.toArray
+            (sections, ydupl)
           }.toArray
-          (sections, ydupl)
-        }.toArray
-        window.viewer3D.setAvlSurfaces(surfaces)
+          window.viewer3D.setAvlSurfaces(surfaces)
+        }
+      } catch {
+        case e: Exception =>
+          logger.log(Level.WARNING, "Error loading AVL surfaces", e)
       }
     }
 
