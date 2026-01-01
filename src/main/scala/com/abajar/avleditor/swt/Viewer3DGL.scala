@@ -813,9 +813,23 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   }
 
   private def drawSingleSurface(gl: GL2, surface: Array[(Float, Float, Float, Float, Float, String)]): Unit = {
-    import scala.math.{toRadians, cos, sin}
+    import scala.math.{toRadians, cos, sin, sqrt, atan2}
 
     gl.glColor3f(0.0f, 1.0f, 0.0f)
+
+    // Calculate span direction from first to last section
+    val (_, y0, z0, _, _, _) = surface.head
+    val (_, y1, z1, _, _, _) = surface.last
+    val spanY = y1 - y0
+    val spanZ = z1 - z0
+
+    // Determine if surface is more vertical or horizontal based on absolute span components
+    // Use absolute values to avoid flipping the profile based on span direction
+    val absSpanY = scala.math.abs(spanY)
+    val absSpanZ = scala.math.abs(spanZ)
+
+    // Angle in Y-Z plane: 0 = horizontal (thickness in Z), π/2 = vertical (thickness in Y)
+    val spanAngle = atan2(absSpanZ, absSpanY).toFloat
 
     // Generate all NACA profiles for the surface
     val numProfilePoints = 20
@@ -826,12 +840,22 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       val sinA = sin(aincRad).toFloat
 
       // Transform profile points to 3D coordinates
+      // Profile thickness direction is perpendicular to span in Y-Z plane
+      val cosSpan = cos(spanAngle).toFloat
+      val sinSpan = sin(spanAngle).toFloat
+
       profile.map { case (px, pz) =>
         val dx = px * chord
         val dz = pz * chord
+        // Apply incidence rotation around span axis
         val rotX = dx * cosA - dz * sinA
-        val rotZ = dx * sinA + dz * cosA
-        avlToModel(xle + rotX, yle, zle + rotZ)
+        val thickness = dx * sinA + dz * cosA
+        // Rotate thickness direction to be perpendicular to span
+        // For horizontal span (Y): thickness goes in Z
+        // For vertical span (Z): thickness goes in -Y
+        val rotY = -thickness * sinSpan
+        val rotZ = thickness * cosSpan
+        avlToModel(xle + rotX, yle + rotY, zle + rotZ)
       }
     }
 
