@@ -36,6 +36,10 @@ This will free up your terminal, and the application will continue running even 
 
 Commit messages should be concise, clear, and a maximum of two lines. The first line should be a brief summary, and the second line can optionally provide more context if needed.
 
+### Git Push Policy
+
+**IMPORTANT:** Never push to remote without explicit user permission. Always ask before running `git push`.
+
 ### Recent UI Changes
 
 - The button to add a new section to a surface has been changed to a `+` button for a more intuitive user experience.
