@@ -247,9 +247,11 @@ object AvlEditor{
           val dX = surface.getdX()
           val dY = surface.getdY()
           val dZ = surface.getdZ()
-          surface.getSections().asScala.map { section =>
+          val ydupl = surface.getYdupl()
+          val sections = surface.getSections().asScala.map { section =>
             (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ, section.getChord())
           }.toArray
+          (sections, ydupl)
         }.toArray
         window.viewer3D.setAvlSurfaces(surfaces)
       }
@@ -381,8 +383,8 @@ object AvlEditor{
           try {
             logger.log(Level.INFO, s"Starting AvlRunner with path: $avlPath")
             val (elevationAngle, azimuthAngle) = window.viewer3D.getViewAngles
-            // Adjust azimuth by +90 degrees to match AVL's coordinate system
-            val runner = new AvlRunner(avlPath, avl, originPath, azimuthAngle + 90, elevationAngle)
+            // Adjust azimuth by -90 degrees to match AVL's coordinate system
+            val runner = new AvlRunner(avlPath, avl, originPath, azimuthAngle - 90, elevationAngle)
             logger.log(Level.INFO, "AvlRunner finished, getting calculation...")
             val calculation = runner.getCalculation()
             val geometryPlotPath = runner.getGeometryPlotPath()

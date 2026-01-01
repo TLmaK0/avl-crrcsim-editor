@@ -70,8 +70,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var wireframeMode: Boolean = true
   @volatile private var showAvlSurfaces: Boolean = true
 
-  // AVL surface data: Array of surfaces, each surface is Array of sections (x, y, z, chord)
-  @volatile private var avlSurfaces: Array[Array[(Float, Float, Float, Float)]] = Array()
+  // AVL surface data: Array of (sections, ydupl), where sections is Array of (x, y, z, chord)
+  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float)], Float)] = Array()
 
   // Selected section for editing (surfaceIndex, sectionIndex, x, y, z, chord)
   @volatile private var selectedSection: Option[(Int, Int, Float, Float, Float, Float)] = None
@@ -409,7 +409,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def getViewAngles: (Float, Float) = (rotationX, rotationY)
 
-  def setAvlSurfaces(surfaces: Array[Array[(Float, Float, Float, Float)]]): Unit = {
+  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float)], Float)]): Unit = {
     avlSurfaces = surfaces
   }
 
@@ -791,36 +791,17 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glScalef(modelScale, modelScale, modelScale)
     gl.glTranslatef(-centerX, -centerY, -centerZ)
 
-    for (surface <- avlSurfaces) {
+    for ((surface, ydupl) <- avlSurfaces) {
       if (surface.length >= 2) {
-        // Draw surface outline - green color
-        gl.glColor3f(0.0f, 1.0f, 0.0f)
+        // Draw original surface
+        drawSingleSurface(gl, surface)
 
-        // Draw leading edge line connecting all sections
-        gl.glBegin(GL.GL_LINE_STRIP)
-        for ((xle, yle, zle, _) <- surface) {
-          val (mx, my, mz) = avlToModel(xle, yle, zle)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+        // Draw symmetric surface (mirror across Y=ydupl plane)
+        // Y_mirrored = 2*ydupl - Y
+        val mirroredSurface = surface.map { case (xle, yle, zle, chord) =>
+          (xle, 2 * ydupl - yle, zle, chord)
         }
-        gl.glEnd()
-
-        // Draw trailing edge line connecting all sections
-        gl.glBegin(GL.GL_LINE_STRIP)
-        for ((xle, yle, zle, chord) <- surface) {
-          val (mx, my, mz) = avlToModel(xle + chord, yle, zle)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-        }
-        gl.glEnd()
-
-        // Draw chord lines for each section
-        for ((xle, yle, zle, chord) <- surface) {
-          val (mx1, my1, mz1) = avlToModel(xle, yle, zle)
-          val (mx2, my2, mz2) = avlToModel(xle + chord, yle, zle)
-          gl.glBegin(GL.GL_LINES)
-          gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
-          gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
-          gl.glEnd()
-        }
+        drawSingleSurface(gl, mirroredSurface)
       }
     }
 
@@ -828,6 +809,36 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glLineWidth(1.0f)
     gl.glEnable(GL.GL_DEPTH_TEST)
     gl.glEnable(GLLightingFunc.GL_LIGHTING)
+  }
+
+  private def drawSingleSurface(gl: GL2, surface: Array[(Float, Float, Float, Float)]): Unit = {
+    gl.glColor3f(0.0f, 1.0f, 0.0f)
+
+    // Draw leading edge line connecting all sections
+    gl.glBegin(GL.GL_LINE_STRIP)
+    for ((xle, yle, zle, _) <- surface) {
+      val (mx, my, mz) = avlToModel(xle, yle, zle)
+      gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    }
+    gl.glEnd()
+
+    // Draw trailing edge line connecting all sections
+    gl.glBegin(GL.GL_LINE_STRIP)
+    for ((xle, yle, zle, chord) <- surface) {
+      val (mx, my, mz) = avlToModel(xle + chord, yle, zle)
+      gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    }
+    gl.glEnd()
+
+    // Draw chord lines for each section
+    for ((xle, yle, zle, chord) <- surface) {
+      val (mx1, my1, mz1) = avlToModel(xle, yle, zle)
+      val (mx2, my2, mz2) = avlToModel(xle + chord, yle, zle)
+      gl.glBegin(GL.GL_LINES)
+      gl.glVertex3f(mx1 * displayScale, my1 * displayScale, mz1 * displayScale)
+      gl.glVertex3f(mx2 * displayScale, my2 * displayScale, mz2 * displayScale)
+      gl.glEnd()
+    }
   }
 
   private def drawSelectedSectionHandle(gl: GL2): Unit = {
