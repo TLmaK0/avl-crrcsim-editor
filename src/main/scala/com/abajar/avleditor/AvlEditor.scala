@@ -185,6 +185,7 @@ object AvlEditor{
         case Some(nodeSelected) => {
           button.click(nodeSelected, window.treeNodeSelectedParent.get)
           window.refreshTree
+          loadAvlSurfaces()
         }
         case None => throw new Exception("Button click without node selected")
       }

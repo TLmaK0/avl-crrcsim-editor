@@ -38,7 +38,7 @@ public class Section  extends MassObject implements AVLSerializable{
     @AvlEditorField(text="Xle",
         help="airfoil's leading edge X location"
     )
-    private float Xle = 15;
+    private float Xle = 0;
 
     @AvlEditorField(text="Yle",
         help="airfoil's leading edge Y location"
@@ -53,7 +53,7 @@ public class Section  extends MassObject implements AVLSerializable{
     @AvlEditorField(text="Chord",
         help="the airfoil's chord  (trailing edge is at Xle+Chord,Yle,Zle)"
     )
-    private float Chord = 10;
+    private float Chord = 1;
 
     @AvlEditorField(text="Ainc",
         help="incidence angle, taken as a rotation (+ by RH rule) about\r\n"

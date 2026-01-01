@@ -118,12 +118,12 @@ public class Surface extends MassObject implements AVLSerializable {
     private final ArrayList<Section> sections = new ArrayList<Section>(){{
       Section root = new Section();
       root.setYle(0);
-      root.setChord(10);
+      root.setChord(1);
       add(root);
 
       Section tip = new Section();
-      tip.setYle(50);
-      tip.setChord(5);
+      tip.setYle(0.5f);
+      tip.setChord(0.5f);
       add(tip);
     }};
 

@@ -249,7 +249,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         val sensitivity = 0.1f / zoom / displayScale
         val deltaScreenY = (e.getY - lastMouseY) * sensitivity
         selectedSection.foreach { case (surfIdx, secIdx, xle, yle, zle, chord) =>
-          val newChord = scala.math.max(0.1f, chord - deltaScreenY)  // Mouse up = larger chord
+          val newChord = scala.math.max(0.01f, chord - deltaScreenY)  // Mouse up = larger chord
           selectedSection = Some((surfIdx, secIdx, xle, yle, zle, newChord))
         }
         lastMouseX = e.getX
