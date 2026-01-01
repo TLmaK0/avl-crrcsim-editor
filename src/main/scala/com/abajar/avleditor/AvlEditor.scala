@@ -249,13 +249,13 @@ object AvlEditor{
             val dX = surface.getdX()
             val dY = surface.getdY()
             val dZ = surface.getdZ()
-            val ydupl = surface.getYdupl()
+            val symmetric = surface.isSymmetric()
             val sections = surface.getSections().asScala.map { section =>
               val naca = Option(section.getNACA()).getOrElse("0012")
               (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ,
                section.getChord(), section.getAinc(), naca)
             }.toArray
-            (sections, ydupl)
+            (sections, symmetric)
           }.toArray
           window.viewer3D.setAvlSurfaces(surfaces)
         }

@@ -70,8 +70,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var wireframeMode: Boolean = true
   @volatile private var showAvlSurfaces: Boolean = true
 
-  // AVL surface data: Array of (sections, ydupl), where sections is Array of (x, y, z, chord, ainc, naca)
-  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Float)] = Array()
+  // AVL surface data: Array of (sections, symmetric), where sections is Array of (x, y, z, chord, ainc, naca)
+  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Boolean)] = Array()
 
   // Selected section for editing (surfaceIndex, sectionIndex, x, y, z, chord)
   @volatile private var selectedSection: Option[(Int, Int, Float, Float, Float, Float)] = None
@@ -409,7 +409,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def getViewAngles: (Float, Float) = (rotationX, rotationY)
 
-  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Float)]): Unit = {
+  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Boolean)]): Unit = {
     avlSurfaces = surfaces
   }
 
@@ -791,17 +791,18 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glScalef(modelScale, modelScale, modelScale)
     gl.glTranslatef(-centerX, -centerY, -centerZ)
 
-    for ((surface, ydupl) <- avlSurfaces) {
+    for ((surface, symmetric) <- avlSurfaces) {
       if (surface.length >= 2) {
         // Draw original surface
         drawSingleSurface(gl, surface)
 
-        // Draw symmetric surface (mirror across Y=ydupl plane)
-        // Y_mirrored = 2*ydupl - Y
-        val mirroredSurface = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
-          (xle, 2 * ydupl - yle, zle, chord, ainc, naca)
+        // Draw symmetric surface (mirror across Y=0 plane) if symmetric is enabled
+        if (symmetric) {
+          val mirroredSurface = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
+            (xle, -yle, zle, chord, ainc, naca)
+          }
+          drawSingleSurface(gl, mirroredSurface)
         }
-        drawSingleSurface(gl, mirroredSurface)
       }
     }
 

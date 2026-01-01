@@ -86,11 +86,16 @@ public class Surface extends MassObject implements AVLSerializable {
     //TODO: SCALE
 
 
-    @AvlEditorField(text="Ydupl",
-        help="Y position of X-Z plane about which the current surface is\r\n"
-            + "reflected to make the duplicate geometric-image surface."
+    @AvlEditorField(text="Symmetric (Ydupl)",
+        help="If checked, the surface is reflected across the X-Z plane (Y=0)\r\n"
+            + "to make the duplicate geometric-image surface."
     )
-    private float Ydupl;
+    private boolean symmetric = true;
+
+    // Deprecated: kept for backward compatibility with old YAML files
+    // Old files have Ydupl: 0.0 meaning symmetric at Y=0
+    @SuppressWarnings("unused")
+    private float Ydupl = 0.0f;
 
     @AvlEditorField(text="Translate dX",
         help="offset added on to all X,Y,Z values in this surface"
@@ -247,8 +252,10 @@ public class Surface extends MassObject implements AVLSerializable {
         }
         ps.print("\n");
 
-        ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
-        ps.printf(locale, formatFloat(1) + "\n", this.getYdupl());          //0.0             | Ydupl
+        if (this.isSymmetric()) {
+            ps.print("YDUPLICATE\n");                              //YDUPLICATE      | (keyword)
+            ps.printf(locale, formatFloat(1) + "\n", 0.0f);        //0.0             | Ydupl (always mirror at Y=0)
+        }
 
         if (this.getdX() != 0 ||  this.getdY() != 0 || this.getdZ() != 0){
             ps.print("TRANSLATE\n");                                 //TRANSLATE         |  (keyword)
@@ -267,17 +274,17 @@ public class Surface extends MassObject implements AVLSerializable {
     }
 
     /**
-     * @return the Ydupl
+     * @return true if surface is symmetric (mirrored across Y=0)
      */
-    public float getYdupl() {
-        return Ydupl;
+    public boolean isSymmetric() {
+        return symmetric;
     }
 
     /**
-     * @param Ydupl the Ydupl to set
+     * @param symmetric whether the surface should be mirrored
      */
-    public void setYdupl(float Ydupl) {
-        this.Ydupl = Ydupl;
+    public void setSymmetric(boolean symmetric) {
+        this.symmetric = symmetric;
     }
 
     /**
