@@ -237,29 +237,26 @@ public class AvlRunner {
         std.setCnp(readFloat("Cnp = ", scanner));
         std.setCnr(readFloat("Cnr = ", scanner));
 
-        boolean check1 = (elevatorPosition == 0 || rudderPosition == 0 || aileronPosition == 0);
-        boolean check2 = (elevatorPosition == 1 || rudderPosition == 1 || aileronPosition == 1);
-        boolean check3 = (elevatorPosition == 2 || rudderPosition == 2 || aileronPosition == 2);
-        
-        if (check1) std.getCLd()[0] = readFloat("CLd01 =", scanner);
-        if (check2) std.getCLd()[1] = readFloat("CLd02 =", scanner);
-        if (check3) std.getCLd()[2] = readFloat("CLd03 =", scanner);
+        // Always read all 3 control derivatives (d01, d02, d03)
+        std.getCLd()[0] = readFloat("CLd01 =", scanner);
+        std.getCLd()[1] = readFloat("CLd02 =", scanner);
+        std.getCLd()[2] = readFloat("CLd03 =", scanner);
 
-        if (check1) std.getCYd()[0] = readFloat("CYd01 =", scanner);
-        if (check2) std.getCYd()[1] = readFloat("CYd02 =", scanner);
-        if (check3) std.getCYd()[2] = readFloat("CYd03 =", scanner);
+        std.getCYd()[0] = readFloat("CYd01 =", scanner);
+        std.getCYd()[1] = readFloat("CYd02 =", scanner);
+        std.getCYd()[2] = readFloat("CYd03 =", scanner);
 
-        if (check1) std.getCld()[0] = readFloat("Cld01 =", scanner);
-        if (check2) std.getCld()[1] = readFloat("Cld02 =", scanner);
-        if (check3) std.getCld()[2] = readFloat("Cld03 =", scanner);
+        std.getCld()[0] = readFloat("Cld01 =", scanner);
+        std.getCld()[1] = readFloat("Cld02 =", scanner);
+        std.getCld()[2] = readFloat("Cld03 =", scanner);
 
-        if (check1) std.getCmd()[0] = readFloat("Cmd01 =", scanner);
-        if (check2) std.getCmd()[1] = readFloat("Cmd02 =", scanner);
-        if (check3) std.getCmd()[2] = readFloat("Cmd03 =", scanner);
+        std.getCmd()[0] = readFloat("Cmd01 =", scanner);
+        std.getCmd()[1] = readFloat("Cmd02 =", scanner);
+        std.getCmd()[2] = readFloat("Cmd03 =", scanner);
 
-        if (check1) std.getCnd()[0] = readFloat("Cnd01 =", scanner);
-        if (check2) std.getCnd()[1] = readFloat("Cnd02 =", scanner);
-        if (check3) std.getCnd()[2] = readFloat("Cnd03 =", scanner);
+        std.getCnd()[0] = readFloat("Cnd01 =", scanner);
+        std.getCnd()[1] = readFloat("Cnd02 =", scanner);
+        std.getCnd()[2] = readFloat("Cnd03 =", scanner);
 
         scanner.close();
         this.result = runCase;

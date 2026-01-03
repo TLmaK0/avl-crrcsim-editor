@@ -53,6 +53,7 @@ import swt.AvlResultsWindow
 import swt.dsl.TableFieldWritable
 import swt.dsl.TableFieldReadOnly
 import swt.dsl.TableFieldFile
+import swt.dsl.TableFieldOptions
 import com.abajar.avleditor.view.annotations
 import java.lang.reflect.Field
 import com.abajar.avleditor.view.annotations.AvlEditorNode
@@ -120,9 +121,22 @@ object AvlEditor{
           // Update selected section in 3D viewer when properties change
           selectSectionIn3D(section)
         case control: com.abajar.avleditor.avl.geometry.Control =>
+          // Sync type across all controls with the same name
+          syncControlType(control)
+          // Refresh properties table to show updated values (type changes hinge axis)
+          loadPropertiesForTreeItem(control)
           // Update selected control in 3D viewer when properties change
           selectControlIn3D(control)
         case _ => // Do nothing for other types
+      }
+      // Refresh the selected tree item name
+      val selection = window.tree.getSelection()
+      if (selection.nonEmpty) {
+        val item = selection(0)
+        val data = item.getData()
+        if (data != null) {
+          item.setText(data.toString)
+        }
       }
       // Reload AVL surfaces when any property changes
       loadAvlSurfaces()
@@ -521,12 +535,26 @@ object AvlEditor{
       val regularFields = for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.AvlEditorField]))
-      } yield new TableFieldWritable(
-        data,
-        field,
-        field.getAnnotation(classOf[AvlEditorField]).text(),
-        field.getAnnotation(classOf[AvlEditorField]).help()
-      )
+      } yield {
+        val annotation = field.getAnnotation(classOf[AvlEditorField])
+        val options = annotation.options()
+        if (options.nonEmpty) {
+          new TableFieldOptions(
+            data,
+            field,
+            annotation.text(),
+            annotation.help(),
+            options
+          )
+        } else {
+          new TableFieldWritable(
+            data,
+            field,
+            annotation.text(),
+            annotation.help()
+          )
+        }
+      }
       val fileFields = for{
         field <- objClass.getDeclaredFields
         if (field.isAnnotationPresent(classOf[annotations.AvlEditorFileField]))
@@ -682,6 +710,30 @@ object AvlEditor{
           sectionIdx += 1
         }
         surfaceIdx += 1
+      }
+    }
+
+    private def syncControlType(control: com.abajar.avleditor.avl.geometry.Control): Unit = {
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val controlName = control.getName()
+      val controlType = control.getType()
+
+      val surfaces = avl.getGeometry().getSurfaces()
+      for (i <- 0 until surfaces.size()) {
+        val surface = surfaces.get(i)
+        val sections = surface.getSections()
+        for (j <- 0 until sections.size()) {
+          val section = sections.get(j)
+          val controls = section.getControls()
+          for (k <- 0 until controls.size()) {
+            val otherControl = controls.get(k)
+            if ((otherControl ne control) && otherControl.getName() == controlName) {
+              otherControl.setType(controlType)
+            }
+          }
+        }
       }
     }
 

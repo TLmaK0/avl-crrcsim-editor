@@ -100,3 +100,50 @@ class TableFieldFile(
 
   def isFileField: Boolean = true
 }
+
+class TableFieldOptions(
+    protected val instance: Any,
+    protected val field: Field,
+    val textArg: String,
+    helpArg: String,
+    val options: Array[String]
+) extends TableField {
+  def text(): String = textArg
+  def help(): String = helpArg
+
+  // Find setter method for this field (e.g., setType for field "type")
+  private val setterMethod: Option[Method] = {
+    val setterName = "set" + field.getName.capitalize
+    try {
+      Some(instance.getClass.getMethod(setterName, classOf[Int]))
+    } catch {
+      case _: NoSuchMethodException => None
+    }
+  }
+
+  def selectedIndex: Int = {
+    field.setAccessible(true)
+    field.getInt(instance)
+  }
+
+  def selectedIndex_=(index: Int): Unit = {
+    // Use setter if available (allows side effects like updating related fields)
+    setterMethod match {
+      case Some(setter) =>
+        setter.invoke(instance, Integer.valueOf(index))
+      case None =>
+        field.setAccessible(true)
+        field.setInt(instance, index)
+    }
+  }
+
+  def value: String = {
+    val idx = selectedIndex
+    if (idx >= 0 && idx < options.length) options(idx) else ""
+  }
+
+  def value_=(value: String): Unit = {
+    val idx = options.indexOf(value)
+    if (idx >= 0) selectedIndex = idx
+  }
+}

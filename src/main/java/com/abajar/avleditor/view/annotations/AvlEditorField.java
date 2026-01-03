@@ -24,4 +24,5 @@ import java.lang.annotation.Target;
 public @interface AvlEditorField {
     String text();
     String help() default "No help";
+    String[] options() default {};
 }

@@ -86,10 +86,8 @@ public class Control extends MassObject implements AVLSerializable {
     private float SgnDup = 1f;
 
     @AvlEditorField(text="type of control",
-        help="type of control:\r\n"
-            + "0 -> aileron\r\n"
-            + "1 -> elevator\r\n"
-            + "2 -> rudder"
+        help="type of control surface",
+        options={"Aileron", "Elevator", "Rudder"}
     )
     private int type;
 
@@ -215,9 +213,31 @@ public class Control extends MassObject implements AVLSerializable {
 
     /**
      * @param type the type to set
+     * Also adjusts hinge axis and SgnDup based on control type
      */
     public void setType(int type) {
         this.type = type;
+        // Adjust hinge vector and SgnDup based on type
+        switch (type) {
+            case AILERON:
+                this.Xhvec = 0f;
+                this.Yhvec = 1f;
+                this.Zhvec = 0f;
+                this.SgnDup = -1f;  // Ailerons move in opposite directions
+                break;
+            case ELEVATOR:
+                this.Xhvec = 0f;
+                this.Yhvec = 1f;
+                this.Zhvec = 0f;
+                this.SgnDup = 1f;   // Elevators move together
+                break;
+            case RUDDER:
+                this.Xhvec = 0f;
+                this.Yhvec = 0f;
+                this.Zhvec = 1f;    // Vertical hinge axis
+                this.SgnDup = 1f;
+                break;
+        }
     }
 
     public ArrayList<Mass> getMassesRecursive() {

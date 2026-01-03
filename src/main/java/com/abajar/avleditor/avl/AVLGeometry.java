@@ -386,20 +386,38 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
     }
 
     private int getControlPosition(int controlType) throws Exception{
-        ArrayList<Integer> controls = new ArrayList<Integer>();
+        // AVL assigns control positions by unique NAME order, not by type
+        // So we need to find the position of the first control with the given type
+        // based on where its NAME appears in the list of unique names
+        java.util.LinkedHashSet<String> uniqueNames = new java.util.LinkedHashSet<>();
+        String targetName = null;
+
         for(Surface surface: this.getSurfaces()){
             for(Section section: surface.getSections()){
                 for(Control control: section.getControls()){
-                    if (!controls.contains(control.getType())){
-                        if (control.getType() == controlType) {
-                            int position = controls.size();
-                            logger.log(Level.FINE, "Control {0} found at {1}", new Object[]{controlType, position});
-                            return position;
+                    String name = control.getName();
+                    if (!uniqueNames.contains(name)) {
+                        if (control.getType() == controlType && targetName == null) {
+                            targetName = name;
                         }
-                        controls.add(control.getType());
+                        uniqueNames.add(name);
                     }
                 }
             }
+        }
+
+        if (targetName == null) {
+            return -1;
+        }
+
+        int position = 0;
+        for (String name : uniqueNames) {
+            if (name.equals(targetName)) {
+                logger.log(Level.FINE, "Control type {0} ({1}) found at position {2}",
+                    new Object[]{controlType, targetName, position});
+                return position;
+            }
+            position++;
         }
         return -1;
     }

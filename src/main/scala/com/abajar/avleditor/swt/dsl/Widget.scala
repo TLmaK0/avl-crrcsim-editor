@@ -57,6 +57,8 @@ object Widget{
             val displayValue = tableField match {
               case boolField: TableFieldWritable if boolField.isBoolean =>
                 if (boolField.booleanValue) "☑" else "☐"
+              case optionsField: TableFieldOptions =>
+                optionsField.value
               case _ => tableField.value
             }
             item.setText(1, displayValue)
@@ -119,6 +121,30 @@ object Widget{
               item.setText(columnNumber, if (newValue) "☑" else "☐")
               // Notify property change callback
               propertyChangeCallback.foreach(callback => callback())
+
+            case optionsField: TableFieldOptions =>
+              val combo = new CCombo(table, SWT.READ_ONLY | SWT.FLAT)
+              optionsField.options.foreach(combo.add)
+              combo.select(optionsField.selectedIndex)
+              combo.addSelectionListener(new SelectionAdapter {
+                override def widgetSelected(e: SelectionEvent): Unit = {
+                  val selectedIdx = combo.getSelectionIndex
+                  optionsField.selectedIndex = selectedIdx
+                  item.setText(columnNumber, optionsField.value)
+                  combo.dispose()
+                  // Notify property change callback
+                  propertyChangeCallback.foreach(callback => callback())
+                }
+              })
+              combo.addListener(SWT.FocusOut, new Listener {
+                override def handleEvent(e: Event): Unit = {
+                  if (!combo.isDisposed) combo.dispose()
+                }
+              })
+              editor.setEditor(combo, item, columnNumber)
+              combo.setFocus()
+              // Open dropdown immediately
+              combo.setListVisible(true)
 
             case _ =>
               val newEditor = new Text(table, SWT.NONE)
