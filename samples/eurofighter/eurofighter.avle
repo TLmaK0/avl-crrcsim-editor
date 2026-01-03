@@ -225,7 +225,7 @@ avl:
           masses: [
             ]
           name: canard
-          type: 0
+          type: 1
         masses: [
           ]
       - AFILE: ''
@@ -240,7 +240,7 @@ avl:
         Yle: 0.1931856
         Zle: -0.0177091
         controls:
-        - SgnDup: -1.0
+        - SgnDup: 1.0
           Xhinge: 0.0
           Xhvec: 0.0
           Yhvec: 1.0
@@ -249,7 +249,7 @@ avl:
           masses: [
             ]
           name: canard
-          type: 0
+          type: 1
         masses: [
           ]
       symmetric: true

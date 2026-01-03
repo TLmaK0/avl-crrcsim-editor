@@ -197,13 +197,6 @@ public class AvlRunner {
             }
         }
         String[] controlNames = uniqueNames.toArray(new String[0]);
-        // Limit to MAX_CONTROLS
-        if (controlNames.length > StabilityDerivatives.MAX_CONTROLS) {
-            String[] limited = new String[StabilityDerivatives.MAX_CONTROLS];
-            System.arraycopy(controlNames, 0, limited, 0, StabilityDerivatives.MAX_CONTROLS);
-            controlNames = limited;
-            logger.log(Level.WARNING, "Too many controls, limiting to " + StabilityDerivatives.MAX_CONTROLS);
-        }
         runCase.setControlNames(controlNames);
 
         Configuration config = runCase.getConfiguration();
@@ -222,6 +215,9 @@ public class AvlRunner {
         config.setE(readFloat("e =", scanner));
 
         StabilityDerivatives std = runCase.getStabilityDerivatives();
+        int numControls = controlNames.length;
+        std.initControls(numControls);
+
         std.setCLa(readFloat("CLa = ", scanner));
         std.setCYb(readFloat("CYb = ", scanner));
         std.setClb(readFloat("Clb = ", scanner));
@@ -236,8 +232,7 @@ public class AvlRunner {
         std.setCnp(readFloat("Cnp = ", scanner));
         std.setCnr(readFloat("Cnr = ", scanner));
 
-        // Read control derivatives for all controls (up to MAX_CONTROLS)
-        int numControls = Math.min(controlNames.length, StabilityDerivatives.MAX_CONTROLS);
+        // Read control derivatives for all controls
         for (int i = 0; i < numControls; i++) {
             String suffix = String.format("%02d", i + 1);
             std.getCLd()[i] = readFloat("CLd" + suffix + " =", scanner);

@@ -18,24 +18,30 @@ public class StabilityDerivatives {
     private float Cma;
     private float Cmq;
 
-    public static final int MAX_CONTROLS = 6;
-
-    private final float[] Cmd = new float[MAX_CONTROLS];
+    private float[] Cmd;
     private float CLa;
     private float CLq; //TODO: Be sure about this parameter (CLq or Clq)
-    private final float[] CLd = new float[MAX_CONTROLS];
+    private float[] CLd;
     private float CYb;
     private float CYp;
     private float CYr;
-    private final float[] CYd = new float[MAX_CONTROLS];
+    private float[] CYd;
     private float Clb;
     private float Clp;
     private float Clr;
-    private final float[] Cld = new float[MAX_CONTROLS];
+    private float[] Cld;
     private float Cnb;
     private float Cnp;
     private float Cnr;
-    private final float[] Cnd = new float[MAX_CONTROLS];
+    private float[] Cnd;
+
+    public void initControls(int numControls) {
+        Cmd = new float[numControls];
+        CLd = new float[numControls];
+        CYd = new float[numControls];
+        Cld = new float[numControls];
+        Cnd = new float[numControls];
+    }
 
     /**
      * @return the Cma
