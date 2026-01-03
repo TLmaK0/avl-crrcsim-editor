@@ -20,11 +20,20 @@ public class AvlCalculation {
     private final int elevatorPosition;
     private final int rudderPosition;
     private final int aileronPosition;
+    private String[] controlNames = new String[]{"d1", "d2", "d3"};
 
     public AvlCalculation(int elevatorPosition, int rudderPosition, int aileronPosition){
         this.elevatorPosition = elevatorPosition;
         this.rudderPosition = rudderPosition;
         this.aileronPosition = aileronPosition;
+    }
+
+    public void setControlNames(String[] names) {
+        this.controlNames = names;
+    }
+
+    public String[] getControlNames() {
+        return controlNames;
     }
     /**
      * @return the stabilityDerivatives

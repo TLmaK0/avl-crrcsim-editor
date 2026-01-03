@@ -317,6 +317,12 @@ public class Section  extends MassObject implements AVLSerializable{
 
     public Control createControl() {
         Control control = new Control();
+        control.setParentSection(this);
+
+        // Generate unique control name
+        String uniqueName = generateUniqueControlName();
+        control.setName(uniqueName);
+
         this.getControls().add(control);
 
         // Also create control in adjacent section with the same name
@@ -335,6 +341,7 @@ public class Section  extends MassObject implements AVLSerializable{
                 if (adjacentSection != null) {
                     // Create a control with the same name in adjacent section
                     Control adjacentControl = new Control();
+                    adjacentControl.setParentSection(adjacentSection);
                     adjacentControl.setName(control.getName());
                     adjacentControl.setXhinge(control.getXhinge());
                     adjacentControl.setGain(control.getGain());
@@ -346,6 +353,24 @@ public class Section  extends MassObject implements AVLSerializable{
         }
 
         return control;
+    }
+
+    private String generateUniqueControlName() {
+        if (parentSurface == null) return "control1";
+
+        // Count existing controls in this surface to generate unique name
+        int count = 0;
+        for (Section sec : parentSurface.getSections()) {
+            count += sec.getControls().size();
+        }
+        return "control" + (count + 1);
+    }
+
+    // Initialize parent references for all controls (call after loading from file)
+    public void initControlParents() {
+        for (Control control : this.getControls()) {
+            control.setParentSection(this);
+        }
     }
 
     public ArrayList<Mass> getMassesRecursive() {

@@ -184,6 +184,29 @@ public class AvlRunner {
         Scanner scanner = new Scanner(fis);
 
         AvlCalculation runCase = new AvlCalculation(elevatorPosition, rudderPosition, aileronPosition);
+
+        // Extract unique control names from geometry
+        java.util.Set<String> uniqueNames = new java.util.LinkedHashSet<>();
+        if (avl.getGeometry() != null) {
+            for (com.abajar.avleditor.avl.geometry.Surface surface : avl.getGeometry().getSurfaces()) {
+                for (com.abajar.avleditor.avl.geometry.Section section : surface.getSections()) {
+                    for (com.abajar.avleditor.avl.geometry.Control control : section.getControls()) {
+                        uniqueNames.add(control.getName());
+                    }
+                }
+            }
+        }
+        String[] controlNames = uniqueNames.toArray(new String[0]);
+        // Pad to 3 elements if needed
+        if (controlNames.length < 3) {
+            String[] padded = new String[]{"d1", "d2", "d3"};
+            for (int i = 0; i < controlNames.length; i++) {
+                padded[i] = controlNames[i];
+            }
+            controlNames = padded;
+        }
+        runCase.setControlNames(controlNames);
+
         Configuration config = runCase.getConfiguration();
 
         config.setVelocity(avl.getVelocity());
@@ -218,25 +241,25 @@ public class AvlRunner {
         boolean check2 = (elevatorPosition == 1 || rudderPosition == 1 || aileronPosition == 1);
         boolean check3 = (elevatorPosition == 2 || rudderPosition == 2 || aileronPosition == 2);
         
-        if (check1) std.getCLd()[0] = readFloat("CLd1 =", scanner);
-        if (check2) std.getCLd()[1] = readFloat("CLd2 =", scanner);
-        if (check3) std.getCLd()[2] = readFloat("CLd3 =", scanner);
+        if (check1) std.getCLd()[0] = readFloat("CLd01 =", scanner);
+        if (check2) std.getCLd()[1] = readFloat("CLd02 =", scanner);
+        if (check3) std.getCLd()[2] = readFloat("CLd03 =", scanner);
 
-        if (check1) std.getCYd()[0] = readFloat("CYd1 =", scanner);
-        if (check2) std.getCYd()[1] = readFloat("CYd2 =", scanner);
-        if (check3) std.getCYd()[2] = readFloat("CYd3 =", scanner);
+        if (check1) std.getCYd()[0] = readFloat("CYd01 =", scanner);
+        if (check2) std.getCYd()[1] = readFloat("CYd02 =", scanner);
+        if (check3) std.getCYd()[2] = readFloat("CYd03 =", scanner);
 
-        if (check1) std.getCld()[0] = readFloat("Cld1 =", scanner);
-        if (check2) std.getCld()[1] = readFloat("Cld2 =", scanner);
-        if (check3) std.getCld()[2] = readFloat("Cld3 =", scanner);
+        if (check1) std.getCld()[0] = readFloat("Cld01 =", scanner);
+        if (check2) std.getCld()[1] = readFloat("Cld02 =", scanner);
+        if (check3) std.getCld()[2] = readFloat("Cld03 =", scanner);
 
-        if (check1) std.getCmd()[0] = readFloat("Cmd1 =", scanner);
-        if (check2) std.getCmd()[1] = readFloat("Cmd2 =", scanner);
-        if (check3) std.getCmd()[2] = readFloat("Cmd3 =", scanner);
+        if (check1) std.getCmd()[0] = readFloat("Cmd01 =", scanner);
+        if (check2) std.getCmd()[1] = readFloat("Cmd02 =", scanner);
+        if (check3) std.getCmd()[2] = readFloat("Cmd03 =", scanner);
 
-        if (check1) std.getCnd()[0] = readFloat("Cnd1 =", scanner);
-        if (check2) std.getCnd()[1] = readFloat("Cnd2 =", scanner);
-        if (check3) std.getCnd()[2] = readFloat("Cnd3 =", scanner);
+        if (check1) std.getCnd()[0] = readFloat("Cnd01 =", scanner);
+        if (check2) std.getCnd()[1] = readFloat("Cnd02 =", scanner);
+        if (check3) std.getCnd()[2] = readFloat("Cnd03 =", scanner);
 
         scanner.close();
         this.result = runCase;

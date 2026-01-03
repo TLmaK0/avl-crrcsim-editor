@@ -21,6 +21,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import com.abajar.avleditor.avl.AVLGeometry;
+import com.abajar.avleditor.avl.geometry.Surface;
 
 /**
  *
@@ -50,11 +52,36 @@ public class AvlEditorTest {
     }
 
     @Test
-    public void testOpen() throws IOException, JAXBException, ClassNotFoundException, InterruptedException, Exception {
-        CRRCSim crrcsim = new CRRCSimRepository().restoreFromFile(new File("./sample/aerosonde/aerosonde.crr"));
+    public void testMultipleSurfacesSaveAndLoad() throws Exception {
+        // Create a new CRRCSim with multiple surfaces
+        AVL avl = new AVL();
+        AVLGeometry geometry = avl.getGeometry();
+
+        // Geometry starts with 1 default surface
+        assertEquals("Should start with 1 surface", 1, geometry.getSurfaces().size());
+        geometry.getSurfaces().get(0).setName("Wing");
+
+        // Add two more surfaces
+        Surface hstab = geometry.createSurface();
+        hstab.setName("Horizontal Stabilizer");
+
+        Surface vstab = geometry.createSurface();
+        vstab.setName("Vertical Stabilizer");
+
+        assertEquals("Should have 3 surfaces before save", 3, geometry.getSurfaces().size());
+
+        // Save
+        CRRCSim crrcsim = new CRRCSimFactory().create(avl);
         new CRRCSimRepository().storeToFile(this.file, crrcsim);
-        crrcsim = new CRRCSimRepository().restoreFromFile(this.file);
-        assertEquals(0.254, crrcsim.getAvl().getGeometry().getSurfaces().get(0).getSections().get(0).getChord(), 0.0001);
+
+        // Load
+        CRRCSim loaded = new CRRCSimRepository().restoreFromFile(this.file);
+
+        // Verify all surfaces were loaded
+        assertEquals("Should have 3 surfaces after load", 3, loaded.getAvl().getGeometry().getSurfaces().size());
+        assertEquals("Wing", loaded.getAvl().getGeometry().getSurfaces().get(0).getName());
+        assertEquals("Horizontal Stabilizer", loaded.getAvl().getGeometry().getSurfaces().get(1).getName());
+        assertEquals("Vertical Stabilizer", loaded.getAvl().getGeometry().getSurfaces().get(2).getName());
     }
 
 }

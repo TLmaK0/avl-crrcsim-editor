@@ -34,22 +34,65 @@ avl:
       - AFILE: ''
         Ainc: 0.0
         Chord: 0.6882381
+        NACA: '0008'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 0.5952459
+        Yle: 0.1003801
+        Zle: -0.0099917
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.8906355
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: aileron1
+          type: 0
+        masses: [
+          ]
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.40771723
         NACA: '4412'
         Nspan: 0
         Sspace: 0.0
         X1: 0.0
         X2: 0.0
-        Xle: 0.6118066
-        Yle: 0.1096197
-        Zle: -0.016064601
-        controls: [
-          ]
+        Xle: 0.864056
+        Yle: 0.31749427
+        Zle: -0.02092455
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.8409045
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: aileron1
+          type: 0
+        - SgnDup: 1.0
+          Xhinge: 0.8407779
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: aileron2
+          type: 0
         masses: [
           ]
       - AFILE: ''
         Ainc: 0.0
         Chord: 0.12719636
-        NACA: '4412'
+        NACA: '0008'
         Nspan: 0
         Sspace: 0.0
         X1: 0.0
@@ -57,10 +100,64 @@ avl:
         Xle: 1.1328661
         Yle: 0.5346084
         Zle: -0.0318574
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.716577
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: aileron2
+          type: 0
+        masses: [
+          ]
+      symmetric: true
+    - Cspace: 1.0
+      Nchord: 8
+      Nspan: 8
+      Sspace: 1.0
+      Ydupl: 0.0
+      dAinc: 0.0
+      dX: 0.0
+      dY: 0.0
+      dZ: 0.0
+      masses: [
+        ]
+      name: new surface
+      sections:
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.35311744
+        NACA: '0010'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 1.1207365
+        Yle: 4.0730002E-4
+        Zle: 0.0982648
         controls: [
           ]
         masses: [
           ]
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.09069275
+        NACA: '0010'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 1.5054742
+        Yle: -1.0E-7
+        Zle: 0.35515088
+        controls: [
+          ]
+        masses: [
+          ]
+      symmetric: false
   lengthUnit: cm
   massUnit: g
   reynoldsNumber: 1.225

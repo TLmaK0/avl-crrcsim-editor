@@ -34,10 +34,13 @@ public class Control extends MassObject implements AVLSerializable {
     public static final int ELEVATOR = 1;
     public static final int RUDDER = 2;
 
+    // Reference to parent section (transient, not serialized)
+    private transient Section parentSection;
+
     @AvlEditorField(text="name",
         help="name of control variable"
     )
-    private String name = "new control";
+    private String name = "control1";
 
     @AvlEditorField(text="gain",
         help="control deflection gain, units:  degrees deflection / control variable\r\n"
@@ -158,7 +161,7 @@ public class Control extends MassObject implements AVLSerializable {
 
     @Override
     public String toString() {
-        return this.getName();
+        return this.getName() + " (" + getAvlId() + ")";
     }
 
     /**
@@ -219,5 +222,35 @@ public class Control extends MassObject implements AVLSerializable {
 
     public ArrayList<Mass> getMassesRecursive() {
         return getMasses();
+    }
+
+    public void setParentSection(Section section) {
+        this.parentSection = section;
+    }
+
+    public Section getParentSection() {
+        return this.parentSection;
+    }
+
+    /**
+     * Calculate the AVL control index (d01, d02, etc.)
+     * based on position in the geometry
+     */
+    public String getAvlId() {
+        if (parentSection == null) return "d??";
+        Surface surface = parentSection.getParentSurface();
+        if (surface == null) return "d??";
+
+        int index = 0;
+        // Count controls in previous sections of this surface
+        for (Section sec : surface.getSections()) {
+            for (Control ctrl : sec.getControls()) {
+                index++;
+                if (ctrl == this) {
+                    return String.format("d%02d", index);
+                }
+            }
+        }
+        return "d??";
     }
 }

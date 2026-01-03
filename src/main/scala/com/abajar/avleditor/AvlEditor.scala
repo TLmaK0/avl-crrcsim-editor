@@ -119,6 +119,9 @@ object AvlEditor{
         case section: com.abajar.avleditor.avl.geometry.Section =>
           // Update selected section in 3D viewer when properties change
           selectSectionIn3D(section)
+        case control: com.abajar.avleditor.avl.geometry.Control =>
+          // Update selected control in 3D viewer when properties change
+          selectControlIn3D(control)
         case _ => // Do nothing for other types
       }
       // Reload AVL surfaces when any property changes
@@ -130,6 +133,15 @@ object AvlEditor{
       window.display.asyncExec(new Runnable {
         override def run(): Unit = {
           updateSectionFromViewer(surfaceIdx, sectionIdx, x, y, z, chord)
+        }
+      })
+    })
+
+    // Set up control update callback for 3D editing
+    window.viewer3D.setControlUpdateCallback((surfaceIdx: Int, sectionIdx: Int, controlIdx: Int, xhinge: Float) => {
+      window.display.asyncExec(new Runnable {
+        override def run(): Unit = {
+          updateControlFromViewer(surfaceIdx, sectionIdx, controlIdx, xhinge)
         }
       })
     })
@@ -595,12 +607,19 @@ object AvlEditor{
             window.viewer3D.clearModel()
           }
           window.viewer3D.clearSelectedSection()
+          window.viewer3D.clearSelectedControl()
         case section: com.abajar.avleditor.avl.geometry.Section =>
           // Find the parent surface and section index
           selectSectionIn3D(section)
-        case _ =>
-          // Clear section selection for other nodes
+          window.viewer3D.clearSelectedControl()
+        case control: com.abajar.avleditor.avl.geometry.Control =>
+          // Find the parent surface, section and control index
+          selectControlIn3D(control)
           window.viewer3D.clearSelectedSection()
+        case _ =>
+          // Clear selections for other nodes
+          window.viewer3D.clearSelectedSection()
+          window.viewer3D.clearSelectedControl()
       }
     }
 
@@ -632,6 +651,59 @@ object AvlEditor{
           sectionIdx += 1
         }
         surfaceIdx += 1
+      }
+    }
+
+    private def selectControlIn3D(control: com.abajar.avleditor.avl.geometry.Control): Unit = {
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val surfaces = avl.getGeometry().getSurfaces()
+      var surfaceIdx = 0
+      var found = false
+      while (surfaceIdx < surfaces.size() && !found) {
+        val surface = surfaces.get(surfaceIdx)
+        val sections = surface.getSections()
+        var sectionIdx = 0
+        while (sectionIdx < sections.size() && !found) {
+          val section = sections.get(sectionIdx)
+          val controls = section.getControls()
+          var controlIdx = 0
+          while (controlIdx < controls.size() && !found) {
+            if (controls.get(controlIdx) eq control) {
+              found = true
+              window.viewer3D.setSelectedControl(
+                surfaceIdx, sectionIdx, controlIdx,
+                control.getXhinge()
+              )
+            }
+            controlIdx += 1
+          }
+          sectionIdx += 1
+        }
+        surfaceIdx += 1
+      }
+    }
+
+    private def updateControlFromViewer(surfaceIdx: Int, sectionIdx: Int, controlIdx: Int, xhinge: Float): Unit = {
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val surfaces = avl.getGeometry().getSurfaces()
+      if (surfaceIdx < surfaces.size()) {
+        val surface = surfaces.get(surfaceIdx)
+        val sections = surface.getSections()
+        if (sectionIdx < sections.size()) {
+          val section = sections.get(sectionIdx)
+          val controls = section.getControls()
+          if (controlIdx < controls.size()) {
+            val control = controls.get(controlIdx)
+            control.setXhinge(xhinge)
+            // Refresh properties table and AVL surfaces
+            window.properties.clearAll()
+            loadAvlSurfaces()
+          }
+        }
       }
     }
 

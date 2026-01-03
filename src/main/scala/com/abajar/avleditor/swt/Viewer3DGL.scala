@@ -82,6 +82,11 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var isDraggingChord: Boolean = false
   private var sectionUpdateCallback: Option[(Int, Int, Float, Float, Float, Float) => Unit] = None
 
+  // Selected control for editing (surfaceIndex, sectionIndex, controlIdx, xhinge)
+  @volatile private var selectedControl: Option[(Int, Int, Int, Float)] = None
+  @volatile private var isDraggingControl: Boolean = false
+  private var controlUpdateCallback: Option[(Int, Int, Int, Float) => Unit] = None
+
   // Axis mapping configuration
   @volatile private var avlXAxis: String = "X"   // Model axis for AVL X (forward)
   @volatile private var avlYAxis: String = "-Z"  // Model axis for AVL Y (spanwise)
@@ -187,8 +192,10 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       lastMouseX = e.getX
       lastMouseY = e.getY
       if (e.getButton == java.awt.event.MouseEvent.BUTTON1) {
-        // Left click to drag section when one is selected
-        if (selectedSection.isDefined) {
+        // Left click to drag section or control when one is selected
+        if (selectedControl.isDefined) {
+          isDraggingControl = true
+        } else if (selectedSection.isDefined) {
           // Check which handle is closer
           val clickedHandle = getClosestHandle(e.getX, e.getY)
           if (clickedHandle == "trailing") {
@@ -207,7 +214,13 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     }
 
     override def mouseReleased(e: java.awt.event.MouseEvent): Unit = {
-      if (isDraggingSection || isDraggingChord) {
+      if (isDraggingControl) {
+        isDraggingControl = false
+        // Notify callback with updated xhinge
+        selectedControl.foreach { case (surfIdx, secIdx, ctrlIdx, xhinge) =>
+          controlUpdateCallback.foreach(_(surfIdx, secIdx, ctrlIdx, xhinge))
+        }
+      } else if (isDraggingSection || isDraggingChord) {
         isDraggingSection = false
         isDraggingChord = false
         // Notify callback with updated position and chord
@@ -226,7 +239,18 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   glCanvas.addMouseMotionListener(new java.awt.event.MouseMotionAdapter {
     override def mouseDragged(e: java.awt.event.MouseEvent): Unit = {
-      if (isDraggingSection) {
+      if (isDraggingControl) {
+        // Change xhinge based on horizontal mouse movement
+        val sensitivity = 0.01f / zoom  // Smaller sensitivity for xhinge (0-1 range)
+        val deltaScreenX = (e.getX - lastMouseX) * sensitivity
+        selectedControl.foreach { case (surfIdx, secIdx, ctrlIdx, xhinge) =>
+          // Clamp xhinge between 0 and 1
+          val newXhinge = scala.math.max(0.0f, scala.math.min(1.0f, xhinge + deltaScreenX))
+          selectedControl = Some((surfIdx, secIdx, ctrlIdx, newXhinge))
+        }
+        lastMouseX = e.getX
+        lastMouseY = e.getY
+      } else if (isDraggingSection) {
         // Move section based on mouse movement
         val sensitivity = 0.1f / zoom / displayScale
         val deltaScreenX = (e.getX - lastMouseX) * sensitivity
@@ -496,6 +520,18 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def setSectionUpdateCallback(callback: (Int, Int, Float, Float, Float, Float) => Unit): Unit = {
     sectionUpdateCallback = Some(callback)
+  }
+
+  def setSelectedControl(surfaceIdx: Int, sectionIdx: Int, controlIdx: Int, xhinge: Float): Unit = {
+    selectedControl = Some((surfaceIdx, sectionIdx, controlIdx, xhinge))
+  }
+
+  def clearSelectedControl(): Unit = {
+    selectedControl = None
+  }
+
+  def setControlUpdateCallback(callback: (Int, Int, Int, Float) => Unit): Unit = {
+    controlUpdateCallback = Some(callback)
   }
 
   private def getClosestHandle(mouseX: Int, mouseY: Int): String = {
@@ -780,6 +816,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       if (showReferenceLine) drawReferenceLine(gl)
       if (showAvlSurfaces && avlSurfaces.nonEmpty) drawAvlSurfaces(gl)
       if (selectedSection.isDefined) drawSelectedSectionHandle(gl)
+      if (selectedControl.isDefined) drawSelectedControlHandle(gl)
     }
 
     gl.glFlush()
@@ -1107,6 +1144,52 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
       gl.glLineWidth(1.0f)
       gl.glEnable(GL.GL_DEPTH_TEST)
       gl.glEnable(GLLightingFunc.GL_LIGHTING)
+    }
+  }
+
+  private def drawSelectedControlHandle(gl: GL2): Unit = {
+    selectedControl.foreach { case (surfIdx, secIdx, ctrlIdx, xhinge) =>
+      // Get section data from avlSurfaces
+      if (surfIdx < avlSurfaces.length) {
+        val (sections, _) = avlSurfaces(surfIdx)
+        if (secIdx < sections.length) {
+          val (xle, yle, zle, chord, _, _, controls) = sections(secIdx)
+          if (ctrlIdx < controls.length) {
+            gl.glDisable(GLLightingFunc.GL_LIGHTING)
+            gl.glDisable(GL.GL_DEPTH_TEST)
+
+            gl.glPushMatrix()
+            gl.glScalef(modelScale, modelScale, modelScale)
+            gl.glTranslatef(-centerX, -centerY, -centerZ)
+
+            // Calculate hinge position using the current xhinge from selection
+            val hingeX = xle + chord * xhinge
+            val trailingX = xle + chord
+            val (mxH, myH, mzH) = avlToModel(hingeX, yle, zle)
+            val (mxT, myT, mzT) = avlToModel(trailingX, yle, zle)
+
+            // Draw hinge handle - bright magenta
+            gl.glColor3f(1.0f, 0.0f, 1.0f)
+            gl.glPointSize(14.0f)
+            gl.glBegin(GL.GL_POINTS)
+            gl.glVertex3f(mxH * displayScale, myH * displayScale, mzH * displayScale)
+            gl.glEnd()
+
+            // Draw line from hinge to trailing edge - highlighted
+            gl.glLineWidth(4.0f)
+            gl.glBegin(GL.GL_LINES)
+            gl.glVertex3f(mxH * displayScale, myH * displayScale, mzH * displayScale)
+            gl.glVertex3f(mxT * displayScale, myT * displayScale, mzT * displayScale)
+            gl.glEnd()
+
+            gl.glPopMatrix()
+            gl.glPointSize(1.0f)
+            gl.glLineWidth(1.0f)
+            gl.glEnable(GL.GL_DEPTH_TEST)
+            gl.glEnable(GLLightingFunc.GL_LIGHTING)
+          }
+        }
+      }
     }
   }
 

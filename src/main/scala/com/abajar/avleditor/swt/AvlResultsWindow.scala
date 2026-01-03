@@ -81,7 +81,7 @@ class AvlResultsWindow(display: Display) {
     controlGridData.horizontalSpan = 2
     controlGroup.setLayoutData(controlGridData)
 
-    addControlHeader(controlGroup)
+    addControlHeader(controlGroup, calculation.getControlNames)
     addControlRow(controlGroup, "CL", stab.getCLd)
     addControlRow(controlGroup, "CY", stab.getCYd)
     addControlRow(controlGroup, "Cl", stab.getCld)
@@ -113,21 +113,15 @@ class AvlResultsWindow(display: Display) {
     valueLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false))
   }
 
-  private def addControlHeader(parent: Composite): Unit = {
+  private def addControlHeader(parent: Composite, controlNames: Array[String]): Unit = {
     val empty = new Label(parent, SWT.NONE)
     empty.setText("")
 
-    val d1Label = new Label(parent, SWT.NONE)
-    d1Label.setText("d1")
-    d1Label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))
-
-    val d2Label = new Label(parent, SWT.NONE)
-    d2Label.setText("d2")
-    d2Label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))
-
-    val d3Label = new Label(parent, SWT.NONE)
-    d3Label.setText("d3")
-    d3Label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))
+    for (i <- 0 until 3) {
+      val label = new Label(parent, SWT.NONE)
+      label.setText(if (i < controlNames.length) controlNames(i) else s"d${i+1}")
+      label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))
+    }
   }
 
   private def addControlRow(parent: Composite, name: String, values: Array[Float]): Unit = {
