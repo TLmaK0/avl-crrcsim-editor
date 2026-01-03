@@ -76,7 +76,8 @@ class AvlResultsWindow(display: Display) {
     // Control Derivatives group
     val controlGroup = new Group(shell, SWT.NONE)
     controlGroup.setText("Control Derivatives")
-    controlGroup.setLayout(new GridLayout(4, false))
+    val numCtrls = calculation.getControlNames.length
+    controlGroup.setLayout(new GridLayout(numCtrls + 1, false))  // +1 for row label
     val controlGridData = new GridData(GridData.FILL_HORIZONTAL)
     controlGridData.horizontalSpan = 2
     controlGroup.setLayoutData(controlGridData)
@@ -113,13 +114,16 @@ class AvlResultsWindow(display: Display) {
     valueLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false))
   }
 
+  private var numControls = 3
+
   private def addControlHeader(parent: Composite, controlNames: Array[String]): Unit = {
+    numControls = controlNames.length
     val empty = new Label(parent, SWT.NONE)
     empty.setText("")
 
-    for (i <- 0 until 3) {
+    for (i <- 0 until numControls) {
       val label = new Label(parent, SWT.NONE)
-      label.setText(if (i < controlNames.length) controlNames(i) else s"d${i+1}")
+      label.setText(controlNames(i))
       label.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))
     }
   }
@@ -128,7 +132,7 @@ class AvlResultsWindow(display: Display) {
     val nameLabel = new Label(parent, SWT.NONE)
     nameLabel.setText(name)
 
-    for (i <- 0 until 3) {
+    for (i <- 0 until numControls) {
       val valueLabel = new Label(parent, SWT.NONE)
       valueLabel.setText(f"${values(i)}%.6f")
       valueLabel.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false))

@@ -197,13 +197,12 @@ public class AvlRunner {
             }
         }
         String[] controlNames = uniqueNames.toArray(new String[0]);
-        // Pad to 3 elements if needed
-        if (controlNames.length < 3) {
-            String[] padded = new String[]{"d1", "d2", "d3"};
-            for (int i = 0; i < controlNames.length; i++) {
-                padded[i] = controlNames[i];
-            }
-            controlNames = padded;
+        // Limit to MAX_CONTROLS
+        if (controlNames.length > StabilityDerivatives.MAX_CONTROLS) {
+            String[] limited = new String[StabilityDerivatives.MAX_CONTROLS];
+            System.arraycopy(controlNames, 0, limited, 0, StabilityDerivatives.MAX_CONTROLS);
+            controlNames = limited;
+            logger.log(Level.WARNING, "Too many controls, limiting to " + StabilityDerivatives.MAX_CONTROLS);
         }
         runCase.setControlNames(controlNames);
 
@@ -237,26 +236,28 @@ public class AvlRunner {
         std.setCnp(readFloat("Cnp = ", scanner));
         std.setCnr(readFloat("Cnr = ", scanner));
 
-        // Always read all 3 control derivatives (d01, d02, d03)
-        std.getCLd()[0] = readFloat("CLd01 =", scanner);
-        std.getCLd()[1] = readFloat("CLd02 =", scanner);
-        std.getCLd()[2] = readFloat("CLd03 =", scanner);
-
-        std.getCYd()[0] = readFloat("CYd01 =", scanner);
-        std.getCYd()[1] = readFloat("CYd02 =", scanner);
-        std.getCYd()[2] = readFloat("CYd03 =", scanner);
-
-        std.getCld()[0] = readFloat("Cld01 =", scanner);
-        std.getCld()[1] = readFloat("Cld02 =", scanner);
-        std.getCld()[2] = readFloat("Cld03 =", scanner);
-
-        std.getCmd()[0] = readFloat("Cmd01 =", scanner);
-        std.getCmd()[1] = readFloat("Cmd02 =", scanner);
-        std.getCmd()[2] = readFloat("Cmd03 =", scanner);
-
-        std.getCnd()[0] = readFloat("Cnd01 =", scanner);
-        std.getCnd()[1] = readFloat("Cnd02 =", scanner);
-        std.getCnd()[2] = readFloat("Cnd03 =", scanner);
+        // Read control derivatives for all controls (up to MAX_CONTROLS)
+        int numControls = Math.min(controlNames.length, StabilityDerivatives.MAX_CONTROLS);
+        for (int i = 0; i < numControls; i++) {
+            String suffix = String.format("%02d", i + 1);
+            std.getCLd()[i] = readFloat("CLd" + suffix + " =", scanner);
+        }
+        for (int i = 0; i < numControls; i++) {
+            String suffix = String.format("%02d", i + 1);
+            std.getCYd()[i] = readFloat("CYd" + suffix + " =", scanner);
+        }
+        for (int i = 0; i < numControls; i++) {
+            String suffix = String.format("%02d", i + 1);
+            std.getCld()[i] = readFloat("Cld" + suffix + " =", scanner);
+        }
+        for (int i = 0; i < numControls; i++) {
+            String suffix = String.format("%02d", i + 1);
+            std.getCmd()[i] = readFloat("Cmd" + suffix + " =", scanner);
+        }
+        for (int i = 0; i < numControls; i++) {
+            String suffix = String.format("%02d", i + 1);
+            std.getCnd()[i] = readFloat("Cnd" + suffix + " =", scanner);
+        }
 
         scanner.close();
         this.result = runCase;

@@ -29,7 +29,7 @@ avl:
       dZ: 0.0
       masses: [
         ]
-      name: new surface
+      name: wing
       sections:
       - AFILE: ''
         Ainc: 0.0
@@ -51,7 +51,7 @@ avl:
           gain: 20.0
           masses: [
             ]
-          name: aileron1
+          name: flapaileron
           type: 0
         masses: [
           ]
@@ -67,7 +67,7 @@ avl:
         Yle: 0.31749427
         Zle: -0.02092455
         controls:
-        - SgnDup: 1.0
+        - SgnDup: -1.0
           Xhinge: 0.8409045
           Xhvec: 0.0
           Yhvec: 1.0
@@ -75,10 +75,10 @@ avl:
           gain: 20.0
           masses: [
             ]
-          name: aileron1
+          name: flapaileron
           type: 0
         - SgnDup: 1.0
-          Xhinge: 0.8407779
+          Xhinge: 0.84077805
           Xhvec: 0.0
           Yhvec: 1.0
           Zhvec: 0.0
@@ -125,7 +125,7 @@ avl:
       dZ: 0.0
       masses: [
         ]
-      name: new surface
+      name: vertical stabilizer
       sections:
       - AFILE: ''
         Ainc: 0.0
@@ -138,13 +138,46 @@ avl:
         Xle: 1.1207365
         Yle: 4.0730002E-4
         Zle: 0.0982648
-        controls: [
-          ]
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.7
+          Xhvec: 0.0
+          Yhvec: 0.0
+          Zhvec: 1.0
+          gain: 20.0
+          masses: [
+            ]
+          name: rudder1
+          type: 2
         masses: [
           ]
       - AFILE: ''
         Ainc: 0.0
-        Chord: 0.09069275
+        Chord: 0.1294434
+        NACA: '4412'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 1.463668
+        Yle: -0.0050000995
+        Zle: 0.3307403
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.5816304
+          Xhvec: 0.0
+          Yhvec: 0.0
+          Zhvec: 1.0
+          gain: 20.0
+          masses: [
+            ]
+          name: rudder1
+          type: 2
+        masses: [
+          ]
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.100692764
         NACA: '0010'
         Nspan: 0
         Sspace: 0.0
@@ -158,6 +191,68 @@ avl:
         masses: [
           ]
       symmetric: false
+    - Cspace: 1.0
+      Nchord: 8
+      Nspan: 8
+      Sspace: 1.0
+      Ydupl: 0.0
+      dAinc: 0.0
+      dX: 0.0
+      dY: 0.0
+      dZ: 0.0
+      masses: [
+        ]
+      name: canard
+      sections:
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.18230005
+        NACA: '4412'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 0.1910162
+        Yle: 0.0473933
+        Zle: 0.024950901
+        controls:
+        - SgnDup: 1.0
+          Xhinge: 0.0
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: canard
+          type: 0
+        masses: [
+          ]
+      - AFILE: ''
+        Ainc: 0.0
+        Chord: 0.06071018
+        NACA: '4412'
+        Nspan: 0
+        Sspace: 0.0
+        X1: 0.0
+        X2: 0.0
+        Xle: 0.35921282
+        Yle: 0.1931856
+        Zle: -0.0177091
+        controls:
+        - SgnDup: -1.0
+          Xhinge: 0.0
+          Xhvec: 0.0
+          Yhvec: 1.0
+          Zhvec: 0.0
+          gain: 20.0
+          masses: [
+            ]
+          name: canard
+          type: 0
+        masses: [
+          ]
+      symmetric: true
   lengthUnit: cm
   massUnit: g
   reynoldsNumber: 1.225
