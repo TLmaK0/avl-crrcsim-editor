@@ -43,7 +43,7 @@ public class Control extends MassObject implements AVLSerializable {
         help="control deflection gain, units:  degrees deflection / control variable\r\n"
             + "Maximun degrees deflection"
     )
-    private float gain;
+    private float gain = 20f;
 
     @AvlEditorField(text="Xhinge",
         help="x/c location of hinge.\r\n"
@@ -52,7 +52,7 @@ public class Control extends MassObject implements AVLSerializable {
             + "0.65 means that the hinge is at 65% of the stabilizer's chord,\r\n"
             + " so the fixed part of the tail is 65% of the chor"
     )
-    private float Xhinge;
+    private float Xhinge = 0.7f;
 
     @AvlEditorField(text="Xhvec",
         help="vector giving hinge axis about which surface rotates \r\n"
@@ -66,7 +66,7 @@ public class Control extends MassObject implements AVLSerializable {
             + "deflection is rotation about hinge by righthand rule\r\n"
             + "1 puts the hinge along the Y axis (0 in otheers)"
     )
-    private float Yhvec;
+    private float Yhvec = 1f;
 
     @AvlEditorField(text="Zhvec",
         help="vector giving hinge axis about which surface rotates \r\n"
@@ -80,7 +80,7 @@ public class Control extends MassObject implements AVLSerializable {
             + "An elevator would have SgnDup = +1\r\n"
             + "An aileron  would have SgnDup = -1"
     )
-    private float SgnDup;
+    private float SgnDup = 1f;
 
     @AvlEditorField(text="type of control",
         help="type of control:\r\n"

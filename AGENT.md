@@ -16,21 +16,22 @@ sbt compile
 
 ### Running the application
 
-To run the application in the foreground, use the following command:
+Use the provided script to start the application:
 
 ```bash
-sbt run
+./run.sh
 ```
+
+This script will:
+- Kill any existing instance of the application
+- Start the application in background mode
 
 The application will start in full-screen mode.
 
-To run the application in the background while keeping the graphical user interface visible, use the `nohup` command:
-
+**Note for agents:** When running from a CLI agent, use background execution to avoid blocking:
 ```bash
-nohup sbt run &
+./run.sh &
 ```
-
-This will free up your terminal, and the application will continue running even if you close the terminal.
 
 ### Commit Message Guidelines
 

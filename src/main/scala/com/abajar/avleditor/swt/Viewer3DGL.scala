@@ -70,8 +70,11 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   @volatile private var wireframeMode: Boolean = true
   @volatile private var showAvlSurfaces: Boolean = true
 
-  // AVL surface data: Array of (sections, symmetric), where sections is Array of (x, y, z, chord, ainc, naca)
-  @volatile private var avlSurfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Boolean)] = Array()
+  // AVL surface data: Array of (sections, symmetric), where sections is Array of (x, y, z, chord, ainc, naca, controls)
+  // controls is Array of (name, xhinge, gain, sgnDup, type)
+  type ControlData = (String, Float, Float, Float, Int)  // (name, xhinge, gain, sgnDup, type)
+  type SectionData = (Float, Float, Float, Float, Float, String, Array[ControlData])  // (xle, yle, zle, chord, ainc, naca, controls)
+  @volatile private var avlSurfaces: Array[(Array[SectionData], Boolean)] = Array()
 
   // Selected section for editing (surfaceIndex, sectionIndex, x, y, z, chord)
   @volatile private var selectedSection: Option[(Int, Int, Float, Float, Float, Float)] = None
@@ -409,7 +412,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
   def getViewAngles: (Float, Float) = (rotationX, rotationY)
 
-  def setAvlSurfaces(surfaces: Array[(Array[(Float, Float, Float, Float, Float, String)], Boolean)]): Unit = {
+  def setAvlSurfaces(surfaces: Array[(Array[SectionData], Boolean)]): Unit = {
     avlSurfaces = surfaces
   }
 
@@ -798,8 +801,8 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
         // Draw symmetric surface (mirror across Y=0 plane) if symmetric is enabled
         if (symmetric) {
-          val mirroredSurface = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
-            (xle, -yle, zle, chord, ainc, naca)
+          val mirroredSurface = surface.map { case (xle, yle, zle, chord, ainc, naca, controls) =>
+            (xle, -yle, zle, chord, ainc, naca, controls)
           }
           drawSingleSurface(gl, mirroredSurface)
         }
@@ -812,14 +815,14 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     gl.glEnable(GLLightingFunc.GL_LIGHTING)
   }
 
-  private def drawSingleSurface(gl: GL2, surface: Array[(Float, Float, Float, Float, Float, String)]): Unit = {
+  private def drawSingleSurface(gl: GL2, surface: Array[SectionData]): Unit = {
     import scala.math.{toRadians, cos, sin, sqrt, atan2}
 
     gl.glColor3f(0.0f, 1.0f, 0.0f)
 
     // Calculate span direction from first to last section
-    val (_, y0, z0, _, _, _) = surface.head
-    val (_, y1, z1, _, _, _) = surface.last
+    val (_, y0, z0, _, _, _, _) = surface.head
+    val (_, y1, z1, _, _, _, _) = surface.last
     val spanY = y1 - y0
     val spanZ = z1 - z0
 
@@ -833,7 +836,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
 
     // Generate all NACA profiles for the surface
     val numProfilePoints = 20
-    val profiles = surface.map { case (xle, yle, zle, chord, ainc, naca) =>
+    val profiles = surface.map { case (xle, yle, zle, chord, ainc, naca, controls) =>
       val profile = generateNaca4Digit(naca, numProfilePoints)
       val aincRad = toRadians(ainc)
       val cosA = cos(aincRad).toFloat
@@ -885,6 +888,84 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         }
       }
     }
+
+    // Draw control surface hinge lines and points
+    gl.glLineWidth(4.0f)
+
+    // Helper to set color based on control type
+    def setControlColor(ctrlType: Int): Unit = {
+      ctrlType match {
+        case 0 => gl.glColor3f(0.0f, 0.7f, 1.0f)  // Aileron - cyan/bright blue
+        case 1 => gl.glColor3f(1.0f, 0.0f, 1.0f)  // Elevator - magenta
+        case 2 => gl.glColor3f(1.0f, 0.2f, 0.2f)  // Rudder - bright red
+        case _ => gl.glColor3f(1.0f, 0.6f, 0.0f)  // Unknown - orange
+      }
+    }
+
+    // First pass: draw hinge points and hinge-to-trailing-edge lines for ALL controls
+    gl.glPointSize(10.0f)
+    for (section <- surface) {
+      val (xle, yle, zle, chord, _, _, controls) = section
+      for (ctrl <- controls) {
+        val (_, xhinge, _, _, ctrlType) = ctrl
+        setControlColor(ctrlType)
+
+        val hingeX = xle + chord * xhinge
+        val trailingX = xle + chord  // Trailing edge position
+        val (mxH, myH, mzH) = avlToModel(hingeX, yle, zle)
+        val (mxT, myT, mzT) = avlToModel(trailingX, yle, zle)
+
+        // Draw hinge point
+        gl.glBegin(GL.GL_POINTS)
+        gl.glVertex3f(mxH * displayScale, myH * displayScale, mzH * displayScale)
+        gl.glEnd()
+
+        // Draw line from hinge to trailing edge
+        gl.glBegin(GL.GL_LINES)
+        gl.glVertex3f(mxH * displayScale, myH * displayScale, mzH * displayScale)
+        gl.glVertex3f(mxT * displayScale, myT * displayScale, mzT * displayScale)
+        gl.glEnd()
+      }
+    }
+
+    // Second pass: draw control surface quadrilaterals between adjacent sections
+    for (i <- 0 until surface.length - 1) {
+      val (xle1, yle1, zle1, chord1, _, _, controls1) = surface(i)
+      val (xle2, yle2, zle2, chord2, _, _, controls2) = surface(i + 1)
+
+      for (ctrl1 <- controls1) {
+        val (name1, xhinge1, _, _, ctrlType1) = ctrl1
+        controls2.find(_._1 == name1).foreach { ctrl2 =>
+          val (_, xhinge2, _, _, _) = ctrl2
+          setControlColor(ctrlType1)
+
+          // Calculate hinge and trailing edge positions for both sections
+          val hingeX1 = xle1 + chord1 * xhinge1
+          val hingeX2 = xle2 + chord2 * xhinge2
+          val trailX1 = xle1 + chord1
+          val trailX2 = xle2 + chord2
+
+          val (mxH1, myH1, mzH1) = avlToModel(hingeX1, yle1, zle1)
+          val (mxH2, myH2, mzH2) = avlToModel(hingeX2, yle2, zle2)
+          val (mxT1, myT1, mzT1) = avlToModel(trailX1, yle1, zle1)
+          val (mxT2, myT2, mzT2) = avlToModel(trailX2, yle2, zle2)
+
+          // Draw hinge line (connecting hinges between sections)
+          gl.glBegin(GL.GL_LINES)
+          gl.glVertex3f(mxH1 * displayScale, myH1 * displayScale, mzH1 * displayScale)
+          gl.glVertex3f(mxH2 * displayScale, myH2 * displayScale, mzH2 * displayScale)
+          gl.glEnd()
+
+          // Draw trailing edge line (connecting trailing edges between sections)
+          gl.glBegin(GL.GL_LINES)
+          gl.glVertex3f(mxT1 * displayScale, myT1 * displayScale, mzT1 * displayScale)
+          gl.glVertex3f(mxT2 * displayScale, myT2 * displayScale, mzT2 * displayScale)
+          gl.glEnd()
+        }
+      }
+    }
+    gl.glPointSize(1.0f)
+    gl.glLineWidth(2.0f)
   }
 
   // Generate NACA 4-digit airfoil coordinates

@@ -35,6 +35,9 @@ public class Section  extends MassObject implements AVLSerializable{
 
     static final long serialVersionUID = 4109729947856743035L;
 
+    // Parent surface reference (transient - not serialized)
+    private transient Surface parentSurface;
+
     @AvlEditorField(text="Xle",
         help="airfoil's leading edge X location"
     )
@@ -304,9 +307,44 @@ public class Section  extends MassObject implements AVLSerializable{
         this.X2 = y;
     }
 
+    public void setParentSurface(Surface surface) {
+        this.parentSurface = surface;
+    }
+
+    public Surface getParentSurface() {
+        return this.parentSurface;
+    }
+
     public Control createControl() {
         Control control = new Control();
         this.getControls().add(control);
+
+        // Also create control in adjacent section with the same name
+        if (parentSurface != null) {
+            ArrayList<Section> sections = parentSurface.getSections();
+            int myIndex = sections.indexOf(this);
+            if (myIndex >= 0) {
+                Section adjacentSection = null;
+                // If there's a next section, use it; otherwise use previous
+                if (myIndex < sections.size() - 1) {
+                    adjacentSection = sections.get(myIndex + 1);
+                } else if (myIndex > 0) {
+                    adjacentSection = sections.get(myIndex - 1);
+                }
+
+                if (adjacentSection != null) {
+                    // Create a control with the same name in adjacent section
+                    Control adjacentControl = new Control();
+                    adjacentControl.setName(control.getName());
+                    adjacentControl.setXhinge(control.getXhinge());
+                    adjacentControl.setGain(control.getGain());
+                    adjacentControl.setSgnDup(control.getSgnDup());
+                    adjacentControl.setType(control.getType());
+                    adjacentSection.getControls().add(adjacentControl);
+                }
+            }
+        }
+
         return control;
     }
 

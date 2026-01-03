@@ -212,9 +212,19 @@ object AvlEditor{
 
     private def open(file: File) = {
       crrcsim = new CRRCSimRepository().restoreFromFile(file)
+      // Initialize parent references for sections (needed for control creation)
+      initSectionParents()
       window.refreshTree
       // Auto-load 3D model if available
       load3DModel()
+    }
+
+    private def initSectionParents(): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl != null && avl.getGeometry() != null) {
+        avl.getGeometry().getSurfaces().asScala.foreach(_.initSectionParents())
+      }
     }
 
     private def load3DModel(): Unit = {
@@ -252,8 +262,13 @@ object AvlEditor{
             val symmetric = surface.isSymmetric()
             val sections = surface.getSections().asScala.map { section =>
               val naca = Option(section.getNACA()).getOrElse("0012")
+              // Extract control surfaces data for each section
+              val controls = section.getControls().asScala.map { control =>
+                (control.getName(), control.getXhinge(), control.getGain(),
+                 control.getSgnDup(), control.getType())
+              }.toArray
               (section.getXle() + dX, section.getYle() + dY, section.getZle() + dZ,
-               section.getChord(), section.getAinc(), naca)
+               section.getChord(), section.getAinc(), naca, controls)
             }.toArray
             (sections, symmetric)
           }.toArray

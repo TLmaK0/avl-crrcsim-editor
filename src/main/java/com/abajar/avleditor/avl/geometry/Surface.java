@@ -223,8 +223,16 @@ public class Surface extends MassObject implements AVLSerializable {
 
     public Section createSection(){
         Section section = new Section();
+        section.setParentSurface(this);
         this.getSections().add(section);
         return section;
+    }
+
+    // Initialize parent references for all sections (call after loading from file)
+    public void initSectionParents() {
+        for (Section section : this.getSections()) {
+            section.setParentSurface(this);
+        }
     }
     /**
      * @return the sections
