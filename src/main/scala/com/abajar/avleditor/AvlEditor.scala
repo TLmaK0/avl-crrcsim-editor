@@ -392,7 +392,9 @@ object AvlEditor{
                 body.getProfilePoints().asScala.map(p => (p.getX(), p.getRadius())).toArray
               }
             }
-            val ydupl = if (body.getYdupl() != 0) Some(body.getYdupl()) else None
+            // Enable mirroring if body is off-center (dY != 0) or Ydupl is explicitly non-zero
+            // Ydupl=0 means mirror about Y=0 plane (centerline), which is the common case
+            val ydupl = if (body.getYdupl() != 0 || body.getdY() != 0) Some(body.getYdupl()) else None
             (body.getName(), profile, body.getdX(), body.getdY(), body.getdZ(), body.getLength(), ydupl)
           }.toArray
           window.viewer3D.setAvlBodies(bodies)

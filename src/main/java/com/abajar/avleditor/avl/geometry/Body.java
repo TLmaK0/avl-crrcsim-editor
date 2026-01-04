@@ -259,8 +259,8 @@ public class Body extends MassObject implements AVLSerializable  {
 
         ps.print("\n");
 
-        // Only write YDUPLICATE if it's non-zero (body needs mirroring)
-        if (this.getYdupl() != 0.0f) {
+        // Write YDUPLICATE if body needs mirroring (Ydupl set or body is off-center)
+        if (this.getYdupl() != 0.0f || this.getdY() != 0.0f) {
             ps.print("YDUPLICATE\n");
             ps.printf(locale, formatFloat(1) + "\n", this.getYdupl());
         }

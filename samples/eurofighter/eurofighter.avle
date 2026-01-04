@@ -1,11 +1,11 @@
 avl:
   alpha: 0.0
   geometry:
-    Bref: 0.0
+    Bref: 1.0692168
     CDp: 0.02
-    Cref: 0.0
+    Cref: 0.36554733
     Mach: 0.0
-    Sref: 0.0
+    Sref: 0.39084935
     Xref: 0.0
     Yref: 0.0
     Zref: 0.0
@@ -15,9 +15,9 @@ avl:
       Bspace: 1.0
       Nbody: 20
       Ydupl: 0.0
-      dX: 0.0
+      dX: -0.009603503
       dY: 0.0
-      dZ: 0.0
+      dZ: 0.015202628
       length: 0.3
       masses: [
         ]
@@ -25,15 +25,91 @@ avl:
       profilePoints:
       - radius: 0.0
         x: 0.0
-      - radius: 0.02
+      - radius: 0.012509996
         x: 0.1
-      - radius: 0.03
+      - radius: 0.027518174
         x: 0.3
-      - radius: 0.03
+    - BFILE: body2.dat
+      Bspace: 1.0
+      Nbody: 20
+      Ydupl: 0.0
+      dX: 0.081728965
+      dY: 1.0E-6
+      dZ: 0.02849165
+      length: 0.3
+      masses: [
+        ]
+      name: body2
+      profilePoints:
+      - radius: 0.022110574
+        x: 0.0
+      - radius: 0.025796289
+        x: 0.1
+      - radius: 0.04653459
+        x: 0.3
+      - radius: 0.06415831
         x: 0.7
-      - radius: 0.018
+      - radius: 0.058885712
         x: 0.9
-      - radius: 0.006
+      - radius: 0.049395032
+        x: 1.0
+    - BFILE: body3.dat
+      Bspace: 1.0
+      Nbody: 20
+      Ydupl: 0.0
+      dX: 0.2236278
+      dY: 0.0
+      dZ: 0.086127296
+      length: 1.25
+      masses: [
+        ]
+      name: body3
+      profilePoints:
+      - radius: 0.0
+        x: 0.0
+      - radius: 0.0378031
+        x: 0.057948947
+      - radius: 0.07904421
+        x: 0.14408927
+      - radius: 0.068364695
+        x: 0.22193003
+      - radius: 0.04419306
+        x: 0.2908249
+      - radius: 0.033088524
+        x: 0.38941273
+      - radius: 0.018190602
+        x: 0.51841617
+      - radius: 0.010990789
+        x: 0.6429125
+      - radius: 0.018663969
+        x: 0.76740885
+      - radius: 0.017
+        x: 0.8837044
+      - radius: 0.012010412
+        x: 1.0
+    - BFILE: body4.dat
+      Bspace: 1.0
+      Nbody: 20
+      Ydupl: 0.01
+      dX: 0.50005424
+      dY: 0.06695098
+      dZ: 0.0
+      length: 1.0
+      masses: [
+        ]
+      name: body4
+      profilePoints:
+      - radius: 0.07747216
+        x: 0.0
+      - radius: 0.07523368
+        x: 0.1
+      - radius: 0.07459788
+        x: 0.3
+      - radius: 0.06819049
+        x: 0.5
+      - radius: 0.06178311
+        x: 0.7
+      - radius: 0.037940174
         x: 1.0
     iYsym: 0
     iZsym: 0

@@ -296,19 +296,20 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         // Dragging X position handle - try to snap to vertices
         selectedProfilePoint.foreach { case (bodyIdx, pointIdx, x, radius) =>
           if (bodyIdx < avlBodies.length) {
-            val (_, _, dX, dY, dZ, _, _) = avlBodies(bodyIdx)
+            val (_, _, dX, dY, dZ, length, _) = avlBodies(bodyIdx)
             // Try to find a nearby vertex to snap to
             findNearestVertexByScreenPos(e.getX, e.getY) match {
               case Some((vx, vy, vz)) =>
                 // Convert vertex to AVL coordinates
                 val (avlX, avlY, avlZ) = modelToAvl(vx / displayScale, vy / displayScale, vz / displayScale)
                 // Calculate new X as relative position along body (normalized 0-1)
-                // Assuming body starts at dX and has length 1 in normalized coords
-                val newX = scala.math.max(0.0f, scala.math.min(1.0f, avlX - dX))
+                // X is normalized, so divide by length
+                val newX = scala.math.max(0.0f, scala.math.min(1.0f, (avlX - dX) / length))
                 selectedProfilePoint = Some((bodyIdx, pointIdx, newX, radius))
               case None =>
                 // No snap - use direct mouse movement
-                val sensitivity = 0.1f / zoom / displayScale
+                // Sensitivity is scaled by length since x is normalized (0-1)
+                val sensitivity = 0.1f / zoom / displayScale / length
                 val deltaScreenX = (e.getX - lastMouseX) * sensitivity
                 val newX = scala.math.max(0.0f, scala.math.min(1.0f, x + deltaScreenX))
                 selectedProfilePoint = Some((bodyIdx, pointIdx, newX, radius))
@@ -321,8 +322,10 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
         // Calculate radius and angle based on mouse position, with snap to vertices
         selectedProfilePoint.foreach { case (bodyIdx, pointIdx, x, _) =>
           if (bodyIdx < avlBodies.length) {
-            val (_, _, dX, dY, dZ, _, _) = avlBodies(bodyIdx)
-            val (mx, my, mz) = avlToModel(dX + x, dY, dZ)
+            val (_, _, dX, dY, dZ, length, _) = avlBodies(bodyIdx)
+            // Profile X is normalized (0-1), multiply by length
+            val actualX = x * length
+            val (mx, my, mz) = avlToModel(dX + actualX, dY, dZ)
 
             // Try to snap to nearby vertex
             findNearestVertexByScreenPos(e.getX, e.getY) match {
@@ -743,13 +746,15 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
   private def getClosestProfilePointHandle(mouseX: Int, mouseY: Int): String = {
     selectedProfilePoint.map { case (bodyIdx, pointIdx, x, radius) =>
       if (bodyIdx < avlBodies.length) {
-        val (_, _, dX, dY, dZ, _, _) = avlBodies(bodyIdx)
+        val (_, _, dX, dY, dZ, length, _) = avlBodies(bodyIdx)
         // Calculate handle positions exactly as they are drawn
-        val (mx, my, mz) = avlToModel(dX + x, dY, dZ)
+        // Profile X is normalized (0-1), multiply by length to get actual position
+        val actualX = x * length
+        val (mx, my, mz) = avlToModel(dX + actualX, dY, dZ)
         // Use the same angle calculation as drawing
         val yOffset = radius * scala.math.sin(radiusHandleAngle).toFloat
         val zOffset = radius * scala.math.cos(radiusHandleAngle).toFloat
-        val (rxEnd, ryEnd, rzEnd) = avlToModel(dX + x, dY + yOffset, dZ + zOffset)
+        val (rxEnd, ryEnd, rzEnd) = avlToModel(dX + actualX, dY + yOffset, dZ + zOffset)
 
         // Project to screen
         val xHandlePos = projectModelToScreen(mx, my, mz)
@@ -769,29 +774,21 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     }.getOrElse("x")
   }
 
-  // Handle offset for body axis handles (in AVL units)
-  private val bodyAxisHandleOffset = 0.15f
+  // Calculate handle offset based on body size
+  private def getBodyAxisHandleOffset(length: Float, profile: Array[(Float, Float)]): Float = {
+    val maxRadius = if (profile.nonEmpty) profile.map(_._2).max else 0.03f
+    // Offset is half the length or twice the radius, whichever is larger
+    scala.math.max(length / 2, maxRadius * 2)
+  }
 
   private def getClosestBodyAxisHandle(mouseX: Int, mouseY: Int): String = {
     selectedBody.map { case (bodyIdx, dX, dY, dZ) =>
       if (bodyIdx < avlBodies.length) {
-        val (_, profile, _, _, _, length, _) = avlBodies(bodyIdx)
+        val (_, profile, _, _, _, length, ydupl) = avlBodies(bodyIdx)
         if (profile.nonEmpty) {
-          val (firstX, _) = profile.head
-          val (lastX, _) = profile.last
-          val bodyCenterX = (firstX + lastX) / 2 * length
-
-          // Calculate handle positions in AVL coordinates
-          val centerAvl = (dX + bodyCenterX, dY, dZ)
-          val xHandleAvl = (dX + bodyCenterX + bodyAxisHandleOffset, dY, dZ)
-          val yHandleAvl = (dX + bodyCenterX, dY + bodyAxisHandleOffset, dZ)
-          val zHandleAvl = (dX + bodyCenterX, dY, dZ + bodyAxisHandleOffset)
-
-          // Project to screen
-          val centerScreen = projectToScreen(centerAvl._1, centerAvl._2, centerAvl._3)
-          val xScreen = projectToScreen(xHandleAvl._1, xHandleAvl._2, xHandleAvl._3)
-          val yScreen = projectToScreen(yHandleAvl._1, yHandleAvl._2, yHandleAvl._3)
-          val zScreen = projectToScreen(zHandleAvl._1, zHandleAvl._2, zHandleAvl._3)
+          // Profile X is normalized (0-1), so center is always at length/2
+          val bodyCenterX = length / 2
+          val handleOffset = getBodyAxisHandleOffset(length, profile)
 
           // Calculate distances to mouse
           def distSq(screen: Option[(Int, Int)]): Float = screen match {
@@ -802,18 +799,38 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
             case None => Float.MaxValue
           }
 
-          val distCenter = distSq(centerScreen)
-          val distX = distSq(xScreen)
-          val distY = distSq(yScreen)
-          val distZ = distSq(zScreen)
+          // Calculate distances for original body
+          def getDistances(bodyDY: Float): (Float, Float, Float, Float) = {
+            val centerAvl = (dX + bodyCenterX, bodyDY, dZ)
+            val xHandleAvl = (dX + bodyCenterX + handleOffset, bodyDY, dZ)
+            val yHandleAvl = (dX + bodyCenterX, bodyDY + handleOffset, dZ)
+            val zHandleAvl = (dX + bodyCenterX, bodyDY, dZ + handleOffset)
 
-          // Find minimum distance including center
-          val minDist = scala.math.min(scala.math.min(scala.math.min(distCenter, distX), distY), distZ)
+            val centerScreen = projectToScreen(centerAvl._1, centerAvl._2, centerAvl._3)
+            val xScreen = projectToScreen(xHandleAvl._1, xHandleAvl._2, xHandleAvl._3)
+            val yScreen = projectToScreen(yHandleAvl._1, yHandleAvl._2, yHandleAvl._3)
+            val zScreen = projectToScreen(zHandleAvl._1, zHandleAvl._2, zHandleAvl._3)
 
-          if (minDist == distCenter) "center"
-          else if (minDist == distX) "x"
-          else if (minDist == distY) "y"
-          else "z"
+            (distSq(centerScreen), distSq(xScreen), distSq(yScreen), distSq(zScreen))
+          }
+
+          val (distCenter, distX, distY, distZ) = getDistances(dY)
+
+          // Also consider mirrored body handles if YDUPLICATE is set
+          val (mirrorDistCenter, mirrorDistX, mirrorDistY, mirrorDistZ) = ydupl match {
+            case Some(yDup) =>
+              val mirroredDY = 2 * yDup - dY
+              getDistances(mirroredDY)
+            case None =>
+              (Float.MaxValue, Float.MaxValue, Float.MaxValue, Float.MaxValue)
+          }
+
+          // Find minimum distance across both original and mirrored handles
+          val allDistances = Seq(
+            (distCenter, "center"), (distX, "x"), (distY, "y"), (distZ, "z"),
+            (mirrorDistCenter, "center"), (mirrorDistX, "x"), (mirrorDistY, "y"), (mirrorDistZ, "z")
+          )
+          allDistances.minBy(_._1)._2
         } else "center"
       } else "center"
     }.getOrElse("center")
@@ -1142,7 +1159,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     val spanAngle = atan2(absSpanZ, absSpanY).toFloat
 
     // Generate all NACA profiles for the surface
-    val numProfilePoints = 20
+    val numProfilePoints = 7
     val profiles = surface.map { case (xle, yle, zle, chord, ainc, naca, controls) =>
       val profile = generateNaca4Digit(naca, numProfilePoints)
       val aincRad = toRadians(ainc)
@@ -1546,7 +1563,7 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     selectedBody.foreach { case (bodyIdx, dX, dY, dZ) =>
       // Get body profile from avlBodies
       if (bodyIdx < avlBodies.length) {
-        val (_, profile, origDX, origDY, origDZ, length, _) = avlBodies(bodyIdx)
+        val (_, profile, origDX, origDY, origDZ, length, ydupl) = avlBodies(bodyIdx)
         if (profile.nonEmpty) {
           gl.glDisable(GLLightingFunc.GL_LIGHTING)
           gl.glDisable(GL.GL_DEPTH_TEST)
@@ -1555,78 +1572,19 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
           gl.glScalef(modelScale, modelScale, modelScale)
           gl.glTranslatef(-centerX, -centerY, -centerZ)
 
-          // Calculate center of body for the handle (using length)
-          val (firstX, _) = profile.head
-          val (lastX, _) = profile.last
-          val bodyCenterX = (firstX + lastX) / 2 * length
-          val (mx, my, mz) = avlToModel(dX + bodyCenterX, dY, dZ)
+          // Calculate center of body for the handle
+          // Profile X is normalized (0-1), so center is always at length/2
+          val bodyCenterX = length / 2
+          val handleOffset = getBodyAxisHandleOffset(length, profile)
 
-          // Draw center point - yellow (with snap)
-          if (isDraggingBody) {
-            gl.glColor3f(1.0f, 1.0f, 0.5f)  // Brighter when dragging
-            gl.glPointSize(16.0f)
-          } else {
-            gl.glColor3f(1.0f, 1.0f, 0.0f)  // Yellow
-            gl.glPointSize(12.0f)
+          // Draw handle for original body
+          drawBodyAxisHandles(gl, dX, dY, dZ, bodyCenterX, handleOffset)
+
+          // Draw handle for mirrored body if YDUPLICATE is set
+          ydupl.foreach { yDup =>
+            val mirroredDY = 2 * yDup - dY
+            drawBodyAxisHandles(gl, dX, mirroredDY, dZ, bodyCenterX, handleOffset)
           }
-          gl.glBegin(GL.GL_POINTS)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-          gl.glEnd()
-
-          // Calculate axis handle positions
-          val (hxX, hxY, hxZ) = avlToModel(dX + bodyCenterX + bodyAxisHandleOffset, dY, dZ)
-          val (hyX, hyY, hyZ) = avlToModel(dX + bodyCenterX, dY + bodyAxisHandleOffset, dZ)
-          val (hzX, hzY, hzZ) = avlToModel(dX + bodyCenterX, dY, dZ + bodyAxisHandleOffset)
-
-          gl.glLineWidth(3.0f)
-
-          // X axis handle - Red
-          if (isDraggingBodyAxisX) {
-            gl.glColor3f(1.0f, 0.5f, 0.5f)  // Brighter when dragging
-            gl.glPointSize(16.0f)
-          } else {
-            gl.glColor3f(1.0f, 0.3f, 0.3f)
-            gl.glPointSize(12.0f)
-          }
-          gl.glBegin(GL.GL_POINTS)
-          gl.glVertex3f(hxX * displayScale, hxY * displayScale, hxZ * displayScale)
-          gl.glEnd()
-          gl.glBegin(GL.GL_LINES)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-          gl.glVertex3f(hxX * displayScale, hxY * displayScale, hxZ * displayScale)
-          gl.glEnd()
-
-          // Y axis handle - Green
-          if (isDraggingBodyAxisY) {
-            gl.glColor3f(0.5f, 1.0f, 0.5f)  // Brighter when dragging
-            gl.glPointSize(16.0f)
-          } else {
-            gl.glColor3f(0.3f, 1.0f, 0.3f)
-            gl.glPointSize(12.0f)
-          }
-          gl.glBegin(GL.GL_POINTS)
-          gl.glVertex3f(hyX * displayScale, hyY * displayScale, hyZ * displayScale)
-          gl.glEnd()
-          gl.glBegin(GL.GL_LINES)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-          gl.glVertex3f(hyX * displayScale, hyY * displayScale, hyZ * displayScale)
-          gl.glEnd()
-
-          // Z axis handle - Blue
-          if (isDraggingBodyAxisZ) {
-            gl.glColor3f(0.5f, 0.7f, 1.0f)  // Brighter when dragging
-            gl.glPointSize(16.0f)
-          } else {
-            gl.glColor3f(0.3f, 0.5f, 1.0f)
-            gl.glPointSize(12.0f)
-          }
-          gl.glBegin(GL.GL_POINTS)
-          gl.glVertex3f(hzX * displayScale, hzY * displayScale, hzZ * displayScale)
-          gl.glEnd()
-          gl.glBegin(GL.GL_LINES)
-          gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
-          gl.glVertex3f(hzX * displayScale, hzY * displayScale, hzZ * displayScale)
-          gl.glEnd()
 
           gl.glPopMatrix()
           gl.glPointSize(1.0f)
@@ -1638,11 +1596,82 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
     }
   }
 
+  private def drawBodyAxisHandles(gl: GL2, dX: Float, dY: Float, dZ: Float, bodyCenterX: Float, handleOffset: Float): Unit = {
+    val (mx, my, mz) = avlToModel(dX + bodyCenterX, dY, dZ)
+
+    // Draw center point - yellow (with snap)
+    if (isDraggingBody) {
+      gl.glColor3f(1.0f, 1.0f, 0.5f)  // Brighter when dragging
+      gl.glPointSize(16.0f)
+    } else {
+      gl.glColor3f(1.0f, 1.0f, 0.0f)  // Yellow
+      gl.glPointSize(12.0f)
+    }
+    gl.glBegin(GL.GL_POINTS)
+    gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    gl.glEnd()
+
+    // Calculate axis handle positions
+    val (hxX, hxY, hxZ) = avlToModel(dX + bodyCenterX + handleOffset, dY, dZ)
+    val (hyX, hyY, hyZ) = avlToModel(dX + bodyCenterX, dY + handleOffset, dZ)
+    val (hzX, hzY, hzZ) = avlToModel(dX + bodyCenterX, dY, dZ + handleOffset)
+
+    gl.glLineWidth(3.0f)
+
+    // X axis handle - Red
+    if (isDraggingBodyAxisX) {
+      gl.glColor3f(1.0f, 0.5f, 0.5f)  // Brighter when dragging
+      gl.glPointSize(16.0f)
+    } else {
+      gl.glColor3f(1.0f, 0.3f, 0.3f)
+      gl.glPointSize(12.0f)
+    }
+    gl.glBegin(GL.GL_POINTS)
+    gl.glVertex3f(hxX * displayScale, hxY * displayScale, hxZ * displayScale)
+    gl.glEnd()
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    gl.glVertex3f(hxX * displayScale, hxY * displayScale, hxZ * displayScale)
+    gl.glEnd()
+
+    // Y axis handle - Green
+    if (isDraggingBodyAxisY) {
+      gl.glColor3f(0.5f, 1.0f, 0.5f)  // Brighter when dragging
+      gl.glPointSize(16.0f)
+    } else {
+      gl.glColor3f(0.3f, 1.0f, 0.3f)
+      gl.glPointSize(12.0f)
+    }
+    gl.glBegin(GL.GL_POINTS)
+    gl.glVertex3f(hyX * displayScale, hyY * displayScale, hyZ * displayScale)
+    gl.glEnd()
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    gl.glVertex3f(hyX * displayScale, hyY * displayScale, hyZ * displayScale)
+    gl.glEnd()
+
+    // Z axis handle - Blue
+    if (isDraggingBodyAxisZ) {
+      gl.glColor3f(0.5f, 0.7f, 1.0f)  // Brighter when dragging
+      gl.glPointSize(16.0f)
+    } else {
+      gl.glColor3f(0.3f, 0.5f, 1.0f)
+      gl.glPointSize(12.0f)
+    }
+    gl.glBegin(GL.GL_POINTS)
+    gl.glVertex3f(hzX * displayScale, hzY * displayScale, hzZ * displayScale)
+    gl.glEnd()
+    gl.glBegin(GL.GL_LINES)
+    gl.glVertex3f(mx * displayScale, my * displayScale, mz * displayScale)
+    gl.glVertex3f(hzX * displayScale, hzY * displayScale, hzZ * displayScale)
+    gl.glEnd()
+  }
+
   private def drawSelectedProfilePointHandle(gl: GL2): Unit = {
     selectedProfilePoint.foreach { case (bodyIdx, pointIdx, x, radius) =>
       // Get body data from avlBodies
       if (bodyIdx < avlBodies.length) {
-        val (_, profile, dX, dY, dZ, _, _) = avlBodies(bodyIdx)
+        val (_, profile, dX, dY, dZ, length, _) = avlBodies(bodyIdx)
         if (pointIdx < profile.length) {
           gl.glDisable(GLLightingFunc.GL_LIGHTING)
           gl.glDisable(GL.GL_DEPTH_TEST)
@@ -1652,13 +1681,15 @@ class Viewer3DGL(parent: Composite, style: Int) extends Composite(parent, style)
           gl.glTranslatef(-centerX, -centerY, -centerZ)
 
           // Profile point position: center of the circle at this profile point
-          val (mx, my, mz) = avlToModel(dX + x, dY, dZ)
+          // Profile X is normalized (0-1), multiply by length to get actual position
+          val actualX = x * length
+          val (mx, my, mz) = avlToModel(dX + actualX, dY, dZ)
 
           // Calculate radius handle position using angle in Y-Z plane
           // Y offset = radius * sin(angle), Z offset = radius * cos(angle)
           val yOffset = radius * scala.math.sin(radiusHandleAngle).toFloat
           val zOffset = radius * scala.math.cos(radiusHandleAngle).toFloat
-          val (rxEnd, ryEnd, rzEnd) = avlToModel(dX + x, dY + yOffset, dZ + zOffset)
+          val (rxEnd, ryEnd, rzEnd) = avlToModel(dX + actualX, dY + yOffset, dZ + zOffset)
 
           // Draw connecting line from center to radius handle
           gl.glColor3f(0.5f, 0.5f, 0.5f)  // Gray line
