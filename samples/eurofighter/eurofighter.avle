@@ -1,17 +1,40 @@
 avl:
   alpha: 0.0
   geometry:
-    Bref: 100.0
+    Bref: 0.0
     CDp: 0.02
-    Cref: 7.5
+    Cref: 0.0
     Mach: 0.0
-    Sref: 750.0
+    Sref: 0.0
     Xref: 0.0
     Yref: 0.0
     Zref: 0.0
     Zsym: 0.0
-    body: [
-      ]
+    body:
+    - BFILE: body1.dat
+      Bspace: 1.0
+      Nbody: 20
+      Ydupl: 0.0
+      dX: 0.0
+      dY: 0.0
+      dZ: 0.0
+      length: 0.3
+      masses: [
+        ]
+      name: body1
+      profilePoints:
+      - radius: 0.0
+        x: 0.0
+      - radius: 0.02
+        x: 0.1
+      - radius: 0.03
+        x: 0.3
+      - radius: 0.03
+        x: 0.7
+      - radius: 0.018
+        x: 0.9
+      - radius: 0.006
+        x: 1.0
     iYsym: 0
     iZsym: 0
     masses: [

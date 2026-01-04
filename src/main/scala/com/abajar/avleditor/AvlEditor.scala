@@ -127,6 +127,10 @@ object AvlEditor{
           loadPropertiesForTreeItem(control)
           // Update selected control in 3D viewer when properties change
           selectControlIn3D(control)
+        case body: com.abajar.avleditor.avl.geometry.Body =>
+          // Select and update body in 3D viewer when properties change
+          selectBodyIn3D(body)
+          loadAvlBodies()
         case _ => // Do nothing for other types
       }
       // Refresh the selected tree item name
@@ -156,6 +160,24 @@ object AvlEditor{
       window.display.asyncExec(new Runnable {
         override def run(): Unit = {
           updateControlFromViewer(surfaceIdx, sectionIdx, controlIdx, xhinge)
+        }
+      })
+    })
+
+    // Set up body update callback for 3D editing
+    window.viewer3D.setBodyUpdateCallback((bodyIdx: Int, dX: Float, dY: Float, dZ: Float) => {
+      window.display.asyncExec(new Runnable {
+        override def run(): Unit = {
+          updateBodyFromViewer(bodyIdx, dX, dY, dZ)
+        }
+      })
+    })
+
+    // Set up profile point update callback for 3D editing
+    window.viewer3D.setProfilePointUpdateCallback((bodyIdx: Int, pointIdx: Int, x: Float, radius: Float) => {
+      window.display.asyncExec(new Runnable {
+        override def run(): Unit = {
+          updateProfilePointFromViewer(bodyIdx, pointIdx, x, radius)
         }
       })
     })
@@ -209,11 +231,42 @@ object AvlEditor{
     private def handleClickButton(button: ENABLE_BUTTONS): Unit = {
       window.treeNodeSelected match {
         case Some(nodeSelected) => {
-          button.click(nodeSelected, window.treeNodeSelectedParent.get)
+          // Special handling for IMPORT_BFILE - open file dialog
+          if (button == ENABLE_BUTTONS.IMPORT_BFILE) {
+            handleImportBfile(nodeSelected)
+          } else {
+            button.click(nodeSelected, window.treeNodeSelectedParent.get)
+          }
           window.refreshTree
           loadAvlSurfaces()
+          loadAvlBodies()
         }
         case None => throw new Exception("Button click without node selected")
+      }
+    }
+
+    private def handleImportBfile(nodeSelected: Any): Unit = {
+      import org.eclipse.swt.widgets.FileDialog
+      import org.eclipse.swt.SWT
+      import com.abajar.avleditor.avl.geometry.Body
+
+      nodeSelected match {
+        case body: Body =>
+          val dialog = new FileDialog(window.getShell, SWT.OPEN)
+          dialog.setText("Import Body Profile")
+          dialog.setFilterExtensions(Array("*.dat", "*.*"))
+          dialog.setFilterNames(Array("Body Profile (*.dat)", "All Files"))
+
+          val filePath = dialog.open()
+          if (filePath != null) {
+            val parsed = parseBfile(filePath)
+            if (parsed.nonEmpty) {
+              body.importProfilePoints(parsed.map(t => Array(t._1, t._2)))
+              body.setBFILE(new java.io.File(filePath).getName())
+            }
+          }
+        case _ =>
+          logger.log(Level.WARNING, "IMPORT_BFILE called on non-Body node")
       }
     }
 
@@ -303,6 +356,110 @@ object AvlEditor{
       } catch {
         case e: Exception =>
           logger.log(Level.WARNING, "Error loading AVL surfaces", e)
+      }
+      // Also load bodies
+      loadAvlBodies()
+    }
+
+    private def loadAvlBodies(): Unit = {
+      import scala.collection.JavaConverters._
+      import java.io.{File, BufferedReader, FileReader}
+      try {
+        val avl = crrcsim.getAvl()
+        if (avl != null && avl.getGeometry() != null) {
+          val bodies = avl.getGeometry().getBodies().asScala.map { body =>
+            // Initialize parent references after deserialization
+            body.initProfilePointParents()
+
+            val profile = if (!body.getProfilePoints().isEmpty) {
+              // Use inline profile points
+              body.getProfilePoints().asScala.map(p => (p.getX(), p.getRadius())).toArray
+            } else {
+              // Fall back to BFILE parsing or default
+              val bfilePath = Option(body.getBFILE()).getOrElse("")
+              if (bfilePath.nonEmpty) {
+                val parsed = parseBfile(bfilePath)
+                if (parsed.nonEmpty) {
+                  // Import parsed points into body for future editing
+                  body.importProfilePoints(parsed.map(t => Array(t._1, t._2)))
+                  parsed
+                } else {
+                  body.initDefaultProfile()
+                  body.getProfilePoints().asScala.map(p => (p.getX(), p.getRadius())).toArray
+                }
+              } else {
+                body.initDefaultProfile()
+                body.getProfilePoints().asScala.map(p => (p.getX(), p.getRadius())).toArray
+              }
+            }
+            val ydupl = if (body.getYdupl() != 0) Some(body.getYdupl()) else None
+            (body.getName(), profile, body.getdX(), body.getdY(), body.getdZ(), body.getLength(), ydupl)
+          }.toArray
+          window.viewer3D.setAvlBodies(bodies)
+        }
+      } catch {
+        case e: Exception =>
+          logger.log(Level.WARNING, "Error loading AVL bodies", e)
+      }
+    }
+
+    // Default body profile - a simple tapered fuselage (scaled to typical aircraft proportions)
+    private def defaultBodyProfile(): Array[(Float, Float)] = {
+      // Length ~1 unit, radius ~0.1 unit (1:10 aspect ratio typical for fuselage)
+      Array(
+        (0.00f, 0.00f),    // Nose tip
+        (0.05f, 0.04f),    // Nose cone
+        (0.15f, 0.08f),    // Forward section
+        (0.25f, 0.10f),    // Main body start
+        (0.75f, 0.10f),    // Main body end
+        (0.90f, 0.06f),    // Tail taper
+        (1.00f, 0.02f)     // Tail tip
+      )
+    }
+
+    // Parse BFILE format: lines of "x r" where x is position along body and r is radius
+    private def parseBfile(path: String): Array[(Float, Float)] = {
+      import java.io.{File, BufferedReader, FileReader}
+      try {
+        // Try to find the file relative to the current AVL file or as absolute path
+        val file = new File(path)
+        val actualFile = if (file.isAbsolute && file.exists()) {
+          file
+        } else {
+          // Try relative to current file
+          currentFile.map(f => new File(f.getParentFile, path)).filter(_.exists()).getOrElse(file)
+        }
+
+        if (!actualFile.exists()) {
+          logger.log(Level.WARNING, s"BFILE not found: $path")
+          return Array()
+        }
+
+        val reader = new BufferedReader(new FileReader(actualFile))
+        val points = new scala.collection.mutable.ArrayBuffer[(Float, Float)]()
+        var line = reader.readLine()
+        while (line != null) {
+          val trimmed = line.trim()
+          if (trimmed.nonEmpty && !trimmed.startsWith("#") && !trimmed.startsWith("!")) {
+            val parts = trimmed.split("\\s+")
+            if (parts.length >= 2) {
+              try {
+                val x = parts(0).toFloat
+                val r = parts(1).toFloat
+                points += ((x, r))
+              } catch {
+                case _: NumberFormatException => // Skip invalid lines
+              }
+            }
+          }
+          line = reader.readLine()
+        }
+        reader.close()
+        points.toArray
+      } catch {
+        case e: Exception =>
+          logger.log(Level.WARNING, s"Error parsing BFILE: $path", e)
+          Array()
       }
     }
 
@@ -636,18 +793,35 @@ object AvlEditor{
           }
           window.viewer3D.clearSelectedSection()
           window.viewer3D.clearSelectedControl()
+          window.viewer3D.clearSelectedBody()
         case section: com.abajar.avleditor.avl.geometry.Section =>
           // Find the parent surface and section index
           selectSectionIn3D(section)
           window.viewer3D.clearSelectedControl()
+          window.viewer3D.clearSelectedBody()
         case control: com.abajar.avleditor.avl.geometry.Control =>
           // Find the parent surface, section and control index
           selectControlIn3D(control)
           window.viewer3D.clearSelectedSection()
+          window.viewer3D.clearSelectedBody()
+        case body: com.abajar.avleditor.avl.geometry.Body =>
+          // Find the body index and select it
+          selectBodyIn3D(body)
+          window.viewer3D.clearSelectedSection()
+          window.viewer3D.clearSelectedControl()
+          window.viewer3D.clearSelectedProfilePoint()
+        case profilePoint: com.abajar.avleditor.avl.geometry.BodyProfilePoint =>
+          // Find the body and point index, select it in 3D
+          selectProfilePointIn3D(profilePoint)
+          window.viewer3D.clearSelectedSection()
+          window.viewer3D.clearSelectedControl()
+          window.viewer3D.clearSelectedBody()
         case _ =>
           // Clear selections for other nodes
           window.viewer3D.clearSelectedSection()
           window.viewer3D.clearSelectedControl()
+          window.viewer3D.clearSelectedBody()
+          window.viewer3D.clearSelectedProfilePoint()
       }
     }
 
@@ -755,6 +929,101 @@ object AvlEditor{
             window.properties.clearAll()
             loadAvlSurfaces()
           }
+        }
+      }
+    }
+
+    private def selectBodyIn3D(body: com.abajar.avleditor.avl.geometry.Body): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val bodies = avl.getGeometry().getBodies()
+      var bodyIdx = 0
+      var found = false
+      while (bodyIdx < bodies.size() && !found) {
+        if (bodies.get(bodyIdx) eq body) {
+          found = true
+          window.viewer3D.setSelectedBody(
+            bodyIdx,
+            body.getdX(),
+            body.getdY(),
+            body.getdZ()
+          )
+        }
+        bodyIdx += 1
+      }
+    }
+
+    private def updateBodyFromViewer(bodyIdx: Int, dX: Float, dY: Float, dZ: Float): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val bodies = avl.getGeometry().getBodies()
+      if (bodyIdx < bodies.size()) {
+        val body = bodies.get(bodyIdx)
+        body.setdX(dX)
+        body.setdY(dY)
+        body.setdZ(dZ)
+        // Refresh properties table and AVL bodies
+        window.treeNodeSelected.foreach {
+          case b: com.abajar.avleditor.avl.geometry.Body if b eq body =>
+            loadPropertiesForTreeItem(body)
+          case _ =>
+        }
+        loadAvlBodies()
+      }
+    }
+
+    private def selectProfilePointIn3D(profilePoint: com.abajar.avleditor.avl.geometry.BodyProfilePoint): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val bodies = avl.getGeometry().getBodies()
+      var bodyIdx = 0
+      var found = false
+      while (bodyIdx < bodies.size() && !found) {
+        val body = bodies.get(bodyIdx)
+        val points = body.getProfilePoints()
+        var pointIdx = 0
+        while (pointIdx < points.size() && !found) {
+          if (points.get(pointIdx) eq profilePoint) {
+            found = true
+            window.viewer3D.setSelectedProfilePoint(
+              bodyIdx,
+              pointIdx,
+              profilePoint.getX(),
+              profilePoint.getRadius()
+            )
+          }
+          pointIdx += 1
+        }
+        bodyIdx += 1
+      }
+    }
+
+    private def updateProfilePointFromViewer(bodyIdx: Int, pointIdx: Int, x: Float, radius: Float): Unit = {
+      import scala.collection.JavaConverters._
+      val avl = crrcsim.getAvl()
+      if (avl == null || avl.getGeometry() == null) return
+
+      val bodies = avl.getGeometry().getBodies()
+      if (bodyIdx < bodies.size()) {
+        val body = bodies.get(bodyIdx)
+        val points = body.getProfilePoints()
+        if (pointIdx < points.size()) {
+          val point = points.get(pointIdx)
+          point.setX(x)
+          point.setRadius(radius)
+          // Refresh properties table and AVL bodies
+          window.treeNodeSelected.foreach {
+            case p: com.abajar.avleditor.avl.geometry.BodyProfilePoint if p eq point =>
+              loadPropertiesForTreeItem(point)
+            case _ =>
+          }
+          loadAvlBodies()
         }
       }
     }

@@ -19,6 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.tree.TreeModel;
 import com.abajar.avleditor.avl.AVLGeometry;
+import com.abajar.avleditor.avl.geometry.Body;
 import com.abajar.avleditor.avl.geometry.Section;
 import com.abajar.avleditor.avl.geometry.Surface;
 import javax.swing.tree.DefaultTreeModel;
@@ -95,6 +96,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
                 return generateTreeNode(((Shaft)parentTreeNode).createSimpleTrust());
             case WHEEL:
                 return generateTreeNode(((CRRCSim)parentTreeNode).createWheel());
+            case PROFILE_POINT:
+                return generateTreeNode(((Body)parentTreeNode).createProfilePoint());
             default:
                 throw new UnsupportedOperationException("Node of type " + type + " not suported");
         }
@@ -118,9 +121,16 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         MASS,
         CHANGE,
         CONFIG,
-        BATTERY
-    ,   SHAFT, ENGINE, DATA, DATA_IDLE
-    ,   PROPELLER, SIMPLE_TRUST, WHEEL}
+        BATTERY,
+        SHAFT,
+        ENGINE,
+        DATA,
+        DATA_IDLE,
+        PROPELLER,
+        SIMPLE_TRUST,
+        WHEEL,
+        PROFILE_POINT
+    }
 
     private static final TreeModificator addSurface = new AddSurface();
     private static final TreeModificator addBody = new AddBody();
@@ -138,6 +148,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
     private static final TreeModificator addSimpleTrust = new AddSimpleTrust();
     private static final TreeModificator addWheel = new AddCollisionPoint();
     private static final TreeModificator addCollisionPoint = new AddCollisionPoint();
+    private static final TreeModificator addProfilePoint = new AddProfilePoint();
+    private static final TreeModificator importBfile = new ImportBfile();
     private static final TreeModificator delete = new Delete();
 
     public enum ENABLE_BUTTONS {
@@ -157,6 +169,8 @@ public class SelectorMutableTreeNode  extends DefaultMutableTreeNode{
         ADD_SYMPLE_TRUST    (addSimpleTrust),
         ADD_WHEEL           (addWheel),
         ADD_COLLISION_POINT (addCollisionPoint),
+        ADD_PROFILE_POINT   (addProfilePoint),
+        IMPORT_BFILE        (importBfile),
         DELETE              (delete);
 
         private final TreeModificator modificator;

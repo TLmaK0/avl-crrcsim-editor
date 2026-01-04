@@ -165,6 +165,8 @@ class MainWindow(
       .addButtonRegister("+ Body", notifyButtonClick, ENABLE_BUTTONS.ADD_BODY)
       .addButtonRegister("+ Section", notifyButtonClick, ENABLE_BUTTONS.ADD_SECTION)
       .addButtonRegister("+ Control", notifyButtonClick, ENABLE_BUTTONS.ADD_CONTROL)
+      .addButtonRegister("+ Profile Point", notifyButtonClick, ENABLE_BUTTONS.ADD_PROFILE_POINT)
+      .addButtonRegister("Import BFILE", notifyButtonClick, ENABLE_BUTTONS.IMPORT_BFILE)
       .addButtonRegister("+ Mass", notifyButtonClick, ENABLE_BUTTONS.ADD_MASS)
       .addButtonRegister("Delete", notifyButtonClick, ENABLE_BUTTONS.DELETE)
 
@@ -244,6 +246,8 @@ class MainWindow(
       } else { None }
     }
   }
+
+  def getShell: org.eclipse.swt.widgets.Shell = shell
 
   def show: Unit = shell.start
 }

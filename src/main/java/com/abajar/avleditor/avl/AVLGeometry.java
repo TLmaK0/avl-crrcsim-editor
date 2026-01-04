@@ -430,6 +430,12 @@ public class AVLGeometry extends MassObject implements AVLSerializable{
 
     public Body createBody() {
         Body body = new Body();
+        // Generate unique body name and BFILE
+        int bodyNum = this.getBodies().size() + 1;
+        body.setName("body" + bodyNum);
+        body.setBFILE("body" + bodyNum + ".dat");
+        // Initialize with default profile
+        body.initDefaultProfile();
         this.getBodies().add(body);
         return body;
     }
