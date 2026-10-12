@@ -4,6 +4,11 @@ on:
   push:
     branches: [master]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Create/update the GitHub release (false lets the build matrix be tested without touching it)'
+        type: boolean
+        default: true
 
 # The newest commit wins, and it kills the older run rather than queueing behind it.
 #
@@ -52,6 +57,15 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
+          # Caches ~/.sbt, ~/.ivy2/cache and the coursier directory, keyed on the build files and
+          # the runner OS. Without it every run re-resolves JOGL cold against jogamp.org — the only
+          # resolver declared for it (build.sbt:12) — and that single host refuses or times out
+          # intermittently on the macOS and Windows runners (never Ubuntu, and never once since
+          # tests.yml carried this same line: see its own comment). This workflow had no cache at
+          # all, so it paid that dice roll on every one of three matrix jobs, every push — which is
+          # why "Build and Release" had been failing since 2026-08-25 while "Checks" never did
+          # (issue #54).
+          cache: 'sbt'
 
       - name: Setup sbt
         uses: sbt/setup-sbt@v1
@@ -150,6 +164,7 @@ jobs:
 
   release:
     needs: build
+    if: github.event_name != 'workflow_dispatch' || inputs.publish
     runs-on: ubuntu-latest
 
     steps:
