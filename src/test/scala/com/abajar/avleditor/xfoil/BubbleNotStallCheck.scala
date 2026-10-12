@@ -123,6 +123,29 @@ object BubbleNotStallCheck {
     check("a maximum at the top of the sweep is still refused as where the run stopped",
       refusalFor(stillClimbing).exists(_.contains("still rising")))
 
+    println("the fix: say what is known and stop claiming a cause this data cannot establish")
+    // SectionStallData carries the recovery now, so whoever reports clMax can say whether it is
+    // ambiguous — without the number itself ever changing. Hugo's decision on #43: the number stays,
+    // the sentence that asserted a cause does not.
+    check("the bubble's own clMax is unaffected by carrying its recovery alongside it",
+      SectionStall.fromPolar(burstBubble, 7.5e4).right.exists(d =>
+        math.abs(d.clMax - 0.832) < 1e-3 && math.abs(d.clMaxRecoveryAfterFall - recovery) < 1e-9))
+    check("a sharp stall's recovery is exactly zero, carried through the same field",
+      SectionStall.fromPolar(sharpStall, 5e5).right.exists(_.clMaxRecoveryAfterFall == 0.0))
+    check("the wing's own stall at a model's Reynolds number is just as ambiguous as the bubble — " +
+      "measured, not assumed, which is why the number is not the thing that changes",
+      SectionStall.fromPolar(lowReynoldsWing, 1e5).right.exists(_.clMaxRecoveryAfterFall > 0.0))
+
+    // bubbleCaveat only reads `downward` and `clMaxRecoveryAfterFall`; the station is irrelevant to it.
+    def onsetOf(recoveryAfterFall: Double, downward: Boolean = false) =
+      StallOnset(null.asInstanceOf[LoadedStation], 0.832, 8.5, downward, recoveryAfterFall)
+    check("a peak that never recovers gets no caveat",
+      WingMaximumLift.bubbleCaveat(onsetOf(0.0)).isEmpty)
+    check("a peak that partly recovers gets one, naming both possibilities",
+      WingMaximumLift.bubbleCaveat(onsetOf(0.074)).contains("laminar bubble"))
+    check("the downward side of the question is never hedged, because it was not measured",
+      WingMaximumLift.bubbleCaveat(onsetOf(0.074, downward = true)).isEmpty)
+
     println(if (ok) "BUBBLE_NOT_STALL_OK" else "BUBBLE_NOT_STALL_FAIL")
     if (!ok) sys.exit(1)
   }

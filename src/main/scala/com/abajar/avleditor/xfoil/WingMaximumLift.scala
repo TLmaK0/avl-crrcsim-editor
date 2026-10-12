@@ -102,18 +102,47 @@ case class LoadedStation(
  * comes back with a polar still climbing at 20 degrees, because the code does not model the separation
  * that would end it. That station then has **no known limit**, so it takes no part in deciding where the
  * aircraft stalls, and whoever asked is told which stations those were.
+ *
+ * @param clMaxRecoveryAfterFall carried from [[SectionStallData.clMaxRecoveryAfterFall]] (interpolated
+ *   the same way as `clMax` itself, between two bracketing sections), so whoever reports `clMax` can say
+ *   whether this data can tell a stall from a bursting bubble — see issue #43. `None` when `clMax` is.
  */
-case class StationLimits(station: LoadedStation, clMax: Option[Double], clMin: Option[Double])
+case class StationLimits(station: LoadedStation, clMax: Option[Double], clMin: Option[Double],
+                          clMaxRecoveryAfterFall: Option[Double] = None)
 
-/** The strip that reaches its aerofoil's limit first, and the attitude at which it does. */
+/**
+ * The strip that reaches its aerofoil's limit first, and the attitude at which it does.
+ *
+ * @param clMaxRecoveryAfterFall the same quantity `StationLimits` carries, read for whichever surface
+ *   this onset belongs to. Meaningful only when `!downward`: the downward (`clMin`) side of issue #43's
+ *   question was not measured, so it is always `0.0` there rather than guessed at.
+ */
 case class StallOnset(
   station: LoadedStation,
   sectionLimit: Double,
   alphaDeg: Double,
-  downward: Boolean
+  downward: Boolean,
+  clMaxRecoveryAfterFall: Double
 )
 
 object WingMaximumLift {
+
+  /**
+   * What to add, in words, when `onset`'s own `sectionLimit` cannot be told apart from a laminar bubble
+   * bursting rather than a real aerofoil limit — issue #43. Empty whenever it can: the curve fell and
+   * never came back at all (`clMaxRecoveryAfterFall == 0.0`), or the onset is the downward (`clMin`) side
+   * of the question, which this does not cover.
+   *
+   * The number itself is never withheld or changed on account of this — see `SectionStall.fromPolar`'s
+   * own documentation for why: the wing's own stall at the Reynolds numbers these aircraft fly at shows
+   * the identical shape, so refusing it would cost the wing its stall speed too. What changes is only
+   * whether the sentence that states the number also claims to know which of the two it is.
+   */
+  def bubbleCaveat(onset: StallOnset): String =
+    if (onset.downward || onset.clMaxRecoveryAfterFall <= 0.0) ""
+    else " That is the highest lift this data measured there: it falls and does not recover within the " +
+      "swept range, but the drop partly reattaches further out, so this cannot be told apart from a " +
+      "laminar bubble bursting rather than a real aerofoil limit."
 
   /** Below this a strip's lift does not respond to attitude at all — a fin, and never the critical one. */
   private val NegligibleSlopePerDegree = 1.0e-6
@@ -178,13 +207,15 @@ object WingMaximumLift {
         limit.clMax match {
           case None => Right(None)
           case Some(max) => s.reaches(max, rising = true).right.map(_.map(a =>
-            StallOnset(s, max, a, downward = false)))
+            StallOnset(s, max, a, downward = false, limit.clMaxRecoveryAfterFall.getOrElse(0.0))))
         }
       else if (s.clPerDegree < -NegligibleSlopePerDegree)
         limit.clMin match {
           case None => Right(None)
           case Some(min) => s.reaches(min, rising = false).right.map(_.map(a =>
-            StallOnset(s, min, a, downward = true)))
+            // The downward side of issue #43's question (a bubble vs a stall on a strip lifting
+            // downwards) was not measured, so it is never hedged rather than guessed at.
+            StallOnset(s, min, a, downward = true, clMaxRecoveryAfterFall = 0.0)))
         }
       else Right(None)
     }

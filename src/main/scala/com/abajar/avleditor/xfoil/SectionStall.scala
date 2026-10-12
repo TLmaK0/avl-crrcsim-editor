@@ -21,6 +21,13 @@ package com.abajar.avleditor.xfoil
  *
  * `clMin` is the same question the other way up. A tailplane usually lifts downwards, and a strip working
  * hard downwards stalls exactly as a wing does.
+ *
+ * @param clMaxRecoveryAfterFall how much of the fall after `clMax` the curve takes back later in the
+ *   sweep (see [[shapeAfterPeak]]). Exactly `0.0` means the curve fell and never came back at all, which
+ *   is the one case issue #43 found no way to confuse with a laminar bubble bursting. Anything above
+ *   zero means it partly reattaches further out, and five candidate tests — all measured against real
+ *   polars in #43 — failed to turn that into a safe "this is/is not a bubble" verdict: this data cannot
+ *   tell the two apart, so `clMax` is reported but not asserted to be a stall rather than a bubble.
  */
 case class SectionStallData(
   clMax: Double,
@@ -28,7 +35,8 @@ case class SectionStallData(
   clMin: Option[Double],
   alphaAtClMinDeg: Option[Double],
   convergedPoints: Int,
-  reynolds: Double
+  reynolds: Double,
+  clMaxRecoveryAfterFall: Double
 )
 
 object SectionStall {
@@ -80,21 +88,28 @@ object SectionStall {
       if (below >= PointsPastThePeak) (Some(trough.cl.toDouble), Some(trough.alpha.toDouble))
       else (None, None)
 
+    val (_, recovery) = shapeAfterPeak(ordered)
     Right(SectionStallData(peak.cl.toDouble, peak.alpha.toDouble, negative._1, negative._2,
-      ordered.length, reynolds))
+      ordered.length, reynolds, recovery))
   }
 
   /**
    * What the curve does after its peak: how far it falls, and how much of that it takes back afterwards.
    *
-   * <b>Reported, and deliberately not acted on.</b> A curve that falls and then climbs again looks like a
-   * laminar separation bubble bursting and reattaching rather than a stall, and telling the two apart from
-   * the polar alone is **not established**: four candidate tests were measured against eleven real XFOIL
-   * polars in issue #43 and every one of them fails on data this editor's own aircraft produce. In
-   * particular the recovery is large for a *genuine* stall at the Reynolds numbers a model flies at — the
-   * check aircraft's own wing section takes back 26-34 % of its fall between Re 60,000 and 100,000 — so
-   * refusing a peak on account of it would throw the wing's stall away. So this states the shape and
-   * nothing is reclassified by it.
+   * <b>Reported, and never used to reclassify `clMax` itself.</b> A curve that falls and then climbs
+   * again looks like a laminar separation bubble bursting and reattaching rather than a stall, and
+   * telling the two apart *by the shape alone* is **not established**: five candidate tests were measured
+   * against eleven real XFOIL polars in issue #43 and every one of them fails on data this editor's own
+   * aircraft produce. In particular the recovery is large for a *genuine* stall at the Reynolds numbers a
+   * model flies at — the check aircraft's own wing section takes back 26.5 % of its fall at Re 100,000,
+   * more than this issue's own bubble's 24.6 % — so refusing a peak, or accepting one, on account of a
+   * recovery threshold would be drawing a line the data puts on the wrong side of itself.
+   *
+   * What a nonzero recovery *does* change is what is said about `clMax`, never the number: `clMax` is
+   * still the largest `cl` XFOIL converged at, exactly as it always was, but whoever reports it says the
+   * data cannot tell a bubble from a stall rather than asserting one. Only `recovery == 0.0` — the curve
+   * fell and never came back at all — earns the plain, unqualified statement; this is the one shape none
+   * of the five candidate tests found a counterexample to.
    *
    * The fall is from the peak to the lowest point after it; the recovery is from there to the highest point
    * after **that**, which is the shape a reattaching flow leaves behind. Both come back zero for a curve

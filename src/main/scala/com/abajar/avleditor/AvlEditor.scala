@@ -1091,7 +1091,8 @@ object AvlEditor{
                 logger.log(Level.INFO, f"  first to give up: ${result.critical.station.describe}%s, " +
                   f"${if (result.critical.downward) "downwards" else "upwards"}%s, against a section limit " +
                   f"of ${result.critical.sectionLimit}%.3f at Re ${result.reynoldsAtCriticalSection}%.0f " +
-                  f"(NACA TR 572's critical-section method; XFOIL for the section, AVL for the loading)")
+                  f"(NACA TR 572's critical-section method; XFOIL for the section, AVL for the loading)." +
+                  com.abajar.avleditor.xfoil.WingMaximumLift.bubbleCaveat(result.critical))
                 logger.log(Level.INFO, f"  the spanwise loading was straight in attitude to within " +
                   f"${result.worstResidual}%.4f of local cl, which is what makes one line per station a " +
                   "measurement rather than an assumption")

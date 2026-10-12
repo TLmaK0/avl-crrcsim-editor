@@ -236,7 +236,9 @@ object StallAnalysis {
               case (SectionKnown(one), SectionKnown(two)) =>
                 (StationLimits(station,
                   Some(one.clMax + (two.clMax - one.clMax) * fraction),
-                  for (aMin <- one.clMin; bMin <- two.clMin) yield aMin + (bMin - aMin) * fraction), None)
+                  for (aMin <- one.clMin; bMin <- two.clMin) yield aMin + (bMin - aMin) * fraction,
+                  Some(one.clMaxRecoveryAfterFall +
+                    (two.clMaxRecoveryAfterFall - one.clMaxRecoveryAfterFall) * fraction)), None)
               case _ =>
                 val why = Seq(a, b).collect { case SectionUnknown(reason) => reason }.distinct.mkString("; ")
                 (StationLimits(station, None, None), Some(station.surface + ": " + why))
@@ -311,7 +313,8 @@ object StallAnalysis {
                   stations.map(_.worstResidual).max, main, share, earlier,
                   notes ++ earlier.map(other =>
                     f"${other.station.describe}%s reaches its aerofoil's limit of " +
-                      f"${other.sectionLimit}%.3f at ${other.alphaDeg}%.2f deg, before '$main%s' does. " +
+                      f"${other.sectionLimit}%.3f at ${other.alphaDeg}%.2f deg, before '$main%s' does." +
+                      WingMaximumLift.bubbleCaveat(other) + " " +
                       "That is not the aircraft's stall — a canard is meant to give up first, and holding " +
                       "the wing below its own limit is what it is for — but past that attitude AVL is " +
                       "still solving it as though it were lifting, so the lift curve above it describes " +
