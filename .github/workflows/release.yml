@@ -78,8 +78,24 @@ jobs:
           VERSION=$(grep 'version :=' build.sbt | sed 's/.*"\(.*\)".*/\1/')
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      # jogamp.org is the only resolver for JOGL/gluegen (build.sbt:12) and has no mirror. The
+      # cache above removes the *repeated* exposure to it, but the run that first populates that
+      # cache still has to resolve cold — and measured, it refuses or times out on a rotating set
+      # of artifacts (a different native jar each time) rather than failing the same way twice,
+      # which is the signature of an intermittently overloaded host rather than a dead one. A
+      # fixed delay between whole-command retries, not coursier's own instant internal retries
+      # (already exhausted by the time `sbt` reports the error), is what gives it room to recover.
       - name: Build staged distribution
-        run: sbt stage
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            if sbt stage; then
+              exit 0
+            fi
+            echo "sbt stage failed (attempt $attempt/3)"
+            [ "$attempt" -lt 3 ] && sleep 60
+          done
+          exit 1
 
       - name: Install WiX Toolset (Windows)
         if: matrix.platform == 'windows'
