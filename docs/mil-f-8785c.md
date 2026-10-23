@@ -51,8 +51,8 @@ A suffix `-L` means land-based and `-C` carrier-based (§1.3.1.1).
 
 The editor reports **all three Levels in all three Categories**: one row per motion, one column per
 Flight Phase. The Category is the one thing about the judgement that cannot be derived from the aircraft,
-and judging one costs nothing over judging three — so it is not asked for. See AGENTS.md, "The Flight
-Phase Category is the one thing the aircraft cannot tell us".
+and judging one costs nothing over judging three — so it is not asked for. See
+`MilF8785cEvaluator.evaluateEveryCategory`; the full story is in AGENTS.md's git history.
 
 ---
 
@@ -439,7 +439,7 @@ Stated here rather than silently skipped.
 | Section | Why not |
 |---------|---------|
 | §3.2.2.2, §3.2.3.x forces, §3.3.4.3, **§3.3.5 in full** — all control-force requirements | A radio-controlled model has no stick feel system. There is no force to specify. §3.3.5.1, §3.3.5.1.1 and §3.3.5.2 (pp. 31-32) are stated entirely in pounds of yaw-control-pedal force. |
-| ~~§3.3.2.2 roll rate oscillations, §3.3.2.3 bank angle oscillations, §3.3.2.4 sideslip excursions~~ | **No longer in this table — they are implemented.** The machinery they were waiting on is `LateralModel` and `RollSideslipCoupling`; see below and AGENTS.md. |
+| ~~§3.3.2.2 roll rate oscillations, §3.3.2.3 bank angle oscillations, §3.3.2.4 sideslip excursions~~ | **No longer in this table — they are implemented.** The machinery they were waiting on is `LateralModel` and `RollSideslipCoupling`; see below, and AGENTS.md's git history for how it was verified. |
 | §3.3.9 asymmetric thrust, §3.3.9.5 two engines inoperative | Single-engine models. |
 | §3.4.2 flight at high angle of attack, stalls | AVL is inviscid and cannot see one. Where a wing **stops** lifting is now measured (XFOIL plus AVL's spanwise loading — see AGENTS.md and §3.2.1.3 above), but what it does *past* that point is not modelled at all. |
 | §3.7 atmospheric disturbances | Needs a turbulence model the editor does not have. |

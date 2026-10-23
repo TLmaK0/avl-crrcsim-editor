@@ -15,8 +15,8 @@ the model states its own units, so the same aeroplane written in metres or in in
 
 **Nothing is invented.** If the model is missing something an export needs, the editor stops and says
 what is missing rather than filling in a plausible default. That rule is the reason to trust the output,
-and it is written up under *No silent fallbacks* in [`AGENTS.md`](AGENTS.md) with the three FlightGear
-bugs that produced it.
+and it is written up under *No silent fallbacks* in [`AGENTS.md`](AGENTS.md); the three FlightGear
+bugs that produced it are in that file's git history.
 
 Download
 --------
