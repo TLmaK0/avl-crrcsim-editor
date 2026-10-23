@@ -23,12 +23,66 @@ on:
 # Cancelling rather than queueing is the deliberate choice: a queue would publish the older commit
 # *after* the newer one and leave the wrong binary up, which is the very thing this is for. What is
 # downloadable has to be what is on the branch.
-concurrency:
-  group: release-${{ github.ref }}
-  cancel-in-progress: true
+#
+# Declared PER JOB rather than for the whole workflow, since the `decide` gate exists: a
+# workflow-level group is entered by the RUN the moment it is queued, before any job decides
+# anything, so a documentation-only push — whose build and release jobs are about to be
+# skipped — would still CANCEL a release already in progress and then publish nothing, leaving
+# stale binaries up with no red anywhere. A skipped job never enters its group. The build
+# matrix needs the platform in its group for the same reason the jobs needed splitting: its
+# three jobs run in PARALLEL, and three parallel jobs in one cancelling group kill each other.
 
 jobs:
+  # A documentation-only push publishes no release. This gate is what retires `[skip ci]` —
+  # the owner's order (2026-10-22): "pues no debe existir el skip ci". `[skip ci]` is
+  # believed, never checked: a commit with three .md AND a .scala plus `[skip ci]` lands code
+  # on master with no gate having run, and branch protection cannot catch it on this plan
+  # (measured 2026-10-22: `403 Upgrade to GitHub Pro`). Deciding by the FILES of the push
+  # removes the reason to write it. The classifier and its control cases live in
+  # .github/docs-only.sh and .github/docs-only-test.sh (lexboe's `decide` shape, the same two
+  # files craftplanes ships).
+  decide:
+    name: decide whether this push releases
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      docs_only: ${{ steps.verdict.outputs.docs_only }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # the diff below compares github.event.before, which needs history
+      - name: Prove the classifier on its control cases before trusting it
+        run: bash .github/docs-only-test.sh
+      - name: Decide whether this push changes only documentation
+        id: verdict
+        run: |
+          # On `push` the honest comparison is against `github.event.before` — the tip this
+          # push REPLACED — so a push of several commits is classified over everything it
+          # brought, not just its last commit (lexboe's approach, kept rather than
+          # reinvented). When `before` is unusable — a manual dispatch has none, and
+          # dispatching this workflow is already a deliberate act; a force-push or a new
+          # branch gives all-zeros and the diff fails — CHANGED stays empty, and the
+          # classifier reads empty as NOT documentation-only: it fails toward running.
+          if [ "${{ github.event_name }}" = 'push' ]; then
+            CHANGED=$(git diff --name-only '${{ github.event.before }}' '${{ github.sha }}' || true)
+          else
+            CHANGED=''
+          fi
+          docs_only=$(printf '%s' "$CHANGED" | bash .github/docs-only.sh)
+          echo "docs_only=$docs_only" >> "$GITHUB_OUTPUT"
+          if [ "$docs_only" = 'true' ]; then
+            echo "documentation only — not building, not publishing a release"
+          else
+            echo "changes something the editor is built from — building and releasing"
+          fi
+          echo "$CHANGED" | sed 's/^/  changed: /'
+
   build:
+    needs: decide
+    if: needs.decide.outputs.docs_only != 'true'
+    concurrency:
+      group: release-${{ github.ref }}-build-${{ matrix.platform }}
+      cancel-in-progress: true
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
@@ -179,8 +233,15 @@ jobs:
           path: artifacts/*
 
   release:
-    needs: build
-    if: github.event_name != 'workflow_dispatch' || inputs.publish
+    # `decide` is named explicitly rather than inherited through `build`. A skipped dependency
+    # already skips this job, but the day somebody adds `if: always()` here to make it
+    # resilient, the rule would silently stop applying to the job that actually publishes.
+    needs: [build, decide]
+    if: needs.decide.outputs.docs_only != 'true' && (github.event_name != 'workflow_dispatch' || inputs.publish)
+    # Its own group, not the matrix's — see the note above `jobs:`.
+    concurrency:
+      group: release-${{ github.ref }}-publish
+      cancel-in-progress: true
     runs-on: ubuntu-latest
 
     steps:
